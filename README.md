@@ -4,44 +4,44 @@
   <img src="https://media.tenor.com/8mJ0eq0T2CoAAAAC/retro-futurism.gif" width="600px" alt="Retro Banner"/>
 </p>
 
-<h1 align="center">🕹️ Blue Rabbit</h1>
-<h3 align="center">⚡ Full Stack Developer • JavaScript | Python • Retro Tech Aesthetics ⚡</h3>
+<h1 align="center">🕹️ Chandrakant Dubey</h1>
+<h3 align="center">⚡ Full Stack Developer | Software Engineer | Open Source Enthusiast ⚡</h3>
 
 ---
 
 ## 🌌 Introduction
-Welcome to my GitHub.  
-I’m a **Full Stack Developer** focused on building **scalable web apps, APIs, and cloud deployments**.  
-Passionate about clean design, performance, and software that stands the test of time.  
+Welcome to my digital workspace.  
+I’m a **Full Stack Developer** with experience building scalable web applications, including social platforms, e-commerce, and personalized recommendation systems.  
+I am skilled in creating real-time features, dynamic visualizations, and end-to-end solutions using JavaScript, TypeScript, and Python. Experienced in CI/CD, database design, and delivering reliable, user-focused applications.
 
 ---
 
 ## 📜 Background
-- 📟 **Early Days:** Started with HTML/CSS, tinkering like old terminal hackers.  
-- ⚙️ **Development Growth:** Mastered **JavaScript, Python, and system design**.  
-- 🚀 **Now:** Delivering production-ready fullstack solutions with **React, Next.js, Node.js, NestJS, FastAPI, Flask**.  
-- ☁️ **Focus Areas:** Cloud deployments, CI/CD pipelines, and database design.  
+- 📟 **Early Days:** Started my journey by building responsive interfaces and reusable components for e-commerce and rewards platforms at **Uvation**.
+- ⚙️ **Leveling Up:** Engineered real-time chat, notifications, and an optimized social feed at **Kintree**, diving deep into interactive visualizations and performant data fetching.
+- 🚀 **Current Mission:** Developing full-stack web solutions at **Nutriiya**, building scalable APIs, designing database models, and implementing CI/CD pipelines for automated deployments.
 
 ---
 
 ## 💻 Tech Stack
 
+### 🗣️ Languages
+- JavaScript | TypeScript | Python | HTML5 | CSS3 | SQL
+
 ### 🎨 Frontend
-- HTML | CSS | JavaScript | TypeScript  
-- React ⚛️ | Next.js | Tailwind | Shadcn | Material UI  
+- React.js ⚛️ | Next.js | Vue.js | Redux
+- Tailwind CSS | Styled Components
 
 ### ⚙️ Backend
-- Node.js | Express | NestJS  
-- Python | Flask | FastAPI | Django  
-- REST APIs | GraphQL  
+- Node.js | Express.js | NestJS
+- FastAPI | Flask | GraphQL
 
 ### 🗄️ Databases
-- PostgreSQL | MySQL | MongoDB | Redis | Firebase  
+- PostgreSQL | MySQL | MongoDB
 
-### 🛠️ DevOps & Tools
-- Git | GitHub | Docker | Linux  
-- CI/CD Pipelines | AWS | Hostinger | Kubernetes  
-- Testing: Jest | PyTest  
+### 🛠️ DevOps, Cloud & Tools
+- AWS | Hostinger | Docker | CI/CD
+- Git | GitHub | ViteJS | Chart.js
 
 ---
 
@@ -60,10 +60,10 @@ Passionate about clean design, performance, and software that stands the test of
 ## 🚀 Featured Projects
 | Project | Stack | Description |
 |---------|-------|-------------|
-| **Portfolio Website** | Next.js, Tailwind | A retro-styled developer portfolio |
-| **API Hub** | FastAPI, PostgreSQL | REST + GraphQL API service for scalable backends |
-| **Realtime Chat** | React, Node.js, Socket.IO | Real-time communication app with notifications |
-| **System Design Notes** | Markdown + Diagrams | Documentation & architecture patterns |
+| **NutriTrack AI** | Vue.js, FastAPI, PostgreSQL, AWS | A full-stack nutrition tracking application with personalized ML-powered meal recommendations. |
+| **Kintree Connect** | React.js, Node.js, Socket.IO | A social platform with a dynamic family tree visualizer, real-time chat, and optimized social feed. |
+| **Markdown Arena**| React.js, Node.js, Express | A blog/notes markdown file renderer for tech topics like system design, backend, frontend, etc. |
+| **Terminal Portfolio** | React, TypeScript, Tailwind | This portfolio website, built to emulate a retro terminal interface for a creative showcase. |
 
 ---
 
@@ -71,7 +71,7 @@ Passionate about clean design, performance, and software that stands the test of
 <p align="center">
   <a href="https://linkedin.com/in/chandrakant-dubey"><img src="https://img.shields.io/badge/LinkedIn-%230A66C2?style=for-the-badge&logo=linkedin&logoColor=white"></a>
   <a href="mailto:919chandrakant@gmail.com"><img src="https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white"></a>
-  <!-- <a href="https://twitter.com/chandrakant-dubey"><img src="https://img.shields.io/badge/Twitter-%231DA1F2?style=for-the-badge&logo=twitter&logoColor=white"></a> -->
+  <a href="https://twitter.com/chandrakantdubey"><img src="https://img.shields.io/badge/Twitter-%231DA1F2?style=for-the-badge&logo=twitter&logoColor=white"></a>
 </p>
 
 ---
