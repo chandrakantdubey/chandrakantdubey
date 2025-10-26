@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chandrakant Dubey</title>
+    <link rel="icon" type="image/svg" sizes="32x32" href="./terminal.svg" />
+    <style>
+      /* For custom scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: var(--color-bg, #0a0a0a);
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--color-primary, #22c55e);
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--color-primary-hover, #4ade80);
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      .terminal-input {
+        caret-color: var(--color-primary, #22c55e);
+      }
+      .crt-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        background: repeating-linear-gradient(
+          0deg,
+          rgba(0, 0, 0, 0.15),
+          rgba(0, 0, 0, 0.15) 1px,
+          transparent 1px,
+          transparent 2px
+        );
+        z-index: 100;
+        opacity: 0.5;
+      }
+
+      /* --- Animation Keyframes --- */
+      @keyframes blink {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0;
+        }
+      }
+      .animate-blink {
+        animation: blink 1s step-end infinite;
+      }
+
+      @keyframes glitch {
+        2%,
+        64% {
+          transform: translate(2px, 0) skew(0deg);
+        }
+        4%,
+        60% {
+          transform: translate(-2px, 0) skew(0deg);
+        }
+        62% {
+          transform: translate(0, 0) skew(5deg);
+        }
+      }
+      @keyframes glitch-top {
+        2%,
+        64% {
+          transform: translate(2px, -2px);
+        }
+        4%,
+        60% {
+          transform: translate(-2px, 2px);
+        }
+        62% {
+          transform: translate(13px, -1px) skew(-13deg);
+        }
+      }
+      @keyframes glitch-bottom {
+        2%,
+        64% {
+          transform: translate(-2px, 0);
+        }
+        4%,
+        60% {
+          transform: translate(-2px, 0);
+        }
+        62% {
+          transform: translate(-22px, 5px) skew(21deg);
+        }
+      }
+      .glitch {
+        position: relative;
+      }
+      .glitch:hover::before,
+      .glitch:hover::after {
+        content: attr(data-text);
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
+      .glitch:hover::before {
+        left: 2px;
+        text-shadow: -2px 0 #ff00c1;
+        clip: rect(44px, 450px, 56px, 0);
+        animation: glitch-top 2s infinite linear alternate-reverse;
+      }
+      .glitch:hover::after {
+        left: -2px;
+        text-shadow: -2px 0 #00fff9, 2px 2px #ff00c1;
+        clip: rect(85px, 450px, 90px, 0);
+        animation: glitch-bottom 1.5s infinite linear alternate-reverse;
+      }
+      #bootloader {
+        transition: opacity 0.5s ease-out;
+      }
+
+      /* --- THEME DEFINITIONS --- */
+      body {
+        --color-bg: #050a05;
+        --color-bg-alt: #000000;
+        --color-primary: #22c55e;
+        --color-primary-hover: #4ade80;
+        --color-text-primary: #22c55e;
+        --color-text-secondary: #e5e7eb;
+        --color-text-tertiary: #9ca3af;
+        --color-border: rgba(34, 197, 94, 0.3);
+        --color-shadow: rgba(34, 197, 94, 0.1);
+      }
+      body.theme-classic {
+        --color-bg: #050a05;
+        --color-bg-alt: #000000;
+        --color-primary: #22c55e;
+        --color-primary-hover: #4ade80;
+        --color-text-primary: #22c55e;
+        --color-text-secondary: #e5e7eb;
+        --color-text-tertiary: #9ca3af;
+        --color-border: rgba(34, 197, 94, 0.3);
+        --color-shadow: rgba(34, 197, 94, 0.1);
+      }
+      body.theme-amber {
+        --color-bg: #1a1000;
+        --color-bg-alt: #000000;
+        --color-primary: #f59e0b;
+        --color-primary-hover: #fbbf24;
+        --color-text-primary: #f59e0b;
+        --color-text-secondary: #e5e7eb;
+        --color-text-tertiary: #9ca3af;
+        --color-border: rgba(245, 158, 11, 0.3);
+        --color-shadow: rgba(245, 158, 11, 0.1);
+      }
+      body.theme-arctic {
+        --color-bg: #050c14;
+        --color-bg-alt: #010409;
+        --color-primary: #0ea5e9;
+        --color-primary-hover: #38bdf8;
+        --color-text-primary: #0ea5e9;
+        --color-text-secondary: #e5e7eb;
+        --color-text-tertiary: #9ca3af;
+        --color-border: rgba(14, 165, 233, 0.3);
+        --color-shadow: rgba(14, 165, 233, 0.1);
+      }
+      body.theme-hacker {
+        --color-bg: #001205;
+        --color-bg-alt: #000700;
+        --color-primary: #00ff00;
+        --color-primary-hover: #66ff66;
+        --color-text-primary: #00ff00;
+        --color-text-secondary: #e0e0e0;
+        --color-text-tertiary: #a0a0a0;
+        --color-border: rgba(0, 255, 0, 0.3);
+        --color-shadow: rgba(0, 255, 0, 0.1);
+      }
+    </style>
+  </head>
+  <body class="bg-[var(--color-bg)] theme-classic">
+    <div class="crt-overlay"></div>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
