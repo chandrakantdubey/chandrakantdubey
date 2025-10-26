@@ -80,4 +80,4 @@ I am skilled in creating real-time features, dynamic visualizations, and end-to-
   <img src="https://media.tenor.com/R9YWy86JgoMAAAAd/retro-wave.gif" width="400px" alt="Retro Footer"/>
 </p>
 
-<h2 align="center">🕹️ Press Start to Continue...</h2>
+<a href="https://portfolio-six-liart-73.vercel.app/" align="center">🕹️ Press Start to Continue...</a>
