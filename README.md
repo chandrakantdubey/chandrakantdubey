@@ -81,7 +81,7 @@ I am skilled in creating real-time features, dynamic visualizations, and end-to-
 <p align="center">
   <a href="https://www.linkedin.com/in/chandra-kant-dubey"><img src="https://img.shields.io/badge/LinkedIn-%230A66C2?style=for-the-badge&logo=linkedin&logoColor=white"></a>
   <a href="mailto:919chandrakant@gmail.com"><img src="https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white"></a>
-  <a href="https://twitter.com/chandrakantdubey"><img src="https://img.shields.io/badge/Twitter-%231DA1F2?style=for-the-badge&logo=twitter&logoColor=white"></a>
+  <a href="https://x.com/__chandrakant__"><img src="https://img.shields.io/badge/Twitter-%231DA1F2?style=for-the-badge&logo=twitter&logoColor=white"></a>
 </p>
 
 ---
