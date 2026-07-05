@@ -27,9 +27,9 @@ const portfolioData = {
   location: "Mumbai, Maharashtra",
   email: "919chandrakant@gmail.com",
   social: {
-    linkedin: "chandrakant-dubey",
+    linkedin: "chandra-kant-dubey",
     github: "chandrakantdubey",
-    twitter: "chandrakantdubey",
+    twitter: "__chandrakant__",
   },
   summary:
     "Fullstack Developer with experience building scalable web applications, including social platforms, e-commerce, and personalized recommendation systems. Skilled in creating real-time features, dynamic visualizations, and end-to-end solutions using JavaScript, TypeScript, and Python. Experienced in CI/CD, database design, and delivering reliable and user-focused applications.",
@@ -559,7 +559,7 @@ const Contact = ({
               {portfolioData.social.github}
             </a>
             <a
-              href={`https://twitter.com/${portfolioData.social.twitter}`}
+              href={`https://x.com/${portfolioData.social.twitter}`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-3 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
