@@ -65,16 +65,6 @@ I am skilled in creating real-time features, dynamic visualizations, and end-to-
 
 ---
 
-## 🚀 Featured Projects
-
-| Project                | Stack                            | Description                                                                                         |
-| ---------------------- | -------------------------------- | --------------------------------------------------------------------------------------------------- |
-| **NutriTrack AI**      | Vue.js, FastAPI, PostgreSQL, AWS | A full-stack nutrition tracking application with personalized ML-powered meal recommendations.      |
-| **Kintree Connect**    | React.js, Node.js, Socket.IO     | A social platform with a dynamic family tree visualizer, real-time chat, and optimized social feed. |
-| **Markdown Arena**     | React.js, Node.js, Express       | A blog/notes markdown file renderer for tech topics like system design, backend, frontend, etc.     |
-| **Terminal Portfolio** | React, TypeScript, Tailwind      | This portfolio website, built to emulate a retro terminal interface for a creative showcase.        |
-
----
 
 ## 📬 Connect with Me
 
