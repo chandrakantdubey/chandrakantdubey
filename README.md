@@ -1,83 +1,36 @@
-<!-- 🚀 Retro-Themed GitHub Profile README -->
+# Chandrakant Dubey
 
-<p align="center">
-  <img src="https://media.tenor.com/8mJ0eq0T2CoAAAAC/retro-futurism.gif" width="600px" alt="Retro Banner"/>
-</p>
+**Full-stack engineer · React · TypeScript · Python · Node.js**<br />
+Mumbai, India · [Portfolio](https://chandrakantdubey.vercel.app/) · [LinkedIn](https://www.linkedin.com/in/chandra-kant-dubey/)
 
-<h1 align="center">🕹️ Chandrakant Dubey</h1>
-<h3 align="center">⚡ Full Stack Developer | Software Engineer | Open Source Enthusiast ⚡</h3>
+I build digital products across web, mobile, and APIs. I have 3+ years of experience delivering enterprise platforms, commerce applications, health and wellness products, and real-time features.
 
----
+## Selected professional work
 
-## 🌌 Introduction
+- **Adeptken** — Full-stack engineering for enterprise workflow products: performance reviews, customer-risk model inference, lead management, and internal communications.
+- **Nutriiya** — Product engineering for a nutrition and wellness app, including meal logging, nutrition insights, and personalized guidance. [Product site](https://nutriiya.com/)
+- **Kintree** — Family-tree visualization, social features, real-time chat, notifications, and location-aware services. [Product site](https://kintree.com/)
+- **Uvation** — Frontend engineering across a product marketplace, rewards portal, and retail storefront: [Marketplace](https://marketplace.uvation.com/) · [Rewards](https://rewards.uvation.com/) · [Bombay Dyeing retail](https://retail.bombaydyeing.com/)
+- **Brush of Hope** — A digital-safety resource for people facing cyberbullying and online abuse. [Website](https://brushofhope.life/)
+- **HRMS** — Internal human resource management system.
 
-Welcome to my digital workspace.  
-I’m a **Full Stack Developer** with experience building scalable web applications, including social platforms, e-commerce, and personalized recommendation systems.  
-I am skilled in creating real-time features, dynamic visualizations, and end-to-end solutions using JavaScript, TypeScript, and Python. Experienced in CI/CD, database design, and delivering reliable, user-focused applications.
+## Independent projects
 
----
+- **[StyleScape](https://github.com/chandrakantdubey/style-scape)** — Procedural pattern studio with custom palettes and CSS, SVG, and PNG exports.
+- **[FitStream](https://github.com/chandrakantdubey/fitstream)** — Fitness PWA for workout plans, exercise guidance, GPS activity tracking, nutrition calculations, and progress exports.
+- **[MH15](https://github.com/chandrakantdubey/mh15)** — Local-first, stylus-oriented tablet notebook with a modular canvas engine and mixed-media notes.
+- **Pokédex RPG** — Mobile Pokémon RPG with trainer accounts, collection management, battles, and progression. [Mobile app](https://github.com/chandrakantdubey/pokedex) · [Backend API](https://github.com/chandrakantdubey/pokedex-backend)
+- **Blackout Protocol** — Private, in-development cooperative real-time grid-routing game for 2–6 players.
+- **FarmPulse** — Private, in-development farm sensor monitoring and time-series analytics prototype, currently using synthetic readings.
 
-## 📜 Background
+## Technical focus
 
-- 📟 **Early Days:** Started my journey by building responsive interfaces and reusable components for e-commerce and rewards platforms at **Uvation**.
-- ⚙️ **Leveling Up:** Engineered real-time chat, notifications, and an optimized social feed at **Kintree**, diving deep into interactive visualizations and performant data fetching.
-- 🚀 **Current Mission:** Developing full-stack web solutions at **Nutriiya**, building scalable APIs, designing database models, and implementing CI/CD pipelines for automated deployments.
+- **Languages:** Python, TypeScript, JavaScript, SQL
+- **Frontend:** React, Next.js, Vue, React Native, Redux, React Query, Tailwind CSS
+- **Backend:** FastAPI, Node.js, Express, NestJS, REST APIs, GraphQL, WebSockets
+- **Data:** PostgreSQL, Oracle, Redis, MongoDB, SQLite, SQLAlchemy
+- **Cloud & delivery:** AWS EC2/S3, Docker, GitHub Actions, CI/CD, Linux / RHEL
 
----
+## Contact
 
-## 💻 Tech Stack
-
-### 🗣️ Languages
-
-- JavaScript | TypeScript | Python | HTML5 | CSS3 | SQL
-
-### 🎨 Frontend
-
-- React.js ⚛️ | Next.js | Vue.js | Redux
-- Tailwind CSS | Styled Components
-
-### ⚙️ Backend
-
-- Node.js | Express.js | NestJS
-- FastAPI | Flask | GraphQL
-
-### 🗄️ Databases
-
-- PostgreSQL | MySQL | MongoDB
-
-### 🛠️ DevOps, Cloud & Tools
-
-- AWS | Hostinger | Docker | CI/CD
-- Git | GitHub | ViteJS | Chart.js
-
----
-
-## 📊 GitHub Stats
-
-<p align="center">
-  <img src="https://github-readme-stats.vercel.app/api?username=chandrakantdubey&show_icons=true&theme=radical" width="48%" />
-  <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=chandrakantdubey&layout=compact&theme=radical" width="40%" />
-</p>
-
-<p align="center">
-  <img src="https://github-readme-streak-stats.herokuapp.com/?user=chandrakantdubey&theme=radical" />
-</p>
-
----
-
-
-## 📬 Connect with Me
-
-<p align="center">
-  <a href="https://www.linkedin.com/in/chandra-kant-dubey"><img src="https://img.shields.io/badge/LinkedIn-%230A66C2?style=for-the-badge&logo=linkedin&logoColor=white"></a>
-  <a href="mailto:919chandrakant@gmail.com"><img src="https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white"></a>
-  <a href="https://x.com/__chandrakant__"><img src="https://img.shields.io/badge/Twitter-%231DA1F2?style=for-the-badge&logo=twitter&logoColor=white"></a>
-</p>
-
----
-
-<p align="center">
-  <img src="https://media.tenor.com/R9YWy86JgoMAAAAd/retro-wave.gif" width="400px" alt="Retro Footer"/>
-</p>
-
-<h2  align="center"><a href="https://chandrakantdubey.vercel.app/" align="center">🕹️ Press Start to Continue...</a></h2>
+[Email](mailto:919chandrakant@gmail.com) · [GitHub](https://github.com/chandrakantdubey) · [LinkedIn](https://www.linkedin.com/in/chandra-kant-dubey/) · [Portfolio](https://chandrakantdubey.vercel.app/)
