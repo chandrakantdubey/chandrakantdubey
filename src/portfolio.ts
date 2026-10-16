@@ -10,159 +10,128 @@ export const profile = {
 export const workProjects = [
   {
     number: "01",
-    category: "Current role · Adeptken",
-    title: "Enterprise platforms",
+    visual: "enterprise",
+    category: "Enterprise platforms · Adeptken",
+    title: "Bank performance reviews and internal tools",
     role: "Full Stack Engineer · Jan 2026 – Present",
     description:
-      "Built an employee performance review platform for IDBI Bank and contributed to customer-risk inference, lead management, and internal communications products.",
+      "Built an employee performance review platform for IDBI Bank and contributed to products for customer-risk inference, lead management, and internal communications.",
     tags: ["React", "Node.js", "FastAPI", "Oracle", "Docker"],
     products: [
-      "Performance Review Management",
-      "ML Inference Platform",
-      "POOL · Lead Management",
-      "Samvad Sambha · Communications",
+      "Performance reviews",
+      "Risk inference",
+      "Lead management",
+      "Internal communications",
     ],
     links: [],
     accessLabel: "Internal products",
   },
   {
     number: "02",
+    visual: "wellness",
     category: "Health & wellness · Nutriiya",
-    title: "Nutrition, made more useful",
+    title: "Nutrition and wellness features",
     role: "Full Stack Engineer · Sep 2025 – Dec 2025",
     description:
-      "Worked across product features for a nutrition and wellness app, including meal logging, nutrition insights, activity tracking, and personalized guidance.",
+      "Worked across meal logging, nutrition insights, activity tracking, and personalized guidance for a nutrition and wellness app.",
     tags: ["React", "Next.js", "Node.js", "FastAPI", "PostgreSQL"],
-    links: [{ label: "nutriiya.com", url: "https://nutriiya.com" }],
+    links: [{ label: "Visit Nutriiya", url: "https://nutriiya.com" }],
   },
   {
     number: "03",
+    visual: "community",
     category: "Family & community · Kintree",
-    title: "A richer family tree",
+    title: "Family tree and community features",
     role: "Full Stack Developer · Nov 2024 – Jan 2026",
     description:
-      "Developed interactive family-tree visualizations and social features, with real-time chat, notifications, and location-aware experiences.",
+      "Developed interactive family-tree visualizations and social features, including real-time chat, notifications, and location-aware experiences.",
     tags: ["React", "BalkanJS", "Node.js", "Socket.IO", "Google Maps"],
-    links: [{ label: "kintree.com", url: "https://kintree.com" }],
+    links: [{ label: "Visit Kintree", url: "https://kintree.com" }],
   },
   {
     number: "04",
+    visual: "commerce",
     category: "Commerce & loyalty · Uvation",
-    title: "Production commerce experiences",
+    title: "Marketplace, loyalty, and retail platforms",
     role: "Software Engineer, Frontend · Aug 2023 – Oct 2024",
     description:
       "Built and maintained responsive interfaces for a product marketplace, a customer rewards portal, and a retail storefront.",
     tags: ["React", "TypeScript", "Node.js", "Express", "E-commerce"],
+    products: ["Marketplace", "Rewards", "Bombay Dyeing retail"],
     links: [
       { label: "Marketplace", url: "https://marketplace.uvation.com" },
       { label: "Rewards", url: "https://rewards.uvation.com" },
-      {
-        label: "Bombay Dyeing retail",
-        url: "https://retail.bombaydyeing.com",
-      },
+      { label: "Retail storefront", url: "https://retail.bombaydyeing.com" },
     ],
   },
+];
+
+export const otherWork = [
   {
-    number: "05",
-    category: "Digital safety · Brush of Hope",
-    title: "Support for safer online lives",
-    description:
-      "A public resource for people facing cyberbullying and online abuse, with practical guidance, reporting, and support information.",
-    tags: ["Web platform", "Digital safety", "Support resources"],
-    links: [{ label: "brushofhope.life", url: "https://brushofhope.life" }],
+    name: "Brush of Hope",
+    type: "Digital safety resource",
+    description: "Practical guidance and support for people facing cyberbullying and online abuse.",
+    url: "https://brushofhope.life",
   },
   {
-    number: "06",
-    category: "Internal product",
-    title: "HRMS system",
-    description:
-      "A human resource management system delivered as part of my professional project work.",
-    tags: ["HRMS", "Internal system"],
-    links: [],
-    accessLabel: "Private project",
+    name: "HRMS",
+    type: "Internal product",
+    description: "A human resource management system delivered as part of professional project work.",
   },
 ];
 
 export const independentProjects = [
   {
     number: "01",
+    name: "StyleScape",
     category: "Creative tool",
-    title: "StyleScape",
     description:
-      "A procedural pattern studio with eight pattern families, a curated preset library, custom palettes, and exports for CSS, SVG, and PNG.",
+      "A procedural pattern studio with eight pattern families, curated presets, custom palettes, and CSS, SVG, and PNG exports.",
     tags: ["React", "TypeScript", "Zustand", "SVG"],
-    links: [
-      {
-        label: "Source code",
-        url: "https://github.com/chandrakantdubey/style-scape",
-      },
-    ],
+    links: [{ label: "View source", url: "https://github.com/chandrakantdubey/style-scape" }],
   },
   {
     number: "02",
+    name: "FitStream",
     category: "Fitness PWA",
-    title: "FitStream",
     description:
       "A fitness companion for progressive workout plans, exercise guidance, GPS activity tracking, nutrition calculations, and progress exports.",
     tags: ["React", "FastAPI", "SQLite", "Leaflet"],
-    links: [
-      {
-        label: "Source code",
-        url: "https://github.com/chandrakantdubey/fitstream",
-      },
-    ],
+    links: [{ label: "View source", url: "https://github.com/chandrakantdubey/fitstream" }],
   },
   {
     number: "03",
+    name: "MH15",
     category: "Android tablet app",
-    title: "MH15",
     description:
-      "A local-first, stylus-oriented notebook for handwriting, sketching, and mixed-media notes, built around a canvas engine separated from the app UI.",
+      "A local-first, stylus-oriented notebook for handwriting, sketching, and mixed-media notes, with a canvas engine separated from the app UI.",
     tags: ["React Native", "TypeScript", "Skia", "SQLite"],
-    links: [
-      {
-        label: "Source code",
-        url: "https://github.com/chandrakantdubey/mh15",
-      },
-    ],
+    links: [{ label: "View source", url: "https://github.com/chandrakantdubey/mh15" }],
   },
   {
     number: "04",
-    category: "Mobile RPG · full stack",
-    title: "Pokédex RPG",
+    name: "Pokédex RPG",
+    category: "Mobile game · full stack",
     description:
       "A mobile Pokémon RPG with trainer accounts, collection and team management, battles, gyms, and progression, backed by a REST API.",
     tags: ["Expo", "React Native", "FastAPI", "PostgreSQL"],
     links: [
-      {
-        label: "Mobile app",
-        url: "https://github.com/chandrakantdubey/pokedex",
-      },
-      {
-        label: "Backend API",
-        url: "https://github.com/chandrakantdubey/pokedex-backend",
-      },
+      { label: "Mobile app", url: "https://github.com/chandrakantdubey/pokedex" },
+      { label: "Backend API", url: "https://github.com/chandrakantdubey/pokedex-backend" },
     ],
   },
+];
+
+export const experiments = [
   {
-    number: "05",
-    category: "In development · private repository",
-    title: "Blackout Protocol",
-    description:
-      "A cooperative real-time grid-routing game for 2–6 players, with shared missions, live room state, specialist abilities, and an authoritative server.",
-    tags: ["Next.js", "Colyseus", "WebSockets", "Multiplayer"],
-    links: [],
-    accessLabel: "Private repository",
+    name: "Blackout Protocol",
+    type: "GAME DESIGN",
+    note: "A cooperative grid-routing game where players work together to find a path off the board.",
   },
   {
-    number: "06",
-    category: "In development · private repository",
-    title: "FarmPulse",
-    description:
-      "A farm-sensor monitoring and time-series analytics prototype. The current build uses synthetic readings while database integration is in progress.",
-    tags: ["Next.js", "FastAPI", "TypeScript", "Time-series data"],
-    links: [],
-    accessLabel: "Private repository",
+    name: "FarmPulse",
+    type: "FARM DATA",
+    note: "A field-monitoring dashboard that presents sensor readings and highlights conditions that need attention.",
   },
 ];
 
@@ -171,74 +140,42 @@ export const experience = [
     role: "Full Stack Engineer",
     company: "Adeptken",
     period: "Jan 2026 – Present",
-    summary:
-      "Enterprise workflow products for performance reviews, customer-risk inference, lead management, and internal communication.",
+    summary: "Building enterprise workflow tools, from bank performance reviews to risk and lead-management systems.",
   },
   {
     role: "Full Stack Engineer",
     company: "Nutriiya",
     period: "Sep 2025 – Dec 2025",
-    summary:
-      "Full-stack product features, REST APIs, data fetching, containerized deployments, and CI/CD for nutrition and wellness products.",
+    summary: "Worked on nutrition and wellness features, APIs, containers, and delivery pipelines across the app and its services.",
   },
   {
     role: "Full Stack Developer",
     company: "Kintree Pvt. Ltd.",
     period: "Nov 2024 – Jan 2026",
-    summary:
-      "Interactive family-tree experiences, real-time services, location features, and backend API improvements.",
+    summary: "Built family-tree visualizations and worked on chat, notifications, location features, and backend APIs.",
   },
   {
     role: "Software Engineer, Frontend",
     company: "Uvation India Pvt. Ltd.",
     period: "Aug 2023 – Oct 2024",
-    summary:
-      "Production e-commerce and loyalty applications, JavaScript-to-TypeScript modernization, API integration, and frontend performance.",
+    summary: "Shipped storefront and loyalty experiences, modernized TypeScript code, and improved how the frontend connects to services.",
   },
 ];
 
 export const skills = [
   {
-    category: "Languages",
-    items: ["Python", "TypeScript", "JavaScript", "SQL"],
+    category: "Web & mobile",
+    summary: "Interfaces and applications for web, mobile, and responsive product workflows.",
+    items: ["React", "Next.js", "TypeScript", "React Native", "Vue", "Tailwind CSS", "Redux"],
   },
   {
-    category: "Frontend",
-    items: [
-      "React",
-      "Next.js",
-      "Vue",
-      "React Native",
-      "Redux",
-      "React Query",
-      "Tailwind CSS",
-    ],
-  },
-  {
-    category: "Backend",
-    items: [
-      "FastAPI",
-      "Node.js",
-      "Express",
-      "NestJS",
-      "REST APIs",
-      "GraphQL",
-      "WebSockets",
-    ],
-  },
-  {
-    category: "Data",
-    items: [
-      "PostgreSQL",
-      "Oracle",
-      "Redis",
-      "MongoDB",
-      "SQLite",
-      "SQLAlchemy",
-    ],
+    category: "Backend & data",
+    summary: "APIs, real-time services, and databases for connected product features.",
+    items: ["Node.js", "Python", "FastAPI", "Express", "REST APIs", "WebSockets", "PostgreSQL", "Oracle", "SQLite"],
   },
   {
     category: "Cloud & delivery",
-    items: ["AWS EC2/S3", "Docker", "GitHub Actions", "CI/CD", "Linux / RHEL"],
+    summary: "Containers, cloud infrastructure, and CI/CD for deployment and maintenance.",
+    items: ["AWS EC2 / S3", "Docker", "GitHub Actions", "CI/CD", "Linux / RHEL"],
   },
 ];

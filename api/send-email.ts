@@ -244,8 +244,26 @@ const EmailTemplate = ({
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 
+interface SendEmailRequest {
+  method?: string;
+  body?: {
+    name?: string;
+    email?: string;
+    subject?: string;
+    message?: string;
+    ownerEmail?: string;
+    ownerName?: string;
+    fromName?: string;
+  };
+}
+
+interface SendEmailResponse {
+  status(code: number): SendEmailResponse;
+  json(body: unknown): void;
+}
+
 // Serverless API function
-export default async function handler(req: any, res: any) {
+export default async function handler(req: SendEmailRequest, res: SendEmailResponse) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method Not Allowed" });
   }
@@ -259,6 +277,7 @@ export default async function handler(req: any, res: any) {
     }
 
     const senderName = fromName || `Chandrakant Dubey Portfolio`;
+    const contactName = name || "";
     // const fromAddress = `${senderName} <${ownerEmail}>`;
     const fromAddress = `${senderName} <onboarding@resend.dev>`;
 
@@ -266,7 +285,7 @@ export default async function handler(req: any, res: any) {
     const notificationHtml = renderToStaticMarkup(
       React.createElement(EmailTemplate, {
         purpose: "notification",
-        name,
+        name: contactName,
         email,
         subject,
         message,
@@ -283,7 +302,7 @@ export default async function handler(req: any, res: any) {
       body: JSON.stringify({
         from: fromAddress,
         to: [ownerEmail],
-        subject: `New Portfolio Message from ${name || "Someone"}`,
+        subject: `New Portfolio Message from ${contactName || "Someone"}`,
         html: notificationHtml,
       }),
     });
