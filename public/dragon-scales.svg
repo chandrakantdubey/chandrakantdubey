@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="48" viewBox="0 0 96 48" fill="none">
+  <g stroke="#a7cda9" stroke-opacity=".24" stroke-width="1">
+    <path d="M0 24C0 11.3 10.7 1 24 1s24 10.3 24 23" />
+    <path d="M48 24C48 11.3 58.7 1 72 1s24 10.3 24 23" />
+    <path d="M-24 48c0-12.7 10.7-23 24-23s24 10.3 24 23" />
+    <path d="M24 48c0-12.7 10.7-23 24-23s24 10.3 24 23" />
+    <path d="M72 48c0-12.7 10.7-23 24-23s24 10.3 24 23" />
+  </g>
+</svg>

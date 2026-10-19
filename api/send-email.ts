@@ -1,6 +1,7 @@
 // /api/send-email.ts
 import React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
+import { profile } from "../src/portfolio";
 
 // Email template component (fully Node-compatible)
 interface EmailTemplateProps {
@@ -243,119 +244,116 @@ const EmailTemplate = ({
 };
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
+const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
+const RATE_LIMIT_MAX = 4;
+const requestCounts = new Map<string, { count: number; expiresAt: number }>();
 
 interface SendEmailRequest {
   method?: string;
+  headers?: Record<string, string | string[] | undefined>;
+  socket?: { remoteAddress?: string };
   body?: {
-    name?: string;
-    email?: string;
-    subject?: string;
-    message?: string;
-    ownerEmail?: string;
-    ownerName?: string;
-    fromName?: string;
+    name?: unknown;
+    email?: unknown;
+    subject?: unknown;
+    message?: unknown;
+    website?: unknown;
   };
 }
 
 interface SendEmailResponse {
+  setHeader?(name: string, value: string): void;
   status(code: number): SendEmailResponse;
   json(body: unknown): void;
+  end?(): void;
 }
 
-// Serverless API function
+function textField(value: unknown): string {
+  return typeof value === "string" ? value.trim() : "";
+}
+
+function requestKey(req: SendEmailRequest): string {
+  const forwarded = req.headers?.["x-forwarded-for"] ?? req.headers?.["x-real-ip"] ?? req.socket?.remoteAddress ?? "unknown";
+  const first = Array.isArray(forwarded) ? forwarded[0] : forwarded;
+  return String(first).split(",")[0].trim() || "unknown";
+}
+
+function isRateLimited(key: string): boolean {
+  const now = Date.now();
+  for (const [entryKey, entry] of requestCounts) {
+    if (entry.expiresAt <= now) requestCounts.delete(entryKey);
+  }
+  const current = requestCounts.get(key);
+  if (current && current.count >= RATE_LIMIT_MAX) return true;
+  requestCounts.set(key, {
+    count: (current?.count ?? 0) + 1,
+    expiresAt: current?.expiresAt ?? now + RATE_LIMIT_WINDOW_MS,
+  });
+  return false;
+}
+
+// Vercel serverless API function. The recipient is fixed server-side so form
+// visitors cannot use the Resend key to direct messages to arbitrary addresses.
 export default async function handler(req: SendEmailRequest, res: SendEmailResponse) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method Not Allowed" });
+  if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
+
+  const body = req.body ?? {};
+  if (textField(body.website)) {
+    res.status(204).end?.();
+    return;
   }
 
+  if (isRateLimited(requestKey(req))) {
+    res.setHeader?.("Retry-After", String(Math.ceil(RATE_LIMIT_WINDOW_MS / 1000)));
+    return res.status(429).json({ error: "Too many messages. Please try again later." });
+  }
+
+  if (!RESEND_API_KEY) return res.status(503).json({ error: "Contact service is not configured" });
+
+  const name = textField(body.name);
+  const email = textField(body.email);
+  const rawSubject = textField(body.subject);
+  const subject = rawSubject.replace(/[\r\n]+/g, " ");
+  const message = textField(body.message);
+
+  if (name.length < 2 || name.length > 100) return res.status(400).json({ error: "Enter a name between 2 and 100 characters." });
+  if (email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return res.status(400).json({ error: "Enter a valid email address." });
+  if (rawSubject.length > 180) return res.status(400).json({ error: "Keep the subject under 180 characters." });
+  if (message.length < 10 || message.length > 5000) return res.status(400).json({ error: "Keep the message between 10 and 5000 characters." });
+
   try {
-    const { name, email, subject, message, ownerEmail, ownerName, fromName } =
-      req.body ?? {};
-
-    if (!ownerEmail || !ownerName) {
-      return res.status(400).json({ error: "Missing ownerEmail or ownerName" });
-    }
-
-    const senderName = fromName || `Chandrakant Dubey Portfolio`;
-    const contactName = name || "";
-    // const fromAddress = `${senderName} <${ownerEmail}>`;
-    const fromAddress = `${senderName} <onboarding@resend.dev>`;
-
-    // Notification email to owner
     const notificationHtml = renderToStaticMarkup(
       React.createElement(EmailTemplate, {
         purpose: "notification",
-        name: contactName,
+        name,
         email,
         subject,
         message,
-        ownerName,
+        ownerName: profile.name,
       })
     );
-
-    const ownerSend = fetch("https://api.resend.com/emails", {
+    const response = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${RESEND_API_KEY}`, // Quoted for clarity
+        Authorization: `Bearer ${RESEND_API_KEY}`,
       },
       body: JSON.stringify({
-        from: fromAddress,
-        to: [ownerEmail],
-        subject: `New Portfolio Message from ${contactName || "Someone"}`,
+        from: process.env.RESEND_FROM_EMAIL || "Chandrakant Dubey Portfolio <onboarding@resend.dev>",
+        to: [process.env.CONTACT_EMAIL || profile.email],
+        reply_to: email,
+        subject: `Portfolio message from ${name}${subject ? ` — ${subject}` : ""}`,
         html: notificationHtml,
       }),
     });
 
-    // Confirmation email to user
-    // let userSend: Promise<Response> | null = null;
-    // if (email) {
-    //   const confirmationHtml = renderToStaticMarkup(
-    //     React.createElement(EmailTemplate, {
-    //       purpose: "confirmation",
-    //       name,
-    //       subject,
-    //       message,
-    //       ownerName,
-    //     })
-    //   );
-
-    //   userSend = fetch("https://api.resend.com/emails", {
-    //     method: "POST",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //       Authorization: `Bearer ${RESEND_API_KEY}`,
-    //     },
-    //     body: JSON.stringify({
-    //       from: fromAddress,
-    //       to: [email],
-    //       subject: `Message Received | ${ownerName}`,
-    //       html: confirmationHtml,
-    //     }),
-    //   });
-    // }
-
-    const results = await Promise.all([
-      ownerSend,
-      // ...(userSend ? [userSend] : []),
-    ]);
-
-    // Check if any send failed
-    for (const result of results) {
-      if (!result.ok) {
-        const errorBody = await result.text(); // Log full error for debugging
-        console.error(`Email send failed (${result.status}): ${errorBody}`);
-        throw new Error(
-          `Email send failed: ${result.statusText} - ${errorBody}`
-        );
-      }
+    if (!response.ok) {
+      console.error("Resend contact delivery failed with status", response.status);
+      return res.status(502).json({ error: "Message delivery failed" });
     }
-
     return res.status(200).json({ success: true });
-  } catch (err) {
-    console.error("Error in /api/send-email:", err);
-    return res
-      .status(500)
-      .json({ error: "Failed to send email", details: String(err) });
+  } catch {
+    console.error("Resend contact request failed");
+    return res.status(502).json({ error: "Message delivery failed" });
   }
 }

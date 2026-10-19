@@ -1,36 +1,70 @@
-# Chandrakant Dubey
+# Chandrakant Dubey · Portfolio
 
-**Full-stack engineer · React · TypeScript · Python · Node.js**<br />
-Mumbai, India · [Portfolio](https://chandrakantdubey.vercel.app/) · [Résumé](https://chandrakantdubey.vercel.app/Chandrakant_Dubey.pdf) · [LinkedIn](https://www.linkedin.com/in/chandra-kant-dubey/)
+Backend-focused full-stack engineer in Mumbai, India. I build enterprise applications, APIs, and ML inference workflows, with experience across product UI and cloud delivery.
 
-I’m a Mumbai-based full-stack engineer who likes working across the whole product: shaping the interface, connecting the services, and polishing the details that make it feel complete. My work spans enterprise tools, commerce, health, family and community products, and digital safety.
+[Portfolio](https://chandrakantdubey.vercel.app/) · [Résumé](https://chandrakantdubey.vercel.app/Chandrakant_Dubey.pdf) · [GitHub](https://github.com/chandrakantdubey) · [LinkedIn](https://www.linkedin.com/in/chandra-kant-dubey/)
 
-## Selected professional work
+## Selected work
 
-- **Adeptken** — Built an employee performance review platform for IDBI Bank and contributed to products for customer-risk inference, lead management, and internal communications.
-- **Nutriiya** — Worked on meal logging, nutrition insights, activity tracking, and personalized guidance for a nutrition and wellness app. [Product site](https://nutriiya.com/)
-- **Kintree** — Developed interactive family-tree visualizations, real-time chat, notifications, and location-aware features. [Product site](https://kintree.com/)
-- **Uvation** — Built responsive interfaces for a product marketplace, customer rewards portal, and retail storefront: [Marketplace](https://marketplace.uvation.com/) · [Rewards](https://rewards.uvation.com/) · [Bombay Dyeing retail](https://retail.bombaydyeing.com/)
-- **Brush of Hope** — A digital-safety resource with practical guidance and support for people facing cyberbullying and online abuse. [Website](https://brushofhope.life/)
-- **HRMS** — Contributed to an internal human resource management system.
+- **Performance review management** — React, Node.js, and Oracle Database application for IDBI Bank, replacing spreadsheet-based workflows. Internal project; no source link.
+- **Customer risk assessment** — Enterprise ML inference platform using Python, FastAPI, React, and Oracle Database. Internal project; no source link.
+- **Kintree** — Family-tree visualizations and real-time collaboration using React, Redux, Node.js, Express, and Socket.IO. [Website](https://kintree.com/)
+- **Pokédex RPG API** — FastAPI and PostgreSQL backend with SQLAlchemy, JWT authentication, role-based access, and RPG domain rules. [Backend](https://github.com/chandrakantdubey/pokedex-backend) · [Mobile app](https://github.com/chandrakantdubey/pokedex)
 
 ## Independent projects
 
-- **[StyleScape](https://github.com/chandrakantdubey/style-scape)** — Procedural pattern studio with eight pattern families, custom palettes, presets, and CSS, SVG, and PNG exports.
-- **[FitStream](https://github.com/chandrakantdubey/fitstream)** — Fitness PWA for progressive workout plans, exercise guidance, GPS activity tracking, nutrition calculations, and progress exports.
-- **[MH15](https://github.com/chandrakantdubey/mh15)** — Local-first tablet notebook for handwriting, sketching, and mixed-media notes, with a modular canvas engine.
-- **Pokédex RPG** — Mobile RPG with trainer accounts, collection and team management, battles, and progression. [App](https://github.com/chandrakantdubey/pokedex) · [Backend API](https://github.com/chandrakantdubey/pokedex-backend)
-- **Blackout Protocol** — A cooperative grid-routing game about reading the board together and getting out before the lights go dark.
-- **FarmPulse** — A sensor dashboard that turns changing field conditions into a clearer picture of what needs attention.
+- **[StyleScape](https://github.com/chandrakantdubey/style-scape)** — Pattern editor for custom palettes and CSS, SVG, and PNG export.
+- **[FitStream](https://github.com/chandrakantdubey/fitstream)** — Fitness app with workout plans, activity tracking, nutrition tools, and progress exports.
+- **[MH15](https://github.com/chandrakantdubey/mh15)** — Local-first tablet notebook for handwriting, sketching, and mixed-media notes.
+- **FarmPulse** *(in development)* — Time-series dashboard concept for farm sensor readings and crop conditions.
+- **Blackout Protocol** *(in development)* — Cooperative grid-routing game concept.
 
-## Technical focus
+## Experience
+
+- **Adeptken** — Full Stack Engineer · Jan 2026–Present
+- **Nutriiya** — Full Stack Engineer · Sep 2025–Dec 2025
+- **Kintree Pvt. Ltd.** — Full Stack Developer · Nov 2024–Jan 2026
+- **Uvation India Pvt. Ltd.** — Software Engineer (Frontend) · Aug 2023–Oct 2024
+
+## Stack
 
 | Area | Tools |
 | --- | --- |
-| Interfaces and apps | React, Next.js, TypeScript, React Native, Vue, Tailwind CSS, Redux |
-| Services and data | Node.js, Python, FastAPI, Express, REST APIs, WebSockets, PostgreSQL, Oracle, SQLite |
-| Cloud and delivery | AWS EC2/S3, Docker, GitHub Actions, CI/CD, Linux / RHEL |
+| Languages | Python, TypeScript, JavaScript, SQL |
+| Backend & APIs | FastAPI, Node.js, Express.js, Django APIs, REST APIs, WebSockets, Socket.IO, SQLAlchemy |
+| Data | PostgreSQL, Oracle Database, Redis, MongoDB, SQLite |
+| Product UI | React, Next.js, Redux, React Native, React Query, SWR, Tailwind CSS |
+| Cloud & delivery | Docker, AWS EC2/S3, GitHub Actions, CI/CD, Linux, Red Hat Enterprise Linux |
+| Applied AI | ML inference integration, model-execution workflows, LLM application patterns, RAG fundamentals |
 
-## Contact
+LLM and RAG are learning and project-focus areas; this portfolio does not claim a production RAG deployment.
 
-[Email](mailto:919chandrakant@gmail.com) · [GitHub](https://github.com/chandrakantdubey) · [LinkedIn](https://www.linkedin.com/in/chandra-kant-dubey/) · [Portfolio](https://chandrakantdubey.vercel.app/)
+## Run locally
+
+```bash
+npm install
+npm run dev
+npm run lint
+npm run build
+```
+
+The app uses React 19, Vite, Tailwind CSS 4, and Motion. There is no Tailwind config file; theme and design tokens are set in `src/components/theme.ts`. Portfolio content lives in `src/portfolio.ts`. The contact endpoint is a Vercel serverless function in `api/send-email.ts`.
+
+## Contact form configuration
+
+Set these variables in the Vercel project environment:
+
+- `RESEND_API_KEY` — server-side Resend API key. Never use a `VITE_` prefix.
+- `CONTACT_EMAIL` — optional recipient override; defaults to the email in `src/portfolio.ts`.
+- `RESEND_FROM_EMAIL` — optional verified sender. If unset, the API uses Resend’s onboarding sender, which is intended for testing.
+
+The form requires the API to return `{ "success": true }` before showing a sent message. With plain `npm run dev`, Vite does not run the serverless API; use `npx vercel dev` to exercise the contact endpoint locally with the environment variables configured. If delivery fails, the form offers the direct email link.
+
+The endpoint validates input, includes a hidden honeypot field, and applies a small in-memory per-IP rate limit. That limit is best-effort across serverless instances.
+
+## Portfolio notes
+
+- Four color themes: Evergreen, Paper Terminal, Void Dragon, and Glacial Cyan. Selection persists in local storage; a first visit follows the system light/dark preference.
+- Motion respects `prefers-reduced-motion`.
+- The dragon scale texture is limited to the hero; illustrations elsewhere are project-specific.
+- The résumé download uses `public/Chandrakant_Dubey.pdf`.
