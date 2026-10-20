@@ -3,6 +3,7 @@ import { profile, workspaceProjects } from "../portfolio";
 import { ArrowIcon, ExternalArrow } from "./icons";
 import { DragonIllustration } from "./DragonIllustration";
 import { InteractiveTerminal } from "./InteractiveTerminal";
+import { Texture } from "./Texture";
 import type { WorkspaceView } from "./navigation";
 
 export function HomeView({ motionEnabled, onNavigate }: { motionEnabled: boolean; onNavigate: (view: WorkspaceView) => void }) {
@@ -21,14 +22,16 @@ export function HomeView({ motionEnabled, onNavigate }: { motionEnabled: boolean
     <div className="mb-5 flex items-center gap-2 font-[family-name:var(--font-mono)] text-[12px] uppercase tracking-[.15em] text-[var(--dim)] sm:mb-7"><span className="text-[var(--accent)]">/</span> workspace <span className="text-[var(--line-strong)]">/</span> overview <span className="ml-auto hidden normal-case tracking-normal text-[var(--muted)] sm:inline">session: chandrakant@drakon</span></div>
 
     <section className="relative grid min-h-[560px] items-center overflow-hidden rounded-[28px] border border-[var(--line)] bg-[radial-gradient(ellipse_at_70%_42%,var(--dragon-soft),transparent_48%),linear-gradient(145deg,var(--page-elevated),var(--page)_65%)] px-5 py-9 sm:px-9 sm:py-12 md:grid-cols-[minmax(0,1.05fr)_minmax(230px,.95fr)] md:gap-2 lg:grid-cols-[1.02fr_.98fr] lg:px-12 lg:py-10">
+      <Texture kind="scales" className="hidden -right-[12%] left-auto w-[72%] opacity-70 [mask-image:linear-gradient(110deg,transparent,black_52%,black)] sm:block" opacity={0.18} />
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[var(--accent)]/70 to-transparent" aria-hidden="true" />
       <div className="relative z-10 max-w-[700px]">
         <div className="mb-5">
-          <motion.p className="m-0 inline-flex max-w-full flex-wrap items-center gap-x-2 gap-y-1 rounded-full border border-[var(--accent-line)] bg-[var(--accent-soft)] px-3.5 py-2 font-[family-name:var(--font-mono)] text-[12px] leading-relaxed tracking-wide text-[var(--accent)] sm:text-[13px]" initial={animate ? { opacity: 0, y: 8 } : false} animate={{ opacity: 1, y: 0 }} transition={{ duration: .55 }}><span className="h-2 w-2 shrink-0 rounded-full bg-[var(--accent)] shadow-[0_0_12px_var(--accent)]" /><span>CHANDRAKANT DUBEY</span><span className="text-[var(--dim)]">/</span><span>FULL-STACK ENGINEER</span></motion.p>
+          <motion.p className="m-0 inline-flex max-w-full flex-wrap items-center gap-x-2 gap-y-1 rounded-full border border-[var(--accent-line)] bg-[var(--accent-soft)] px-3.5 py-2 font-[family-name:var(--font-mono)] text-[12px] leading-relaxed tracking-wide text-[var(--accent)] sm:text-[13px]" initial={animate ? { y: 8 } : false} animate={{ y: 0 }} transition={{ duration: .55 }}><span className="h-2 w-2 shrink-0 rounded-full bg-[var(--accent)] shadow-[0_0_12px_var(--accent)]" /><span>CHANDRAKANT DUBEY</span><span className="text-[var(--dim)]">/</span><span>FULL-STACK ENGINEER</span></motion.p>
           <p className="mb-0 mt-2 pl-3 font-[family-name:var(--font-mono)] text-[12px] uppercase tracking-[.13em] text-[var(--dim)]">Backend systems <span className="text-[var(--accent)]">·</span> Applied AI</p>
         </div>
-        <motion.h1 id="view-heading" tabIndex={-1} className="max-w-[720px] text-[clamp(2.2rem,5.5vw,5rem)] font-semibold leading-[.98] tracking-[-.055em] text-[var(--ink)] outline-none" initial={animate ? { opacity: 0, y: 18 } : false} animate={{ opacity: 1, y: 0 }} transition={{ duration: .72, delay: .08, ease: [.22, 1, .36, 1] }}>I build reliable systems <span className="text-[var(--accent)]">and the products around them.</span></motion.h1>
-        <motion.p className="mt-6 max-w-[580px] text-[16px] leading-[1.75] text-[var(--muted)] sm:text-[18px]" initial={animate ? { opacity: 0, y: 12 } : false} animate={{ opacity: 1, y: 0 }} transition={{ duration: .6, delay: .18 }}>{profile.introduction}</motion.p>
-        <motion.div className="mt-8 flex flex-wrap items-center gap-3" initial={animate ? { opacity: 0 } : false} animate={{ opacity: 1 }} transition={{ duration: .5, delay: .28 }}>
+        <motion.h1 id="view-heading" tabIndex={-1} className="max-w-[720px] text-[clamp(2.2rem,5.5vw,5rem)] font-semibold leading-[.98] tracking-[-.055em] text-[var(--ink)] outline-none" initial={animate ? { y: 18 } : false} animate={{ y: 0 }} transition={{ duration: .72, delay: .08, ease: [.22, 1, .36, 1] }}>I build reliable systems <span className="text-[var(--accent)]">and the products around them.</span></motion.h1>
+        <motion.p className="mt-6 max-w-[580px] text-[16px] leading-[1.75] text-[var(--muted)] sm:text-[18px]" initial={animate ? { y: 12 } : false} animate={{ y: 0 }} transition={{ duration: .6, delay: .18 }}>{profile.introduction}</motion.p>
+        <motion.div className="mt-8 flex flex-wrap items-center gap-3" initial={animate ? { y: 8 } : false} animate={{ y: 0 }} transition={{ duration: .5, delay: .28 }}>
           <button type="button" onClick={() => onNavigate("work")} className={"group inline-flex min-h-12 items-center gap-3 rounded-xl bg-[var(--accent)] px-5 text-[14px] font-semibold text-[var(--accent-ink)] shadow-[0_10px_35px_var(--accent-soft)] transition focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[var(--focus)] " + (motionEnabled ? "hover:-translate-y-0.5 hover:shadow-[0_16px_40px_var(--accent-soft)]" : "")} >Open workbench <span className="transition-transform group-hover:translate-x-1"><ArrowIcon /></span></button>
           <a href={profile.resume} download className="inline-flex min-h-12 items-center gap-2 rounded-xl border border-[var(--line-strong)] bg-[var(--panel)]/65 px-4 text-[14px] font-medium text-[var(--ink)] transition hover:border-[var(--accent-line)] hover:bg-[var(--panel-raised)] focus-visible:outline-2 focus-visible:outline-[var(--focus)]">Download résumé <span className="text-[var(--accent)]" aria-hidden="true">↓</span></a>
         </motion.div>
@@ -47,7 +50,9 @@ export function HomeView({ motionEnabled, onNavigate }: { motionEnabled: boolean
     </section>
 
     <section className="mt-5 grid gap-5 xl:grid-cols-[minmax(280px,.74fr)_minmax(0,1.26fr)]">
-      <div className="rounded-[24px] border border-[var(--line)] bg-[linear-gradient(145deg,var(--panel),var(--page-elevated))] p-5 sm:p-7">
+      <div className="relative isolate overflow-hidden rounded-[24px] border border-[var(--line)] bg-[linear-gradient(145deg,var(--panel),var(--page-elevated))] p-5 sm:p-7">
+        <Texture kind="contours" className="hidden left-auto top-auto h-36 w-52 opacity-60 sm:block" opacity={0.2} />
+        <div className="relative z-10">
         <div className="flex items-center justify-between gap-3"><div><p className="m-0 font-[family-name:var(--font-mono)] text-[12px] uppercase tracking-[.15em] text-[var(--dim)]">Explore the workspace</p><h2 className="mb-0 mt-2 text-[24px] font-semibold tracking-[-.03em] text-[var(--ink)] sm:text-[28px]">A few open paths.</h2></div><span className="text-[28px] text-[var(--accent)]" aria-hidden="true">⌁</span></div>
         <div className="mt-6 divide-y divide-[var(--line)]">
           {[
@@ -64,6 +69,7 @@ export function HomeView({ motionEnabled, onNavigate }: { motionEnabled: boolean
           <a href={profile.github} target="_blank" rel="noreferrer" className="inline-flex min-h-11 items-center gap-1.5 text-[var(--muted)] hover:text-[var(--accent)]">GitHub <ExternalArrow /></a>
           <a href={profile.linkedin} target="_blank" rel="noreferrer" className="inline-flex min-h-11 items-center gap-1.5 text-[var(--muted)] hover:text-[var(--accent)]">LinkedIn <ExternalArrow /></a>
           <button type="button" onClick={() => onNavigate("contact")} className="ml-auto inline-flex min-h-11 items-center gap-1.5 font-semibold text-[var(--accent)]">Get in touch <ArrowIcon /></button>
+        </div>
         </div>
       </div>
       <InteractiveTerminal onNavigate={onNavigate} onResume={downloadResume} motionEnabled={motionEnabled} />

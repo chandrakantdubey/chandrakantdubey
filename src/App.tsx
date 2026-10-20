@@ -1,16 +1,18 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, MotionConfig, motion } from "motion/react";
 import { AppRail } from "./components/AppRail";
-import { CommandPalette } from "./components/CommandPalette";
-import { ContactView } from "./components/ContactView";
-import { HomeView } from "./components/HomeView";
-import { JournalView } from "./components/JournalView";
-import { PackagesView } from "./components/PackagesView";
+import { BootSequence } from "./components/BootSequence";
 import { SystemBar } from "./components/SystemBar";
-import { WorkbenchView } from "./components/WorkbenchView";
 import { readHash, type WorkspaceView } from "./components/navigation";
 import { getSavedTheme, paletteClasses, themes, type ThemeName } from "./components/theme";
 import { profile } from "./portfolio";
+
+const HomeView = lazy(() => import("./components/HomeView").then(({ HomeView: Component }) => ({ default: Component })));
+const WorkbenchView = lazy(() => import("./components/WorkbenchView").then(({ WorkbenchView: Component }) => ({ default: Component })));
+const JournalView = lazy(() => import("./components/JournalView").then(({ JournalView: Component }) => ({ default: Component })));
+const PackagesView = lazy(() => import("./components/PackagesView").then(({ PackagesView: Component }) => ({ default: Component })));
+const ContactView = lazy(() => import("./components/ContactView").then(({ ContactView: Component }) => ({ default: Component })));
+const CommandPalette = lazy(() => import("./components/CommandPalette").then(({ CommandPalette: Component }) => ({ default: Component })));
 
 function getSavedMotion() {
   try {
@@ -31,6 +33,7 @@ export default function App() {
   const [selectedProjectId, setSelectedProjectId] = useState(initialRoute.projectId);
   const [selectedRoleId, setSelectedRoleId] = useState("adeptken");
   const [paletteOpen, setPaletteOpen] = useState(false);
+  const [booting, setBooting] = useState(true);
   const lastView = useRef(initialRoute.view);
   const selectedTheme = themes.find((item) => item.id === theme) ?? themes[0];
 
@@ -103,8 +106,13 @@ export default function App() {
     return () => window.clearTimeout(timer);
   }, [view]);
 
+  useEffect(() => {
+    if (!booting) document.getElementById("view-heading")?.focus({ preventScroll: true });
+  }, [booting]);
+
   return <MotionConfig reducedMotion={motionEnabled ? "user" : "always"}>
-    <div className={[
+    {booting && <BootSequence motionEnabled={motionEnabled} themeClasses={paletteClasses[theme]} onComplete={() => setBooting(false)} />}
+    <div id="workspace-shell" inert={booting} className={[
       "min-h-screen min-w-0 overflow-x-clip bg-[var(--page)] font-[family-name:'DM_Sans',Inter,ui-sans-serif,system-ui,sans-serif] text-[var(--ink)] antialiased selection:bg-[var(--accent)] selection:text-[var(--accent-ink)] [--font-mono:'IBM_Plex_Mono',monospace]",
       selectedTheme.scheme === "light" ? "scheme-light" : "scheme-dark",
       paletteClasses[theme],
@@ -115,20 +123,22 @@ export default function App() {
         <div className="mx-auto grid max-w-[1600px] lg:grid-cols-[72px_minmax(0,1fr)]">
           <AppRail view={view} onNavigate={navigate} />
           <main id="main" tabIndex={-1} className="min-h-[calc(100dvh-120px)] min-w-0 outline-none">
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.div key={view} initial={motionEnabled ? { opacity: 0, y: 7 } : false} animate={{ opacity: 1, y: 0 }} exit={motionEnabled ? { opacity: 0, y: -4 } : undefined} transition={{ duration: motionEnabled ? .2 : 0 }}>
-                {view === "home" && <HomeView motionEnabled={motionEnabled} onNavigate={navigate} />}
-                {view === "work" && <WorkbenchView selectedProjectId={selectedProjectId} onSelect={navigateToProject} motionEnabled={motionEnabled} />}
-                {view === "journal" && <JournalView selectedId={selectedRoleId} onSelect={setSelectedRoleId} />}
-                {view === "packages" && <PackagesView />}
-                {view === "contact" && <ContactView />}
-              </motion.div>
-            </AnimatePresence>
+            <Suspense fallback={null}>
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.div key={view} initial={motionEnabled ? { opacity: 0, y: 7 } : false} animate={{ opacity: 1, y: 0 }} exit={motionEnabled ? { opacity: 0, y: -4 } : undefined} transition={{ duration: motionEnabled ? .2 : 0 }}>
+                  {view === "home" && <HomeView motionEnabled={motionEnabled} onNavigate={navigate} />}
+                  {view === "work" && <WorkbenchView selectedProjectId={selectedProjectId} onSelect={navigateToProject} motionEnabled={motionEnabled} />}
+                  {view === "journal" && <JournalView selectedId={selectedRoleId} onSelect={setSelectedRoleId} />}
+                  {view === "packages" && <PackagesView />}
+                  {view === "contact" && <ContactView />}
+                </motion.div>
+              </AnimatePresence>
+            </Suspense>
           </main>
         </div>
       </div>
       <div className="sr-only" aria-live="polite" aria-atomic="true">{view === "home" ? "Overview" : view === "work" ? "Workbench" : view === "journal" ? "Journal" : view === "packages" ? "Packages" : "Contact"}</div>
-      {paletteOpen && <CommandPalette onClose={() => setPaletteOpen(false)} onNavigate={navigate} onResume={downloadResume} />}
+      {paletteOpen && <Suspense fallback={null}><CommandPalette onClose={() => setPaletteOpen(false)} onNavigate={navigate} onResume={downloadResume} /></Suspense>}
     </div>
   </MotionConfig>;
 }

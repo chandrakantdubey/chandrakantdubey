@@ -36,8 +36,6 @@ The terminal is a UI simulation only. It accepts a small list of navigation and 
 - **Kintree Pvt. Ltd.** — Full Stack Developer · Nov 2024–Jan 2026
 - **Uvation India Pvt. Ltd.** — Software Engineer (Frontend) · Aug 2023–Oct 2024
 
-The résumé lists overlapping months at Kintree and Nutriiya (Sep–Dec 2025), and Kintree and Adeptken (Jan 2026). This site preserves the provided dates and flags the overlap in the Journal view.
-
 ## Stack
 
 | Area | Tools |
@@ -48,26 +46,3 @@ The résumé lists overlapping months at Kintree and Nutriiya (Sep–Dec 2025), 
 | Product UI | React, Next.js, Redux, React Native, React Query, SWR, Tailwind CSS |
 | Cloud & delivery | Docker, AWS EC2/S3, GitHub Actions, CI/CD, Linux, Red Hat Enterprise Linux |
 | Applied AI | ML inference integration, model-execution workflows, LLM application patterns, RAG fundamentals |
-
-LLM and RAG are learning and project-focus areas; this portfolio does not claim a production RAG deployment.
-
-## Run locally
-
-```bash
-npm install
-npm run dev
-npm run lint
-npm run build
-```
-
-The app uses React 19, Vite, Tailwind CSS 4, and Motion. There is no Tailwind config file; palette tokens use Tailwind v4 arbitrary properties in `src/components/theme.ts`. Portfolio content lives in `src/portfolio.ts`. The source PDF résumé is `public/Chandrakant_Dubey.pdf`.
-
-## Contact form configuration
-
-Set these variables in the Vercel project environment:
-
-- `RESEND_API_KEY` — server-side Resend API key. Never use a `VITE_` prefix.
-- `CONTACT_EMAIL` — optional recipient override; defaults to the email in `src/portfolio.ts`.
-- `RESEND_FROM_EMAIL` — optional verified sender. If unset, the API uses Resend’s onboarding sender, which is intended for testing.
-
-The form requires the API to return `{ "success": true }` before showing a sent message. With plain `npm run dev`, Vite does not run the serverless API; use `npx vercel dev` to exercise the contact endpoint locally with environment variables configured. If delivery fails, the form offers the direct email link. The endpoint validates input, includes a hidden honeypot field, and applies a small in-memory per-IP rate limit. That limit is best-effort across serverless instances.

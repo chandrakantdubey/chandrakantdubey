@@ -23,7 +23,7 @@ export function SystemBar({ theme, onThemeChange, motionEnabled, onMotionToggle,
               <circle cx="29" cy="17" r="1.2" fill="var(--ember)" />
             </svg>
           </span>
-          <span className="min-w-0">
+          <span className="hidden min-w-0 min-[380px]:block">
             <span className="block truncate text-[13px] font-semibold tracking-tight text-[var(--ink)] sm:text-[15px]">DRAKON</span>
             <span className="hidden font-[family-name:var(--font-mono)] text-[11px] text-[var(--dim)] sm:block">{profile.name.toLowerCase().replaceAll(" ", "")}</span>
           </span>
