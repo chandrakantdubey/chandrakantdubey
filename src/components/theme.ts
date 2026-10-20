@@ -1,64 +1,31 @@
 export type ThemeName = "evergreen" | "paper" | "void" | "glacial";
-type ColorScheme = "dark" | "light";
 
-export const themes: { id: ThemeName; name: string; swatchClass: string; surface: string; scheme: ColorScheme }[] = [
-  { id: "evergreen", name: "Evergreen", swatchClass: "bg-[#C5FF4A]", surface: "#07110D", scheme: "dark" },
-  { id: "paper", name: "Paper Terminal", swatchClass: "bg-[#507808]", surface: "#F6F3EA", scheme: "light" },
-  { id: "void", name: "Void Dragon", swatchClass: "bg-[#BEA4FF]", surface: "#100B1D", scheme: "dark" },
-  { id: "glacial", name: "Glacial Cyan", swatchClass: "bg-[#5FEAF0]", surface: "#071820", scheme: "dark" },
+export const themes: { id: ThemeName; name: string; description: string; surface: string; scheme: "dark" | "light" }[] = [
+  { id: "evergreen", name: "Evergreen", description: "Jade signal on deep pine", surface: "#07110d", scheme: "dark" },
+  { id: "paper", name: "Paper terminal", description: "Warm ivory and ink", surface: "#f3f0e7", scheme: "light" },
+  { id: "void", name: "Void dragon", description: "Violet heat on obsidian", surface: "#100d18", scheme: "dark" },
+  { id: "glacial", name: "Glacial cyan", description: "Clear ice and midnight", surface: "#08131a", scheme: "dark" },
 ];
 
 export const paletteClasses: Record<ThemeName, string> = {
-  evergreen: [
-    "[--page:#07110D] [--page-elevated:#0A1711] [--panel:rgba(15,31,23,.88)] [--panel-solid:#0E1D15] [--panel-raised:#13271C]",
-    "[--ink:#EEF7F0] [--muted:#A2B6A8] [--dim:#8A9E90] [--line:rgba(195,235,207,.15)] [--line-strong:rgba(195,235,207,.28)]",
-    "[--lime:#C5FF4A] [--ember:#FF684A] [--cyan:#4DE1E9] [--violet:#B6A0FF] [--focus:#E9FF9A]",
-    "[--accent:#C5FF4A] [--accent-ink:#172407] [--accent-soft:rgba(197,255,74,.14)] [--accent-line:rgba(197,255,74,.48)]",
-    "[--tone-enterprise:#C5FF4A] [--tone-wellness:#4DE1E9] [--tone-community:#B6A0FF] [--tone-commerce:#FF684A]",
-    "[--art-panel:#0E1D15] [--art-ink:#EEF7F0] [--art-muted:#A2B6A8] [--art-highlight:#FF684A] [--shadow-glass:0_18px_60px_rgba(0,0,0,.24)]",
-  ].join(" "),
-  paper: [
-    "[--page:#F6F3EA] [--page-elevated:#FBFAF6] [--panel:rgba(255,255,255,.86)] [--panel-solid:#FFFFFF] [--panel-raised:#F0EEE6]",
-    "[--ink:#172A32] [--muted:#52676C] [--dim:#63777A] [--line:rgba(23,42,50,.13)] [--line-strong:rgba(23,42,50,.23)]",
-    "[--lime:#507808] [--ember:#B9442D] [--cyan:#087F91] [--violet:#7650C8] [--focus:#496C09]",
-    "[--accent:#507808] [--accent-ink:#FFFFFF] [--accent-soft:rgba(80,120,8,.10)] [--accent-line:rgba(80,120,8,.40)]",
-    "[--tone-enterprise:#507808] [--tone-wellness:#087F91] [--tone-community:#7650C8] [--tone-commerce:#B9442D]",
-    "[--art-panel:#FFFFFF] [--art-ink:#172A32] [--art-muted:#52676C] [--art-highlight:#7650C8] [--shadow-glass:0_18px_50px_rgba(32,29,20,.12)]",
-  ].join(" "),
-  void: [
-    "[--page:#100B1D] [--page-elevated:#151027] [--panel:rgba(29,22,49,.88)] [--panel-solid:#1D1631] [--panel-raised:#29203F]",
-    "[--ink:#F4F0FF] [--muted:#B7ACD0] [--dim:#A095B8] [--line:rgba(212,196,255,.15)] [--line-strong:rgba(212,196,255,.27)]",
-    "[--lime:#D3FF63] [--ember:#FF795E] [--cyan:#5FEAF0] [--violet:#BEA4FF] [--focus:#E3D6FF]",
-    "[--accent:#BEA4FF] [--accent-ink:#211339] [--accent-soft:rgba(190,164,255,.16)] [--accent-line:rgba(190,164,255,.48)]",
-    "[--tone-enterprise:#D3FF63] [--tone-wellness:#5FEAF0] [--tone-community:#BEA4FF] [--tone-commerce:#FF795E]",
-    "[--art-panel:#1D1631] [--art-ink:#F4F0FF] [--art-muted:#B7ACD0] [--art-highlight:#5FEAF0] [--shadow-glass:0_18px_60px_rgba(0,0,0,.32)]",
-  ].join(" "),
-  glacial: [
-    "[--page:#071820] [--page-elevated:#0B2029] [--panel:rgba(13,35,44,.90)] [--panel-solid:#102630] [--panel-raised:#173640]",
-    "[--ink:#F1FCFF] [--muted:#B8D6DC] [--dim:#91B3BB] [--line:rgba(172,225,235,.15)] [--line-strong:rgba(172,225,235,.28)]",
-    "[--lime:#D0FF79] [--ember:#FF9278] [--cyan:#5FEAF0] [--violet:#C2A2FF] [--focus:#B6FBFF]",
-    "[--accent:#5FEAF0] [--accent-ink:#04262B] [--accent-soft:rgba(95,234,240,.14)] [--accent-line:rgba(95,234,240,.48)]",
-    "[--tone-enterprise:#D0FF79] [--tone-wellness:#5FEAF0] [--tone-community:#C2A2FF] [--tone-commerce:#FF9278]",
-    "[--art-panel:#102630] [--art-ink:#F1FCFF] [--art-muted:#B8D6DC] [--art-highlight:#FF9278] [--shadow-glass:0_18px_60px_rgba(0,0,0,.30)]",
-  ].join(" "),
+  evergreen: "[--page:#07110d] [--page-elevated:#0b1812] [--panel:#0d1d16] [--panel-solid:#10231a] [--panel-raised:#13281e] [--ink:#eef8ef] [--muted:#a6bbaa] [--dim:#7d9682] [--line:#294133] [--line-strong:#3a5744] [--lime:#b7f36b] [--ember:#ffad72] [--cyan:#78e1d2] [--violet:#d0a5ff] [--focus:#d5ff95] [--accent:#b7f36b] [--accent-ink:#13200e] [--accent-soft:#b7f36b24] [--accent-line:#b7f36b70] [--dragon:#b7f36b] [--dragon-soft:#b7f36b1a] [--shadow-glass:#00000055]",
+  paper: "[--page:#f3f0e7] [--page-elevated:#eae6da] [--panel:#fffdf6] [--panel-solid:#fffdf6] [--panel-raised:#e7efe1] [--ink:#1e2922] [--muted:#46584a] [--dim:#697a6d] [--line:#d5d7c8] [--line-strong:#b9c0b2] [--lime:#3c742d] [--ember:#9c4b26] [--cyan:#176a69] [--violet:#704997] [--focus:#246a27] [--accent:#3c742d] [--accent-ink:#fbfff7] [--accent-soft:#3c742d18] [--accent-line:#3c742d70] [--dragon:#548c3b] [--dragon-soft:#548c3b16] [--shadow-glass:#28352518]",
+  void: "[--page:#100d18] [--page-elevated:#171220] [--panel:#1a1525] [--panel-solid:#211a30] [--panel-raised:#2b203b] [--ink:#f5efff] [--muted:#c1b4d3] [--dim:#9386a6] [--line:#3a2f4a] [--line-strong:#59436d] [--lime:#d1ff75] [--ember:#ff9d78] [--cyan:#78e5f0] [--violet:#d9a6ff] [--focus:#edc8ff] [--accent:#d9a6ff] [--accent-ink:#211326] [--accent-soft:#d9a6ff24] [--accent-line:#d9a6ff70] [--dragon:#ff9d78] [--dragon-soft:#ff9d781b] [--shadow-glass:#00000060]",
+  glacial: "[--page:#08131a] [--page-elevated:#0d1b23] [--panel:#10232c] [--panel-solid:#142a35] [--panel-raised:#193743] [--ink:#eaf8fb] [--muted:#abc3ca] [--dim:#809ca5] [--line:#284651] [--line-strong:#3d6571] [--lime:#b5f074] [--ember:#ffbd83] [--cyan:#75e6f4] [--violet:#c0b1ff] [--focus:#aaf3ff] [--accent:#75e6f4] [--accent-ink:#092027] [--accent-soft:#75e6f424] [--accent-line:#75e6f470] [--dragon:#75e6f4] [--dragon-soft:#75e6f41c] [--shadow-glass:#00000055]",
 };
 
-const savedThemeKey = "chandrakant-portfolio-theme-terminal-v1";
-const olderThemeIds: Record<string, ThemeName> = {
-  nocturne: "evergreen",
-  clay: "paper",
-  cobalt: "void",
-  grove: "glacial",
-};
+const storageKey = "chandrakant-portfolio-theme-terminal-v1";
 
 export function getSavedTheme(): ThemeName {
-  if (typeof window === "undefined") return "evergreen";
   try {
-    const saved = window.localStorage.getItem(savedThemeKey);
-    if (themes.some((theme) => theme.id === saved)) return saved as ThemeName;
-    if (saved && olderThemeIds[saved]) return olderThemeIds[saved];
+    const saved = window.localStorage.getItem(storageKey);
+    if (saved === "evergreen" || saved === "paper" || saved === "void" || saved === "glacial") return saved;
+    if (saved === "jade" || saved === "forest") return "evergreen";
+    if (saved === "amber" || saved === "light") return "paper";
+    if (saved === "purple" || saved === "dragon") return "void";
+    if (saved === "cyan" || saved === "ice") return "glacial";
+    return window.matchMedia("(prefers-color-scheme: light)").matches ? "paper" : "evergreen";
   } catch {
-    // The palette selector stays usable when storage is unavailable.
+    return "evergreen";
   }
-  return window.matchMedia?.("(prefers-color-scheme: light)").matches ? "paper" : "evergreen";
 }

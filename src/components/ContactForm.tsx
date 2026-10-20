@@ -10,8 +10,8 @@ export function ContactForm() {
   const [isSending, setIsSending] = useState(false);
   const [status, setStatus] = useState<{ type: "success" | "error"; message: string } | null>(null);
   const [form, setForm] = useState<FormState>({ name: "", email: "", subject: "", message: "", website: "" });
-  const fieldClass = "min-h-12 w-full rounded-md border border-[var(--line-strong)] bg-[var(--page)] px-3.5 py-3 text-[15px] text-[var(--ink)] outline-none transition placeholder:text-[var(--dim)] hover:border-[var(--accent-line)] focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-soft)]";
-  const labelClass = "flex min-w-0 flex-col gap-2 text-[13px] font-medium text-[var(--muted)]";
+  const fieldClass = "min-h-12 w-full rounded-md border border-[var(--line-strong)] bg-[var(--page)] px-3.5 py-3 text-[16px] text-[var(--ink)] outline-none transition placeholder:text-[var(--dim)] hover:border-[var(--accent-line)] focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-soft)]";
+  const labelClass = "flex min-w-0 flex-col gap-2 text-[14px] font-medium text-[var(--muted)]";
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();

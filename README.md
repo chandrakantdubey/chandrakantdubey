@@ -1,8 +1,18 @@
-# Chandrakant Dubey · Portfolio
+# DRAKON · Chandrakant Dubey’s engineering workspace
 
-Backend-focused full-stack engineer in Mumbai, India. I build enterprise applications, APIs, and ML inference workflows, with experience across product UI and cloud delivery.
+Personal portfolio for Chandrakant Dubey, a full-stack engineer in Mumbai, India. DRAKON presents selected enterprise systems, product work, independent projects, work history, and technical experience as a responsive engineering workstation.
 
-[Portfolio](https://chandrakantdubey.vercel.app/) · [Résumé](https://chandrakantdubey.vercel.app/Chandrakant_Dubey.pdf) · [GitHub](https://github.com/chandrakantdubey) · [LinkedIn](https://www.linkedin.com/in/chandra-kant-dubey/)
+[Open portfolio](https://chandrakantdubey.vercel.app/) · [Download résumé](https://chandrakantdubey.vercel.app/Chandrakant_Dubey.pdf) · [GitHub](https://github.com/chandrakantdubey) · [LinkedIn](https://www.linkedin.com/in/chandra-kant-dubey/)
+
+## What’s inside
+
+- **Overview** — Personal introduction, original inline dragon illustration, quick navigation, and an allowlisted simulated terminal.
+- **Workbench** — Selectable project file tree, project detail, schematic architecture diagrams, and public/private project links.
+- **Journal** — Selectable role history and contributions.
+- **Packages** — Searchable technology groups with individual detail views.
+- **Contact** — Existing contact form backed by the Vercel API endpoint in `api/send-email.ts`.
+
+The terminal is a UI simulation only. It accepts a small list of navigation and information commands; it never invokes a local shell. The command palette opens with **Ctrl/Cmd+K**. Four color themes and a motion toggle are provided. Motion follows `prefers-reduced-motion` by default.
 
 ## Selected work
 
@@ -26,6 +36,8 @@ Backend-focused full-stack engineer in Mumbai, India. I build enterprise applica
 - **Kintree Pvt. Ltd.** — Full Stack Developer · Nov 2024–Jan 2026
 - **Uvation India Pvt. Ltd.** — Software Engineer (Frontend) · Aug 2023–Oct 2024
 
+The résumé lists overlapping months at Kintree and Nutriiya (Sep–Dec 2025), and Kintree and Adeptken (Jan 2026). This site preserves the provided dates and flags the overlap in the Journal view.
+
 ## Stack
 
 | Area | Tools |
@@ -48,7 +60,7 @@ npm run lint
 npm run build
 ```
 
-The app uses React 19, Vite, Tailwind CSS 4, and Motion. There is no Tailwind config file; theme and design tokens are set in `src/components/theme.ts`. Portfolio content lives in `src/portfolio.ts`. The contact endpoint is a Vercel serverless function in `api/send-email.ts`.
+The app uses React 19, Vite, Tailwind CSS 4, and Motion. There is no Tailwind config file; palette tokens use Tailwind v4 arbitrary properties in `src/components/theme.ts`. Portfolio content lives in `src/portfolio.ts`. The source PDF résumé is `public/Chandrakant_Dubey.pdf`.
 
 ## Contact form configuration
 
@@ -58,13 +70,4 @@ Set these variables in the Vercel project environment:
 - `CONTACT_EMAIL` — optional recipient override; defaults to the email in `src/portfolio.ts`.
 - `RESEND_FROM_EMAIL` — optional verified sender. If unset, the API uses Resend’s onboarding sender, which is intended for testing.
 
-The form requires the API to return `{ "success": true }` before showing a sent message. With plain `npm run dev`, Vite does not run the serverless API; use `npx vercel dev` to exercise the contact endpoint locally with the environment variables configured. If delivery fails, the form offers the direct email link.
-
-The endpoint validates input, includes a hidden honeypot field, and applies a small in-memory per-IP rate limit. That limit is best-effort across serverless instances.
-
-## Portfolio notes
-
-- Four color themes: Evergreen, Paper Terminal, Void Dragon, and Glacial Cyan. Selection persists in local storage; a first visit follows the system light/dark preference.
-- Motion respects `prefers-reduced-motion`.
-- The dragon scale texture is limited to the hero; illustrations elsewhere are project-specific.
-- The résumé download uses `public/Chandrakant_Dubey.pdf`.
+The form requires the API to return `{ "success": true }` before showing a sent message. With plain `npm run dev`, Vite does not run the serverless API; use `npx vercel dev` to exercise the contact endpoint locally with environment variables configured. If delivery fails, the form offers the direct email link. The endpoint validates input, includes a hidden honeypot field, and applies a small in-memory per-IP rate limit. That limit is best-effort across serverless instances.

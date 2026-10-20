@@ -1,78 +1,102 @@
 export const profile = {
   name: "Chandrakant Dubey",
+  role: "Full-stack engineer",
   location: "Mumbai, India",
   email: "919chandrakant@gmail.com",
   linkedin: "https://www.linkedin.com/in/chandra-kant-dubey/",
   github: "https://github.com/chandrakantdubey",
   portfolio: "https://chandrakantdubey.vercel.app/",
   resume: "/Chandrakant_Dubey.pdf",
+  introduction:
+    "I build reliable products from the interface to the data layer. My work spans enterprise workflows, backend services, and ML-powered systems.",
 };
 
-export const workProjects = [
+export type ProjectGroup = "enterprise" | "product" | "independent" | "labs";
+
+export type WorkspaceProject = {
+  id: string;
+  name: string;
+  group: ProjectGroup;
+  role: string;
+  summary: string;
+  stack: string[];
+  links: { label: string; url: string }[];
+  access?: string;
+  stage?: string;
+  diagram?: { caption: string; nodes: string[] };
+};
+
+export const projectGroups: { id: ProjectGroup; label: string; hint: string }[] = [
+  { id: "enterprise", label: "Enterprise systems", hint: "Private · selected engineering work" },
+  { id: "product", label: "Product delivery", hint: "Production products and client work" },
+  { id: "independent", label: "Independent", hint: "Public projects and source" },
+  { id: "labs", label: "In the lab", hint: "Early work · still developing" },
+];
+
+export const workspaceProjects: WorkspaceProject[] = [
   {
-    number: "01",
-    visual: "enterprise",
-    category: "Workflow automation · Adeptken",
-    title: "Performance review management",
-    role: "Enterprise application · Internal project",
-    description:
-      "Built an employee performance-review platform for IDBI Bank with React, Node.js, and Oracle Database, replacing spreadsheet-based workflows.",
-    tags: ["React", "Node.js", "Oracle Database"],
+    id: "performance-review",
+    name: "Performance review management",
+    group: "enterprise",
+    role: "Full Stack Engineer · Adeptken",
+    summary: "Built an employee performance-review platform for IDBI Bank, replacing spreadsheet-based review workflows with a web application.",
+    stack: ["React", "Node.js", "Oracle Database"],
+    access: "Enterprise project · details limited",
+    diagram: { caption: "Review workflow · simplified", nodes: ["Review cycle", "Employee input", "Manager review", "Status & records"] },
     links: [],
-    accessLabel: "Private enterprise project",
   },
   {
-    number: "02",
-    visual: "inference",
-    category: "Applied ML · Adeptken",
-    title: "Customer risk assessment",
-    role: "ML inference platform · Internal project",
-    description:
-      "Built an enterprise model-inference platform for customer risk assessment with Python, FastAPI, React, and Oracle Database.",
-    tags: ["Python", "FastAPI", "React", "Oracle Database", "Docker", "RHEL"],
+    id: "customer-risk",
+    name: "Customer risk assessment",
+    group: "enterprise",
+    role: "Full Stack Engineer · Adeptken",
+    summary: "Built a customer risk-assessment platform that connects application workflows to an internal machine-learning inference service.",
+    stack: ["Python", "FastAPI", "React", "Oracle Database", "Docker", "RHEL"],
+    access: "Enterprise project · details limited",
+    diagram: { caption: "Inference path · simplified", nodes: ["Application", "FastAPI", "Model inference", "Risk result"] },
     links: [],
-    accessLabel: "Private enterprise project",
   },
   {
-    number: "03",
-    visual: "community",
-    category: "Real-time product · Kintree",
-    title: "Family tree and collaboration",
+    id: "kintree",
+    name: "Kintree",
+    group: "product",
     role: "Full Stack Developer · Kintree",
-    description:
-      "Developed family-tree visualizations with React, Redux, and BalkanJS, plus real-time communication features using Node.js, Express, and Socket.IO.",
-    tags: ["React", "Redux", "BalkanJS", "Node.js", "Socket.IO", "Google Maps API"],
-    links: [{ label: "Visit Kintree", url: "https://kintree.com" }],
+    summary: "Developed family-tree visualizations and real-time collaboration features for a family connection product.",
+    stack: ["React", "Redux", "BalkanJS", "Node.js", "Express", "Socket.IO", "Google Maps API"],
+    diagram: { caption: "Product surfaces · simplified", nodes: ["Family graph", "Shared updates", "Live communication", "Places"] },
+    links: [{ label: "Open product", url: "https://kintree.com" }],
   },
   {
-    number: "04",
-    visual: "backend",
-    category: "Backend engineering · Independent",
-    title: "Pokédex RPG API",
-    role: "Personal project · Public source",
-    description:
-      "A layered REST API for an RPG, built with FastAPI, PostgreSQL, and SQLAlchemy. It includes JWT authentication, role-based access control, and game rules for stats, breeding, evolution, and experience.",
-    tags: ["Python", "FastAPI", "PostgreSQL", "SQLAlchemy", "JWT", "Docker"],
+    id: "pokedex",
+    name: "Pokédex RPG API",
+    group: "independent",
+    role: "Independent project · Public source",
+    summary: "A layered REST API for an RPG, with authentication, role-based access, and game rules for stats, breeding, evolution, and experience.",
+    stack: ["Python", "FastAPI", "PostgreSQL", "SQLAlchemy", "JWT", "Docker"],
+    diagram: { caption: "API layers · simplified", nodes: ["REST routes", "Domain rules", "SQLAlchemy", "PostgreSQL"] },
     links: [
       { label: "Backend source", url: "https://github.com/chandrakantdubey/pokedex-backend" },
       { label: "Mobile app source", url: "https://github.com/chandrakantdubey/pokedex" },
     ],
   },
-];
-
-export const otherWork = [
   {
+    id: "nutriiya",
     name: "Nutriiya",
-    type: "Product engineering · Full Stack Engineer",
-    description:
-      "Built full-stack features across a nutrition and wellness app, working with React, Next.js, Node.js, and FastAPI services.",
+    group: "product",
+    role: "Full Stack Engineer · Nutriiya",
+    summary: "Developed features across a nutrition and wellness app, working with web interfaces and supporting service APIs.",
+    stack: ["React", "Next.js", "Node.js", "FastAPI"],
+    diagram: { caption: "Product scope · selected areas", nodes: ["Web experience", "Product features", "Service APIs"] },
     links: [{ label: "Visit Nutriiya", url: "https://nutriiya.com" }],
   },
   {
+    id: "uvation-commerce",
     name: "Uvation commerce",
-    type: "Commerce and loyalty · Software Engineer",
-    description:
-      "Developed e-commerce and loyalty experiences across a B2B marketplace, rewards portal, and Bombay Dyeing storefront.",
+    group: "product",
+    role: "Software Engineer · Uvation",
+    summary: "Developed e-commerce and loyalty experiences across a B2B marketplace, rewards portal, and Bombay Dyeing storefront.",
+    stack: ["React", "TypeScript", "Node.js", "Express.js", "REST APIs"],
+    diagram: { caption: "Commerce products · selected", nodes: ["B2B marketplace", "Rewards portal", "Retail storefront"] },
     links: [
       { label: "Marketplace", url: "https://marketplace.uvation.com" },
       { label: "Rewards", url: "https://rewards.uvation.com" },
@@ -80,70 +104,76 @@ export const otherWork = [
     ],
   },
   {
+    id: "brush-of-hope",
     name: "Brush of Hope",
-    type: "Digital safety resource",
-    description:
-      "A digital-safety resource for people facing cyberbullying and online abuse.",
+    group: "product",
+    role: "Digital safety resource",
+    summary: "A digital-safety resource for people facing cyberbullying and online abuse.",
+    stack: [],
     links: [{ label: "Visit Brush of Hope", url: "https://brushofhope.life" }],
   },
   {
+    id: "hrms",
     name: "HRMS",
-    type: "Internal product",
-    description: "An internal human resource management system.",
+    group: "product",
+    role: "Internal product",
+    summary: "An internal human resource management system.",
+    stack: [],
+    access: "Private internal project",
     links: [],
   },
-];
-
-export const independentProjects = [
   {
-    number: "01",
+    id: "stylescape",
     name: "StyleScape",
-    category: "Creative tool",
-    visual: "stylescape",
-    description:
-      "A pattern editor for making custom palettes and exporting designs as CSS, SVG, or PNG.",
-    tags: ["React", "TypeScript", "Zustand", "SVG"],
+    group: "independent",
+    role: "Creative tool · Public source",
+    summary: "A pattern editor for making custom palettes and exporting designs as CSS, SVG, or PNG.",
+    stack: ["React", "TypeScript", "Zustand", "SVG"],
     links: [{ label: "Source code", url: "https://github.com/chandrakantdubey/style-scape" }],
   },
   {
-    number: "02",
+    id: "fitstream",
     name: "FitStream",
-    category: "Fitness PWA",
-    visual: "fitstream",
-    description:
-      "A fitness app with workout plans, activity tracking, nutrition tools, and progress exports.",
-    tags: ["React", "FastAPI", "SQLite", "Leaflet"],
+    group: "independent",
+    role: "Fitness PWA · Public source",
+    summary: "A fitness app with workout plans, activity tracking, nutrition tools, and progress exports.",
+    stack: ["React", "FastAPI", "SQLite", "Leaflet"],
     links: [{ label: "Source code", url: "https://github.com/chandrakantdubey/fitstream" }],
   },
   {
-    number: "03",
+    id: "mh15",
     name: "MH15",
-    category: "Android tablet app",
-    visual: "mh15",
-    description:
-      "A local-first tablet notebook for handwriting, sketching, and mixed-media notes.",
-    tags: ["React Native", "TypeScript", "Skia", "SQLite"],
+    group: "independent",
+    role: "Android tablet app · Public source",
+    summary: "A local-first tablet notebook for handwriting, sketching, and mixed-media notes.",
+    stack: ["React Native", "TypeScript", "Skia", "SQLite"],
     links: [{ label: "Source code", url: "https://github.com/chandrakantdubey/mh15" }],
   },
-];
-
-export const experiments = [
   {
-    name: "Blackout Protocol",
-    type: "In development",
-    visual: "game",
-    note: "A cooperative grid-routing game concept about finding a path off the board.",
+    id: "farmpulse",
+    name: "FarmPulse",
+    group: "labs",
+    role: "In development",
+    summary: "A time-series dashboard concept for farm sensor readings and crop conditions.",
+    stack: [],
+    stage: "Early build",
+    links: [],
   },
   {
-    name: "FarmPulse",
-    type: "In development",
-    visual: "farm",
-    note: "A time-series dashboard concept for farm sensor readings and crop conditions.",
+    id: "blackout-protocol",
+    name: "Blackout Protocol",
+    group: "labs",
+    role: "In development",
+    summary: "A cooperative grid-routing game concept about finding a path off the board.",
+    stack: [],
+    stage: "Early build",
+    links: [],
   },
 ];
 
 export const experience = [
   {
+    id: "adeptken",
     role: "Full Stack Engineer",
     company: "Adeptken",
     period: "Jan 2026 – Present",
@@ -156,6 +186,7 @@ export const experience = [
     technologies: ["React", "Node.js", "Oracle Database", "Python", "FastAPI", "Redis", "React Query", "Docker", "AWS EC2", "GitHub Actions", "ML inference"],
   },
   {
+    id: "nutriiya-role",
     role: "Full Stack Engineer",
     company: "Nutriiya",
     period: "Sep 2025 – Dec 2025",
@@ -167,6 +198,7 @@ export const experience = [
     technologies: ["React", "Next.js", "Node.js", "FastAPI", "React Query", "SWR", "Docker", "AWS EC2", "GitHub Actions"],
   },
   {
+    id: "kintree-role",
     role: "Full Stack Developer",
     company: "Kintree Pvt. Ltd.",
     period: "Nov 2024 – Jan 2026",
@@ -179,6 +211,7 @@ export const experience = [
     technologies: ["React", "Redux", "BalkanJS", "Node.js", "Express.js", "Socket.IO", "Google Maps API", "Django API"],
   },
   {
+    id: "uvation-role",
     role: "Software Engineer (Frontend)",
     company: "Uvation India Pvt. Ltd.",
     period: "Aug 2023 – Oct 2024",
@@ -191,35 +224,11 @@ export const experience = [
   },
 ];
 
-export const skills = [
-  {
-    category: "Languages",
-    summary: "Languages used across product and service work.",
-    items: ["Python", "TypeScript", "JavaScript", "SQL"],
-  },
-  {
-    category: "Backend & APIs",
-    summary: "Service development, API design, and real-time features.",
-    items: ["FastAPI", "Node.js", "Express.js", "Django APIs", "REST APIs", "WebSockets", "Socket.IO", "SQLAlchemy"],
-  },
-  {
-    category: "Databases & caching",
-    summary: "Relational databases and caching used in application backends.",
-    items: ["PostgreSQL", "Oracle Database", "Redis", "MongoDB", "SQLite"],
-  },
-  {
-    category: "Product UI",
-    summary: "Web, mobile, and data-fetching tools for product interfaces.",
-    items: ["React", "Next.js", "Redux", "React Native", "React Query", "SWR", "Tailwind CSS"],
-  },
-  {
-    category: "Cloud & delivery",
-    summary: "Containers, cloud infrastructure, and automated delivery.",
-    items: ["Docker", "AWS EC2", "AWS S3", "GitHub Actions", "CI/CD", "Linux / RHEL"],
-  },
-  {
-    category: "Applied AI & practices",
-    summary: "ML inference integration, with LLM and retrieval patterns as a growing focus.",
-    items: ["ML inference", "Model execution", "LLM patterns", "RAG fundamentals", "Authentication / RBAC", "Caching", "Testing"],
-  },
+export const skillGroups = [
+  { id: "languages", title: "Languages", note: "Used across product and service work", items: ["Python", "TypeScript", "JavaScript", "SQL"] },
+  { id: "services", title: "Services & APIs", note: "Application logic, integration, and real-time features", items: ["FastAPI", "Node.js", "Express.js", "Django APIs", "REST APIs", "WebSockets", "Socket.IO", "SQLAlchemy"] },
+  { id: "data", title: "Data systems", note: "Relational stores and caching", items: ["PostgreSQL", "Oracle Database", "Redis", "MongoDB", "SQLite"] },
+  { id: "interfaces", title: "Product interfaces", note: "Web, mobile, and client data", items: ["React", "Next.js", "Redux", "React Native", "React Query", "SWR", "Tailwind CSS"] },
+  { id: "delivery", title: "Delivery & runtime", note: "Containers, cloud infrastructure, and automation", items: ["Docker", "AWS EC2", "AWS S3", "GitHub Actions", "CI/CD", "Linux / RHEL"] },
+  { id: "applied-ai", title: "Applied AI", note: "Experience in inference integration; LLM and retrieval patterns are a learning focus", items: ["ML inference", "Model execution", "LLM patterns", "RAG fundamentals", "Authentication / RBAC", "Caching", "Testing"] },
 ];
