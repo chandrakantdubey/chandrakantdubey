@@ -7,15 +7,16 @@ type Line = { command: string; response: string };
 
 const commandList = ["help", "whoami", "ls", "cat about.md", "work", "journal", "packages", "resume", "contact", "clear"];
 const helpOutput = [
-  "whoami       identity and engineering focus",
-  "ls           browse the workspace",
-  "cat about.md read the short introduction",
-  "work         inspect selected projects",
-  "journal      explore professional experience",
-  "packages     inspect engineering tools",
-  "resume       download the résumé",
-  "contact      open contact options",
-  "clear        clear terminal output",
+  "help          command list",
+  "whoami        profile",
+  "ls            projects",
+  "cat about.md   introduction",
+  "work          open workbench",
+  "journal       experience",
+  "packages      technology stack",
+  "resume        download résumé",
+  "contact       contact options",
+  "clear         clear screen",
 ].join("\n");
 
 export function InteractiveTerminal({ onNavigate, onResume, motionEnabled }: { onNavigate: (view: WorkspaceView) => void; onResume: () => void; motionEnabled: boolean }) {
@@ -46,7 +47,7 @@ export function InteractiveTerminal({ onNavigate, onResume, motionEnabled }: { o
 
     const responses: Record<string, string> = {
       help: helpOutput,
-      whoami: `${profile.name} — ${profile.role}, based in ${profile.location}. Focus: full-stack product engineering, backend systems, and ML inference integration.`,
+      whoami: `${profile.name} · ${profile.role} · ${profile.location}`,
       ls: workspaceProjects.map((project) => project.id).join("   "),
       "cat about.md": profile.introduction,
     };
@@ -85,19 +86,22 @@ export function InteractiveTerminal({ onNavigate, onResume, motionEnabled }: { o
   }
 
   return <section className="overflow-hidden rounded-[24px] border border-[var(--line-strong)] bg-[var(--panel)] shadow-[0_24px_70px_var(--shadow-glass)]" aria-labelledby="terminal-heading">
-    <div className="flex min-h-[60px] items-center gap-3 border-b border-[var(--line)] px-4 sm:px-5">
-      <div className="flex gap-1.5" aria-hidden="true"><span className="h-2.5 w-2.5 rounded-full bg-[var(--ember)]" /><span className="h-2.5 w-2.5 rounded-full bg-[var(--lime)]" /><span className="h-2.5 w-2.5 rounded-full bg-[var(--cyan)]" /></div>
-      <h2 id="terminal-heading" className="m-0 min-w-0 flex-1 truncate font-[family-name:var(--font-mono)] text-[13px] font-medium text-[var(--muted)]">chandrakant@drakon <span className="text-[var(--dim)]">: ~/workspace</span></h2>
-      <span className="hidden items-center gap-2 rounded-full border border-[var(--line)] px-2.5 py-1 text-[12px] text-[var(--muted)] sm:inline-flex"><span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" /> simulated shell</span>
+    <div className="flex min-h-[60px] items-center gap-3 border-b border-[var(--line)] bg-[var(--page)]/35 px-4 sm:px-5">
+      <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg border border-[var(--accent-line)] bg-[var(--accent-soft)] font-[family-name:var(--font-mono)] text-[12px] font-semibold text-[var(--accent)]" aria-hidden="true">$_</span>
+      <div className="min-w-0 flex-1">
+        <h2 id="terminal-heading" className="m-0 truncate font-[family-name:var(--font-mono)] text-[13px] font-semibold text-[var(--ink)]">Terminal <span className="font-normal text-[var(--dim)]">— chandrakant@drakon</span></h2>
+        <p className="m-0 truncate font-[family-name:var(--font-mono)] text-[11px] text-[var(--dim)]">~/workspace</p>
+      </div>
+      <span className="hidden items-center gap-2 rounded-lg border border-[var(--line)] bg-[var(--panel)] px-2.5 py-1.5 font-[family-name:var(--font-mono)] text-[11px] text-[var(--muted)] sm:inline-flex"><span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)] shadow-[0_0_8px_var(--accent)]" />DRAKON</span>
     </div>
-    <div ref={output} className="max-h-[220px] min-h-[128px] space-y-3 overflow-y-auto px-4 py-4 font-[family-name:var(--font-mono)] text-[13px] leading-relaxed sm:px-5" aria-live="polite" aria-relevant="additions text">
-      {lines.length === 0 ? <div className="space-y-2"><p className="m-0 text-[var(--accent)]">DRAKON workstation · portfolio shell</p><p className="m-0 break-words text-[var(--muted)]">This is a safe, simulated command surface. Try <button type="button" onClick={() => execute("help")} className="inline-flex min-h-11 items-center rounded px-2 underline decoration-[var(--accent-line)] underline-offset-4 hover:text-[var(--ink)]">help</button> to get started.</p></div> : lines.map((line, index) => <div key={`${line.command}-${index}`} className="space-y-1.5"><p className="m-0 break-all text-[var(--accent)]"><span className="text-[var(--dim)]">chandrakant@drakon:~$ </span>{line.command}</p><p className="m-0 break-words whitespace-pre-wrap text-[var(--muted)]">{line.response}</p></div>)}
+    <div ref={output} className="max-h-[250px] min-h-[146px] space-y-3 overflow-y-auto bg-[radial-gradient(ellipse_at_15%_0%,var(--accent-soft),transparent_55%)] px-4 py-4 font-[family-name:var(--font-mono)] text-[13px] leading-relaxed sm:px-5" aria-live="polite" aria-relevant="additions text">
+      {lines.length === 0 ? <div className="space-y-2"><p className="m-0 text-[var(--accent)]">~/workspace <span className="text-[var(--cyan)]">·</span> ready</p><p className="m-0 break-words text-[var(--muted)]">Run <button type="button" onClick={() => execute("help")} className="inline-flex min-h-11 items-center rounded px-2 font-semibold text-[var(--accent)] underline decoration-[var(--accent-line)] underline-offset-4 hover:text-[var(--ink)]">help</button> to browse commands.</p></div> : lines.map((line, index) => <div key={`${line.command}-${index}`} className="space-y-1.5"><p className="m-0 break-all"><span className="text-[var(--accent)]">chandrakant@drakon</span><span className="text-[var(--dim)]">:</span><span className="text-[var(--cyan)]">~/workspace</span><span className="text-[var(--accent)]">$ </span><span className="text-[var(--ink)]">{line.command}</span></p><p className="m-0 break-words whitespace-pre-wrap text-[var(--muted)]">{line.response}</p></div>)}
     </div>
     <form onSubmit={handleSubmit} className="flex min-h-[58px] items-center gap-2 border-t border-[var(--line)] px-4 sm:px-5">
-      <label htmlFor="terminal-command" className="font-[family-name:var(--font-mono)] text-[14px] text-[var(--accent)]">$</label>
+      <label htmlFor="terminal-command" className="shrink-0 font-[family-name:var(--font-mono)] text-[12px] text-[var(--accent)] sm:text-[13px]"><span className="hidden text-[var(--muted)] md:inline">chandrakant@drakon:</span><span className="text-[var(--cyan)]">~/workspace</span>$</label>
       <input ref={input} id="terminal-command" value={value} onChange={(event) => setValue(event.target.value)} onKeyDown={handleKeyDown} autoComplete="off" spellCheck={false} aria-describedby="terminal-help" placeholder="Type a command…" className="min-w-0 flex-1 bg-transparent py-3 font-[family-name:var(--font-mono)] text-[14px] text-[var(--ink)] outline-none placeholder:text-[var(--dim)]" />
       <button type="submit" className="min-h-11 shrink-0 rounded-xl border border-[var(--accent-line)] bg-[var(--accent-soft)] px-3 text-[13px] font-medium text-[var(--accent)] transition hover:bg-[var(--accent)] hover:text-[var(--accent-ink)] focus-visible:outline-2 focus-visible:outline-[var(--focus)]">Run</button>
     </form>
-    <p id="terminal-help" className="m-0 border-t border-[var(--line)] px-4 py-2.5 text-[12px] leading-relaxed text-[var(--dim)] sm:px-5">Allowlisted commands only. Tab completes · ↑ recalls history. Nothing runs on your device.</p>
+    <p id="terminal-help" className="m-0 border-t border-[var(--line)] bg-[var(--page)]/25 px-4 py-2.5 font-[family-name:var(--font-mono)] text-[11px] text-[var(--dim)] sm:px-5">Tab complete <span className="px-1 text-[var(--line-strong)]">·</span> ↑ history</p>
   </section>;
 }

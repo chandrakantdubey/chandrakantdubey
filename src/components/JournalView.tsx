@@ -22,7 +22,7 @@ export function JournalView({ selectedId, onSelect }: { selectedId: string; onSe
       </nav>
 
       {selected && <motion.article key={selected.id} initial={reduceMotion ? false : { opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: reduceMotion ? 0 : .24 }} className="relative isolate min-w-0 overflow-hidden rounded-[24px] border border-[var(--line-strong)] bg-[linear-gradient(145deg,var(--panel-solid),var(--page-elevated))] p-5 sm:p-7 lg:p-9">
-        <Texture kind="circuit" className="hidden left-auto top-auto right-0 h-56 w-64 opacity-50 sm:block" opacity={0.15} />
+        <Texture kind="circuit" className="hidden left-auto top-auto right-0 h-56 w-64 opacity-35 sm:block" opacity={0.07} />
         <div className="relative z-10">
         <div className="flex flex-wrap items-start justify-between gap-4"><div><p className="m-0 font-[family-name:var(--font-mono)] text-[12px] uppercase tracking-[.14em] text-[var(--accent)]">{selected.period}</p><h2 className="mb-0 mt-3 text-[clamp(1.75rem,3.4vw,3rem)] font-semibold leading-tight tracking-[-.04em] text-[var(--ink)]">{selected.role}</h2><p className="mb-0 mt-2 text-[17px] font-medium text-[var(--muted)]">{selected.company}</p></div><span className="grid h-12 w-12 place-items-center rounded-2xl border border-[var(--accent-line)] bg-[var(--accent-soft)] font-[family-name:var(--font-mono)] text-[15px] text-[var(--accent)]">{String(experience.indexOf(selected) + 1).padStart(2, "0")}</span></div>
         <p className="mb-0 mt-6 max-w-3xl border-l-2 border-[var(--accent)] pl-4 text-[16px] leading-[1.8] text-[var(--muted)] sm:text-[18px]">{selected.summary}</p>

@@ -22,9 +22,8 @@ export type WorkspaceProject = {
   stack: string[];
   capabilities?: string[];
   links: { label: string; url: string }[];
-  access?: string;
   stage?: string;
-  diagram?: { caption: string; nodes: string[]; kind?: "flow" | "layers" | "branch"; note?: string };
+  diagram?: { caption: string; nodes: string[]; kind?: "flow" | "layers" | "branch" };
 };
 
 export const projectGroups: { id: ProjectGroup; label: string; hint: string }[] = [
@@ -42,9 +41,8 @@ export const workspaceProjects: WorkspaceProject[] = [
     role: "Full Stack Engineer · Adeptken",
     summary: "Built an employee performance-review platform for IDBI Bank, replacing spreadsheet-based review workflows with a web application.",
     stack: ["React", "Node.js", "Oracle Database"],
-    access: "Enterprise project · details limited",
     capabilities: ["Review-cycle setup", "Employee and manager workflows", "Status tracking"],
-    diagram: { caption: "Review workflow · simplified", nodes: ["Review cycle", "Employee input", "Manager review", "Status & records"], kind: "flow", note: "A simplified view of the spreadsheet-replacement workflow." },
+    diagram: { caption: "Review workflow", nodes: ["Review cycle", "Employee input", "Manager review", "Status & records"], kind: "flow" },
     links: [],
   },
   {
@@ -54,9 +52,8 @@ export const workspaceProjects: WorkspaceProject[] = [
     role: "Full Stack Engineer · Adeptken",
     summary: "Built a customer risk-assessment platform that connects application workflows to an internal machine-learning inference service.",
     stack: ["Python", "FastAPI", "React", "Oracle Database", "Docker", "RHEL"],
-    access: "Enterprise project · details limited",
     capabilities: ["Application workflow", "Internal inference service", "Risk assessment result"],
-    diagram: { caption: "Inference path · simplified", nodes: ["Application", "FastAPI", "Model inference", "Risk result"], kind: "flow", note: "Illustrative request path; internal implementation details are not shown." },
+    diagram: { caption: "Risk inference flow", nodes: ["Application", "FastAPI", "Model inference", "Risk result"], kind: "flow" },
     links: [],
   },
   {
@@ -67,7 +64,7 @@ export const workspaceProjects: WorkspaceProject[] = [
     summary: "Developed family-tree visualizations and real-time collaboration features for a family connection product.",
     stack: ["React", "Redux", "BalkanJS", "Node.js", "Express", "Socket.IO", "Google Maps API"],
     capabilities: ["Family-tree visualization", "Real-time collaboration", "Location features"],
-    diagram: { caption: "Connected product areas · simplified", nodes: ["Family connection product", "Tree views", "Live collaboration", "Places"], kind: "branch", note: "Grouped product areas based on the public-facing feature scope." },
+    diagram: { caption: "Family product map", nodes: ["Family connection product", "Tree views", "Live collaboration", "Places"], kind: "branch" },
     links: [{ label: "Open product", url: "https://kintree.com" }],
   },
   {
@@ -78,7 +75,7 @@ export const workspaceProjects: WorkspaceProject[] = [
     summary: "A layered REST API for an RPG, with authentication, role-based access, and game rules for stats, breeding, evolution, and experience.",
     stack: ["Python", "FastAPI", "PostgreSQL", "SQLAlchemy", "JWT", "Docker"],
     capabilities: ["Authentication and access control", "RPG rules and progression", "Persistent game data"],
-    diagram: { caption: "API structure · simplified", nodes: ["REST routes", "Game rules", "SQLAlchemy", "PostgreSQL"], kind: "layers", note: "A high-level view of the API and persistence stack." },
+    diagram: { caption: "API structure", nodes: ["REST routes", "Game rules", "SQLAlchemy", "PostgreSQL"], kind: "layers" },
     links: [
       { label: "Backend source", url: "https://github.com/chandrakantdubey/pokedex-backend" },
       { label: "Mobile app source", url: "https://github.com/chandrakantdubey/pokedex" },
@@ -128,7 +125,6 @@ export const workspaceProjects: WorkspaceProject[] = [
     summary: "An internal human resource management system.",
     stack: [],
     capabilities: ["Internal HR workflows"],
-    access: "Private internal project",
     links: [],
   },
   {
@@ -139,7 +135,7 @@ export const workspaceProjects: WorkspaceProject[] = [
     summary: "A visual pattern editor for building custom palettes and exporting designs as CSS, SVG, or PNG.",
     stack: ["React", "TypeScript", "Zustand", "SVG"],
     capabilities: ["Pattern editing", "Palette customization", "CSS, SVG, and PNG export"],
-    diagram: { caption: "Design loop · simplified", nodes: ["Choose a pattern", "Tune palette", "Preview", "Export"], kind: "flow" },
+    diagram: { caption: "Design loop", nodes: ["Choose a pattern", "Tune palette", "Preview", "Export"], kind: "flow" },
     links: [{ label: "Source code", url: "https://github.com/chandrakantdubey/style-scape" }],
   },
   {
@@ -150,7 +146,7 @@ export const workspaceProjects: WorkspaceProject[] = [
     summary: "A fitness app with workout plans, activity tracking, nutrition tools, and progress exports.",
     stack: ["React", "FastAPI", "SQLite", "Leaflet"],
     capabilities: ["Workout plans", "Activity tracking", "Nutrition tools", "Progress exports"],
-    diagram: { caption: "Training loop · selected features", nodes: ["Plan", "Track activity", "Review progress", "Export"], kind: "flow" },
+    diagram: { caption: "Training loop", nodes: ["Plan", "Track activity", "Review progress", "Export"], kind: "flow" },
     links: [{ label: "Source code", url: "https://github.com/chandrakantdubey/fitstream" }],
   },
   {
@@ -161,7 +157,7 @@ export const workspaceProjects: WorkspaceProject[] = [
     summary: "A local-first tablet notebook for handwriting, sketching, and mixed-media notes.",
     stack: ["React Native", "TypeScript", "Skia", "SQLite"],
     capabilities: ["Handwriting", "Sketching", "Mixed-media notes", "Local-first storage"],
-    diagram: { caption: "Notebook stack · simplified", nodes: ["Pen & canvas input", "React Native UI", "Skia rendering", "SQLite storage"], kind: "layers" },
+    diagram: { caption: "Notebook layers", nodes: ["Pen & canvas input", "React Native UI", "Skia rendering", "SQLite storage"], kind: "layers" },
     links: [{ label: "Source code", url: "https://github.com/chandrakantdubey/mh15" }],
   },
   {
@@ -172,7 +168,7 @@ export const workspaceProjects: WorkspaceProject[] = [
     summary: "A time-series dashboard concept for farm sensor readings and crop conditions.",
     stack: [],
     capabilities: ["Sensor readings", "Time-series views", "Crop conditions"],
-    diagram: { caption: "Dashboard concept · simplified", nodes: ["Farm sensors", "Readings", "Time-series view", "Crop conditions"], kind: "flow" },
+    diagram: { caption: "Farm sensor flow", nodes: ["Farm sensors", "Readings", "Time-series view", "Crop conditions"], kind: "flow" },
     stage: "Early build",
     links: [],
   },
@@ -184,7 +180,7 @@ export const workspaceProjects: WorkspaceProject[] = [
     summary: "A cooperative grid-routing game concept about finding a path off the board.",
     stack: [],
     capabilities: ["Grid routing", "Cooperative play", "Path-finding objective"],
-    diagram: { caption: "Game loop · concept", nodes: ["Shared grid", "Choose a route", "Coordinate moves", "Find the exit"], kind: "flow" },
+    diagram: { caption: "Game loop", nodes: ["Shared grid", "Choose a route", "Coordinate moves", "Find the exit"], kind: "flow" },
     stage: "Early build",
     links: [],
   },

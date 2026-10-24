@@ -1,7 +1,7 @@
 import { motion, useReducedMotion } from "motion/react";
 import { profile, workspaceProjects } from "../portfolio";
 import { ArrowIcon, ExternalArrow } from "./icons";
-import { DragonIllustration } from "./DragonIllustration";
+import { HeroIllustration } from "./HeroIllustration";
 import { InteractiveTerminal } from "./InteractiveTerminal";
 import { Texture } from "./Texture";
 import type { WorkspaceView } from "./navigation";
@@ -22,7 +22,7 @@ export function HomeView({ motionEnabled, onNavigate }: { motionEnabled: boolean
     <div className="mb-5 flex items-center gap-2 font-[family-name:var(--font-mono)] text-[12px] uppercase tracking-[.15em] text-[var(--dim)] sm:mb-7"><span className="text-[var(--accent)]">/</span> workspace <span className="text-[var(--line-strong)]">/</span> overview <span className="ml-auto hidden normal-case tracking-normal text-[var(--muted)] sm:inline">session: chandrakant@drakon</span></div>
 
     <section className="relative grid min-h-[560px] items-center overflow-hidden rounded-[28px] border border-[var(--line)] bg-[radial-gradient(ellipse_at_70%_42%,var(--dragon-soft),transparent_48%),linear-gradient(145deg,var(--page-elevated),var(--page)_65%)] px-5 py-9 sm:px-9 sm:py-12 md:grid-cols-[minmax(0,1.05fr)_minmax(230px,.95fr)] md:gap-2 lg:grid-cols-[1.02fr_.98fr] lg:px-12 lg:py-10">
-      <Texture kind="scales" className="hidden -right-[12%] left-auto w-[72%] opacity-70 [mask-image:linear-gradient(110deg,transparent,black_52%,black)] sm:block" opacity={0.18} />
+      <Texture kind="scales" className="hidden -right-[12%] left-auto w-[72%] opacity-35 [mask-image:linear-gradient(110deg,transparent,black_52%,black)] sm:block" opacity={0.035} />
       <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[var(--accent)]/70 to-transparent" aria-hidden="true" />
       <div className="relative z-10 max-w-[700px]">
         <div className="mb-5">
@@ -42,16 +42,13 @@ export function HomeView({ motionEnabled, onNavigate }: { motionEnabled: boolean
       </div>
 
       <div className="pointer-events-none absolute right-[-20%] top-[-2%] z-0 w-[90%] max-w-[360px] opacity-25 md:pointer-events-auto md:relative md:right-auto md:top-auto md:z-auto md:mx-auto md:mt-0 md:w-full md:max-w-[560px] md:opacity-100 lg:-mr-6 lg:scale-[1.1]">
-        <div className="absolute left-[4%] top-[19%] z-10 hidden rounded-xl border border-[var(--line-strong)] bg-[var(--panel-solid)]/85 px-3 py-2 font-[family-name:var(--font-mono)] text-[11px] leading-relaxed text-[var(--muted)] shadow-[0_12px_35px_var(--shadow-glass)] backdrop-blur-md md:block sm:left-0 sm:text-[12px]"><span className="text-[var(--accent)]">01</span> &nbsp;systems that scale</div>
-        <div className="absolute right-[2%] top-[39%] z-10 hidden rounded-xl border border-[var(--line-strong)] bg-[var(--panel-solid)]/85 px-3 py-2 font-[family-name:var(--font-mono)] text-[11px] leading-relaxed text-[var(--muted)] shadow-[0_12px_35px_var(--shadow-glass)] backdrop-blur-md md:block sm:text-[12px]"><span className="text-[var(--cyan)]">02</span> &nbsp;products with care</div>
-        <div className="absolute bottom-[13%] left-[11%] z-10 hidden rounded-xl border border-[var(--line-strong)] bg-[var(--panel-solid)]/85 px-3 py-2 font-[family-name:var(--font-mono)] text-[11px] leading-relaxed text-[var(--muted)] shadow-[0_12px_35px_var(--shadow-glass)] backdrop-blur-md md:block sm:text-[12px]"><span className="text-[var(--ember)]">03</span> &nbsp;ideas made tangible</div>
-        <DragonIllustration motionEnabled={motionEnabled} />
+        <HeroIllustration motionEnabled={motionEnabled} />
       </div>
     </section>
 
     <section className="mt-5 grid gap-5 xl:grid-cols-[minmax(280px,.74fr)_minmax(0,1.26fr)]">
       <div className="relative isolate overflow-hidden rounded-[24px] border border-[var(--line)] bg-[linear-gradient(145deg,var(--panel),var(--page-elevated))] p-5 sm:p-7">
-        <Texture kind="contours" className="hidden left-auto top-auto h-36 w-52 opacity-60 sm:block" opacity={0.2} />
+        <Texture kind="contours" className="hidden left-auto top-auto h-36 w-52 opacity-40 sm:block" opacity={0.07} />
         <div className="relative z-10">
         <div className="flex items-center justify-between gap-3"><div><p className="m-0 font-[family-name:var(--font-mono)] text-[12px] uppercase tracking-[.15em] text-[var(--dim)]">Explore the workspace</p><h2 className="mb-0 mt-2 text-[24px] font-semibold tracking-[-.03em] text-[var(--ink)] sm:text-[28px]">A few open paths.</h2></div><span className="text-[28px] text-[var(--accent)]" aria-hidden="true">⌁</span></div>
         <div className="mt-6 divide-y divide-[var(--line)]">

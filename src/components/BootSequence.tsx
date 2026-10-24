@@ -1,5 +1,6 @@
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { BrandMark } from "./icons";
 
 const startupLines = [
   "mounting /home/chandrakant/workspace",
@@ -73,9 +74,7 @@ export function BootSequence({ motionEnabled, themeClasses, onComplete }: { moti
         transition={{ duration: animate ? .35 : 0, ease: [.22, 1, .36, 1] }}
       >
         <header className="flex min-h-14 items-center gap-3 border-b border-[var(--line)] px-4 sm:px-6">
-          <span className="grid h-8 w-8 place-items-center rounded-lg border border-[var(--accent-line)] bg-[var(--accent-soft)]">
-            <img className="h-6 w-6" src="/favicon.svg" alt="" />
-          </span>
+          <BrandMark className="h-8 w-8 shrink-0" />
           <span className="font-[family-name:var(--font-mono)] text-[13px] text-[var(--muted)]">chandrakant@drakon: ~</span>
           <span className="ml-auto hidden font-[family-name:var(--font-mono)] text-[11px] uppercase tracking-[.14em] text-[var(--dim)] sm:block">startup sequence</span>
           <span aria-live="polite" className="ml-auto font-[family-name:var(--font-mono)] text-[11px] text-[var(--accent)] sm:ml-0">{sequenceNumber} / 03</span>
@@ -111,13 +110,11 @@ export function BootSequence({ motionEnabled, themeClasses, onComplete }: { moti
           <div className="pointer-events-none absolute right-[-9%] top-[21%] grid aspect-square w-[38%] max-w-[150px] place-items-center opacity-[.12] sm:relative sm:right-auto sm:top-auto sm:w-full sm:opacity-100" aria-hidden="true">
             <div className="absolute inset-0 rounded-full border border-dashed border-[var(--accent-line)]" />
             <div className="absolute inset-[12%] rounded-full bg-[radial-gradient(circle,var(--accent-soft),transparent_70%)]" />
-            <motion.img
-              className="relative h-[58%] w-[58%] drop-shadow-[0_0_24px_var(--accent-soft)]"
-              src="/favicon.svg"
-              alt=""
+            <motion.div
+              className="relative grid h-[58%] w-[58%] place-items-center drop-shadow-[0_0_24px_var(--accent-soft)]"
               animate={animate ? { rotate: [0, 3, 0] } : undefined}
               transition={{ duration: 4, ease: "easeInOut", repeat: Infinity }}
-            />
+            ><BrandMark className="h-full w-full" /></motion.div>
           </div>
 
           <div className="relative z-10 flex items-center justify-between gap-4 border-t border-[var(--line)] pt-5 sm:col-span-2">

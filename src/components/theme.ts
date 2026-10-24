@@ -1,17 +1,17 @@
 export type ThemeName = "evergreen" | "paper" | "void" | "glacial";
 
 export const themes: { id: ThemeName; name: string; description: string; surface: string; scheme: "dark" | "light" }[] = [
-  { id: "evergreen", name: "Dragonfire", description: "Acid lime · deep forest", surface: "#0a1410", scheme: "dark" },
-  { id: "void", name: "Emberglass", description: "Hot coral · ink violet", surface: "#160f1e", scheme: "dark" },
-  { id: "paper", name: "Citrus paper", description: "Warm ivory · vermilion", surface: "#fff8e9", scheme: "light" },
-  { id: "glacial", name: "Tidal blue", description: "Clear sky · deep azure", surface: "#f1faff", scheme: "light" },
+  { id: "void", name: "Lightning Blue", description: "Electric blue · midnight shell", surface: "#071421", scheme: "dark" },
+  { id: "evergreen", name: "Neon Green", description: "Laser green · deep forest", surface: "#081710", scheme: "dark" },
+  { id: "paper", name: "Burning Red", description: "Signal red · warm ivory", surface: "#fff8f1", scheme: "light" },
+  { id: "glacial", name: "Cyan", description: "Bright cyan · ice terminal", surface: "#effbff", scheme: "light" },
 ];
 
 export const paletteClasses: Record<ThemeName, string> = {
-  evergreen: "[--page:#0a1410] [--page-elevated:#0f1d16] [--panel:#12251b] [--panel-solid:#172d21] [--panel-raised:#1d3828] [--ink:#f2f8ed] [--muted:#c1d0bd] [--dim:#93a995] [--line:#304b39] [--line-strong:#496a4b] [--lime:#d4f36b] [--ember:#ff9e64] [--cyan:#65e2c3] [--violet:#c9a2ff] [--focus:#e7ff9a] [--accent:#d4f36b] [--accent-ink:#18220b] [--accent-soft:#d4f36b22] [--accent-line:#d4f36b80] [--dragon:#b7ed5a] [--dragon-soft:#b7ed5a24] [--shadow-glass:#02080470]",
-  void: "[--page:#160f1e] [--page-elevated:#21152a] [--panel:#281a31] [--panel-solid:#30203a] [--panel-raised:#3d2947] [--ink:#fff4f7] [--muted:#dbc5d4] [--dim:#b39aaa] [--line:#51374f] [--line-strong:#714c67] [--lime:#d4f36b] [--ember:#ffad6e] [--cyan:#79e6e7] [--violet:#e6a5ff] [--focus:#ffd1e9] [--accent:#ff79b7] [--accent-ink:#321126] [--accent-soft:#ff79b724] [--accent-line:#ff79b780] [--dragon:#ff986c] [--dragon-soft:#ff986c26] [--shadow-glass:#09040c80]",
-  paper: "[--page:#fff8e9] [--page-elevated:#fff0d4] [--panel:#fffdf7] [--panel-solid:#fffdf7] [--panel-raised:#f8e7c8] [--ink:#2b2118] [--muted:#594b3e] [--dim:#766758] [--line:#e7d7bd] [--line-strong:#cdb795] [--lime:#557b19] [--ember:#a9381d] [--cyan:#08746e] [--violet:#7047a0] [--focus:#b73e20] [--accent:#b83f20] [--accent-ink:#fffaf0] [--accent-soft:#b83f2018] [--accent-line:#b83f2070] [--dragon:#cd5c2f] [--dragon-soft:#cd5c2f18] [--shadow-glass:#5c381a1f]",
-  glacial: "[--page:#f1faff] [--page-elevated:#e3f4ff] [--panel:#fbfeff] [--panel-solid:#fbfeff] [--panel-raised:#dff1fb] [--ink:#152a39] [--muted:#405a6b] [--dim:#60798a] [--line:#c9e1ee] [--line-strong:#9fc4d6] [--lime:#507b1e] [--ember:#b34b2c] [--cyan:#056f91] [--violet:#6248ad] [--focus:#075d9b] [--accent:#086cae] [--accent-ink:#f5fbff] [--accent-soft:#086cae18] [--accent-line:#086cae70] [--dragon:#087d91] [--dragon-soft:#087d9119] [--shadow-glass:#163d561d]",
+  evergreen: "[--page:#081710] [--page-elevated:#0c2015] [--panel:#10271a] [--panel-solid:#15321f] [--panel-raised:#1c3d26] [--ink:#f2ffec] [--muted:#c3ddc5] [--dim:#8fad96] [--line:#284b34] [--line-strong:#3d6b46] [--lime:#b4ff45] [--ember:#ff765d] [--cyan:#53e6d2] [--violet:#c4a7ff] [--focus:#d6ff9c] [--accent:#adff3f] [--accent-ink:#11200b] [--accent-soft:#adff3f24] [--accent-line:#adff3f82] [--dragon:#adff3f] [--dragon-soft:#adff3f21] [--shadow-glass:#020b0570]",
+  void: "[--page:#071421] [--page-elevated:#0b1d31] [--panel:#102740] [--panel-solid:#153150] [--panel-raised:#1c3e62] [--ink:#eff8ff] [--muted:#c2d8eb] [--dim:#8eabc7] [--line:#284867] [--line-strong:#3c6792] [--lime:#baff4a] [--ember:#ff705d] [--cyan:#5ef1ea] [--violet:#c1b5ff] [--focus:#a9d7ff] [--accent:#56adff] [--accent-ink:#071829] [--accent-soft:#56adff25] [--accent-line:#56adff85] [--dragon:#56adff] [--dragon-soft:#56adff25] [--shadow-glass:#020a147a]",
+  paper: "[--page:#fff8f1] [--page-elevated:#fff0e6] [--panel:#fffdfb] [--panel-solid:#fffdfb] [--panel-raised:#ffe7d9] [--ink:#321e1b] [--muted:#654741] [--dim:#8a6b64] [--line:#efd5c8] [--line-strong:#d8aa98] [--lime:#397522] [--ember:#b83527] [--cyan:#087b76] [--violet:#7047a0] [--focus:#a82724] [--accent:#d6332b] [--accent-ink:#fffaf7] [--accent-soft:#d6332b18] [--accent-line:#d6332b75] [--dragon:#d6332b] [--dragon-soft:#d6332b16] [--shadow-glass:#5b2a201c]",
+  glacial: "[--page:#effbff] [--page-elevated:#def5fb] [--panel:#fbfeff] [--panel-solid:#fbfeff] [--panel-raised:#d9f1f7] [--ink:#102c39] [--muted:#3c5d6b] [--dim:#64818e] [--line:#c5e5eb] [--line-strong:#91c8d2] [--lime:#477b23] [--ember:#bd492e] [--cyan:#007c96] [--violet:#6349a5] [--focus:#006f87] [--accent:#008da7] [--accent-ink:#f6feff] [--accent-soft:#008da71b] [--accent-line:#008da775] [--dragon:#008da7] [--dragon-soft:#008da718] [--shadow-glass:#143d4b1d]",
 };
 
 const storageKey = "chandrakant-portfolio-theme-terminal-v1";

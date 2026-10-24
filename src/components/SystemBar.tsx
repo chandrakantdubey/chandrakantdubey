@@ -2,6 +2,7 @@ import type { ThemeName } from "./theme";
 import { ThemePicker } from "./ThemePicker";
 import { navigation, type WorkspaceView } from "./navigation";
 import { profile } from "../portfolio";
+import { BrandMark, HomeIcon } from "./icons";
 
 export function SystemBar({ theme, onThemeChange, motionEnabled, onMotionToggle, onPaletteOpen, view, onNavigate }: {
   theme: ThemeName;
@@ -16,13 +17,7 @@ export function SystemBar({ theme, onThemeChange, motionEnabled, onMotionToggle,
     <header className="sticky top-0 z-40 border-b border-[var(--line)] bg-[var(--page)]/90 px-3 backdrop-blur-2xl sm:px-6 lg:px-8">
       <div className="mx-auto flex min-h-[68px] max-w-[1600px] items-center gap-2 sm:gap-5">
         <a href="#home" onClick={(event) => { event.preventDefault(); onNavigate("home"); }} className="group flex min-h-12 min-w-0 items-center gap-2 rounded-xl pr-1 focus-visible:outline-2 focus-visible:outline-[var(--focus)] sm:gap-3" aria-label="Chandrakant Dubey workspace home">
-          <span className="grid h-10 w-10 shrink-0 place-items-center overflow-hidden rounded-xl border border-[var(--accent-line)] bg-[var(--accent-soft)] text-[var(--accent)] shadow-[0_0_24px_var(--accent-soft)]" aria-hidden="true">
-            <svg viewBox="0 0 40 40" className="h-7 w-7" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M8 28c2-5 6-9 12-11 3-1 5-4 4-9 4 4 7 7 12 8l-5 3c-2 4-6 6-11 4-3 4-7 6-12 5Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
-              <path d="M25 10c2-3 5-5 9-6-1 4-.5 7 2 10M15 24c-4 2-6 5-6 9m13-11c2 3 4 5 8 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-              <circle cx="29" cy="17" r="1.2" fill="var(--ember)" />
-            </svg>
-          </span>
+          <BrandMark className="h-10 w-10 shrink-0 drop-shadow-[0_0_18px_var(--accent-soft)] transition-transform duration-300 group-hover:scale-[1.04]" />
           <span className="hidden min-w-0 min-[380px]:block">
             <span className="block truncate text-[13px] font-semibold tracking-tight text-[var(--ink)] sm:text-[15px]">DRAKON</span>
             <span className="hidden font-[family-name:var(--font-mono)] text-[11px] text-[var(--dim)] sm:block">{profile.name.toLowerCase().replaceAll(" ", "")}</span>
@@ -41,7 +36,7 @@ export function SystemBar({ theme, onThemeChange, motionEnabled, onMotionToggle,
       </div>
     </header>
     <nav className="sticky top-[68px] z-30 grid grid-cols-5 border-b border-[var(--line)] bg-[var(--page)]/95 px-2 py-1 backdrop-blur-2xl lg:hidden" aria-label="Mobile navigation">
-      {navigation.map((item) => <a key={item.id} href={item.id === "work" ? "#work" : `#${item.id}`} onClick={(event) => { event.preventDefault(); onNavigate(item.id); }} aria-current={view === item.id ? "page" : undefined} className={"flex min-h-12 min-w-0 flex-col items-center justify-center gap-0.5 rounded-lg px-1 text-[12px] font-medium leading-tight transition focus-visible:outline-2 focus-visible:outline-[var(--focus)] " + (view === item.id ? "text-[var(--accent)]" : "text-[var(--dim)] hover:text-[var(--ink)]")}><span aria-hidden="true" className="text-[17px] leading-5">{item.glyph}</span><span className="truncate">{item.short}</span></a>)}
+      {navigation.map((item) => <a key={item.id} href={item.id === "work" ? "#work" : `#${item.id}`} onClick={(event) => { event.preventDefault(); onNavigate(item.id); }} aria-current={view === item.id ? "page" : undefined} className={"flex min-h-12 min-w-0 flex-col items-center justify-center gap-0.5 rounded-lg px-1 text-[12px] font-medium leading-tight transition focus-visible:outline-2 focus-visible:outline-[var(--focus)] " + (view === item.id ? "text-[var(--accent)]" : "text-[var(--dim)] hover:text-[var(--ink)]")}><span aria-hidden="true" className="grid h-[20px] place-items-center text-[17px] leading-5">{item.id === "home" ? <HomeIcon className="h-[18px] w-[18px]" /> : item.glyph}</span><span className="truncate">{item.short}</span></a>)}
     </nav>
   </>;
 }

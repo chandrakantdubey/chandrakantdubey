@@ -3,10 +3,10 @@ import type { ThemeName } from "./theme";
 import { themes } from "./theme";
 
 const swatches: Record<ThemeName, string[]> = {
-  evergreen: ["#d4f36b", "#ff9e64", "#65e2c3"],
-  void: ["#ff79b7", "#ffad6e", "#79e6e7"],
-  paper: ["#b83f20", "#557b19", "#08746e"],
-  glacial: ["#086cae", "#087d91", "#6248ad"],
+  evergreen: ["#adff3f", "#53e6d2", "#ff765d"],
+  void: ["#56adff", "#5ef1ea", "#ff705d"],
+  paper: ["#d6332b", "#087b76", "#397522"],
+  glacial: ["#008da7", "#006f87", "#bd492e"],
 };
 
 export function ThemePicker({ theme, onChange }: { theme: ThemeName; onChange: (value: ThemeName) => void }) {
