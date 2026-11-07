@@ -1,5 +1,35 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect x="3" y="3" width="58" height="58" rx="29" fill="#141820" stroke="#d5f080" stroke-width="2" />
-  <text x="31" y="46" fill="#f3f0e9" font-family="Georgia, 'Times New Roman', serif" font-size="42" text-anchor="middle">C</text>
-  <circle cx="46" cy="43" r="3" fill="#d5f080" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <rect width="64" height="64" rx="16" fill="#030712" />
+  <circle cx="32" cy="32" r="26" stroke="#1e3a63" stroke-width="1.5" />
+  <circle cx="32" cy="32" r="23" stroke="#38bdf8" stroke-width="1.5" />
+  <circle cx="32" cy="32" r="6" fill="#0f172a" stroke="#38bdf8" stroke-width="1.8" />
+  <circle cx="32" cy="32" r="2.5" fill="#ffffff" />
+  <!-- 24 Spokes of Ashoka Chakra -->
+  <g stroke="#38bdf8" stroke-width="1.2" stroke-linecap="round">
+    <line x1="32" y1="9" x2="32" y2="26" />
+    <line x1="32" y1="38" x2="32" y2="55" />
+    <line x1="9" y1="32" x2="26" y2="32" />
+    <line x1="38" y1="32" x2="55" y2="32" />
+    <line x1="15.74" y1="15.74" x2="27.76" y2="27.76" />
+    <line x1="36.24" y1="36.24" x2="48.26" y2="48.26" />
+    <line x1="15.74" y1="48.26" x2="27.76" y2="36.24" />
+    <line x1="36.24" y1="27.76" x2="48.26" y2="15.74" />
+    <!-- 15 deg, 30 deg, 60 deg, 75 deg and symmetrical pairs -->
+    <line x1="32" y1="32" x2="36.4" y2="9.4" stroke-dasharray="17" stroke-dashoffset="-6" />
+    <line x1="32" y1="32" x2="27.6" y2="9.4" stroke-dasharray="17" stroke-dashoffset="-6" />
+    <line x1="32" y1="32" x2="43.5" y2="12.1" stroke-dasharray="17" stroke-dashoffset="-6" />
+    <line x1="32" y1="32" x2="20.5" y2="12.1" stroke-dasharray="17" stroke-dashoffset="-6" />
+    <line x1="32" y1="32" x2="49.9" y2="18.5" stroke-dasharray="17" stroke-dashoffset="-6" />
+    <line x1="32" y1="32" x2="14.1" y2="18.5" stroke-dasharray="17" stroke-dashoffset="-6" />
+    <line x1="32" y1="32" x2="54.6" y2="25.6" stroke-dasharray="17" stroke-dashoffset="-6" />
+    <line x1="32" y1="32" x2="9.4" y2="25.6" stroke-dasharray="17" stroke-dashoffset="-6" />
+    <line x1="32" y1="32" x2="54.6" y2="38.4" stroke-dasharray="17" stroke-dashoffset="-6" />
+    <line x1="32" y1="32" x2="9.4" y2="38.4" stroke-dasharray="17" stroke-dashoffset="-6" />
+    <line x1="32" y1="32" x2="49.9" y2="45.5" stroke-dasharray="17" stroke-dashoffset="-6" />
+    <line x1="32" y1="32" x2="14.1" y2="45.5" stroke-dasharray="17" stroke-dashoffset="-6" />
+    <line x1="32" y1="32" x2="43.5" y2="51.9" stroke-dasharray="17" stroke-dashoffset="-6" />
+    <line x1="32" y1="32" x2="20.5" y2="51.9" stroke-dasharray="17" stroke-dashoffset="-6" />
+    <line x1="32" y1="32" x2="36.4" y2="54.6" stroke-dasharray="17" stroke-dashoffset="-6" />
+    <line x1="32" y1="32" x2="27.6" y2="54.6" stroke-dasharray="17" stroke-dashoffset="-6" />
+  </g>
 </svg>
