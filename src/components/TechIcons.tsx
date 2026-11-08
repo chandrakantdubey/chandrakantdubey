@@ -15,7 +15,7 @@ export function TechIcon({ name, className = "w-5 h-5" }: { name: string; classN
   if (normalized.includes("typescript")) {
     return (
       <svg className={className} viewBox="0 0 128 128" fill="none">
-        <rect width="128" height="128" rx="16" fill="#3178c6" />
+        <rect width="128" height="128" rx="20" fill="#3178c6" />
         <path d="M70.9 88.5c2.3 3.9 6.2 6.6 11.5 6.6 6.3 0 10.3-3.4 10.3-8.1 0-5.4-4.4-7.4-12.2-10.8-11.2-4.9-16.4-10.4-16.4-20.5 0-11.2 8.9-19.4 22.8-19.4 9.9 0 17 3.9 21.2 11.7l-9.7 6.2c-2.4-4.5-5.5-6.6-11.5-6.6-5.8 0-9.2 3.3-9.2 7.4 0 4.8 3.6 6.9 11.5 10.3 12.3 5.3 17.2 10.9 17.2 21.3 0 12.8-9.9 20.3-24.6 20.3-12.9 0-21.6-5.9-25.7-14.7l14.8-3.7zM24 49h39.4v12.2H49.8v43.5H33.6V61.2H24V49z" fill="#ffffff" />
       </svg>
     );
@@ -25,19 +25,19 @@ export function TechIcon({ name, className = "w-5 h-5" }: { name: string; classN
   if (normalized.includes("javascript")) {
     return (
       <svg className={className} viewBox="0 0 128 128" fill="none">
-        <rect width="128" height="128" rx="16" fill="#f7df1e" />
+        <rect width="128" height="128" rx="20" fill="#f7df1e" />
         <path d="M33.4 98.7c2.6 4.3 6.6 7.4 13.5 7.4 7.7 0 12.5-4 12.5-12.8V49.2H46.7v44c0 3.3-1.6 4.8-4.7 4.8-2.6 0-4.3-1.4-5.6-3.8l-3 4.5zM75.2 96.6c3.2 5.3 8.8 9.5 17.7 9.5 10.4 0 17.2-5.4 17.2-13.6 0-8.9-6.4-12.3-17.7-17.1-8.5-3.6-12.2-6.5-12.2-11.7 0-4.9 3.8-8.7 10.4-8.7 5.9 0 9.8 2.3 12.8 7.3l8.9-5.7c-4.9-8.4-12.5-12.3-21.7-12.3-12.4 0-20.7 7.7-20.7 18.5 0 11.2 7.1 16.3 17.9 20.8 9 3.8 13.2 6.8 13.2 12.4 0 5.6-5 9.3-11.8 9.3-8.2 0-13.1-4.6-16.1-10.4l-7.9 5.7z" fill="#000000" />
       </svg>
     );
   }
 
-  // React
+  // React & React Native
   if (normalized.includes("react")) {
     return (
       <svg className={className} viewBox="0 0 128 128" fill="none">
-        <ellipse cx="64" cy="64" rx="20" ry="52" stroke="#61dafb" strokeWidth="6" transform="rotate(30 64 64)" />
-        <ellipse cx="64" cy="64" rx="20" ry="52" stroke="#61dafb" strokeWidth="6" transform="rotate(90 64 64)" />
-        <ellipse cx="64" cy="64" rx="20" ry="52" stroke="#61dafb" strokeWidth="6" transform="rotate(150 64 64)" />
+        <ellipse cx="64" cy="64" rx="20" ry="54" stroke="#61dafb" strokeWidth="6" transform="rotate(30 64 64)" />
+        <ellipse cx="64" cy="64" rx="20" ry="54" stroke="#61dafb" strokeWidth="6" transform="rotate(90 64 64)" />
+        <ellipse cx="64" cy="64" rx="20" ry="54" stroke="#61dafb" strokeWidth="6" transform="rotate(150 64 64)" />
         <circle cx="64" cy="64" r="10" fill="#61dafb" />
       </svg>
     );
@@ -58,8 +58,29 @@ export function TechIcon({ name, className = "w-5 h-5" }: { name: string; classN
     return (
       <svg className={className} viewBox="0 0 128 128" fill="none">
         <path d="M64 4l52 30v60l-52 30-52-30V34L64 4z" fill="#339933" />
-        <path d="M64 16l42 24v48L64 112 22 88V40l42-24z" fill="#222222" />
+        <path d="M64 16l42 24v48L64 112 22 88V40l42-24z" fill="#1b241b" />
         <path d="M54 44v34l22-12V44l-22 12z" fill="#83cd29" />
+      </svg>
+    );
+  }
+
+  // Express
+  if (normalized.includes("express")) {
+    return (
+      <svg className={className} viewBox="0 0 128 128" fill="none">
+        <rect width="128" height="128" rx="20" fill="#2d3748" />
+        <path d="M30 40h44v14H46v16h24v14H46v18h28v14H30V40zM80 72l16-24h18l-18 26 20 30H98l-18-28v28H66V40h14v32z" fill="#ffffff" />
+      </svg>
+    );
+  }
+
+  // Django
+  if (normalized.includes("django")) {
+    return (
+      <svg className={className} viewBox="0 0 128 128" fill="none">
+        <rect width="128" height="128" rx="20" fill="#092e20" />
+        <path d="M66 28h18v48c0 14-8 24-24 24-10 0-18-5-22-12l15-8c2 4 5 6 9 6 6 0 9-4 9-10V28z" fill="#44b78b" />
+        <path d="M84 40h-8v-9h8V40z" fill="#44b78b" />
       </svg>
     );
   }
@@ -68,7 +89,7 @@ export function TechIcon({ name, className = "w-5 h-5" }: { name: string; classN
   if (normalized.includes("next")) {
     return (
       <svg className={className} viewBox="0 0 128 128" fill="none">
-        <circle cx="64" cy="64" r="60" fill="#000000" stroke="#3b82f6" strokeWidth="3" />
+        <circle cx="64" cy="64" r="60" fill="#0f172a" stroke="#3b82f6" strokeWidth="4" />
         <path d="M44 40v48h10V56.2l32.2 31.8h8.8V40H85v31.8L52.8 40H44z" fill="#ffffff" />
       </svg>
     );
@@ -164,8 +185,8 @@ export function TechIcon({ name, className = "w-5 h-5" }: { name: string; classN
     );
   }
 
-  // SQLite
-  if (normalized.includes("sqlite")) {
+  // SQLite / Generic SQL
+  if (normalized.includes("sqlite") || normalized === "sql") {
     return (
       <svg className={className} viewBox="0 0 128 128" fill="none">
         <path d="M20 30c0-12 20-20 44-20s44 8 44 20v68c0 12-20 20-44 20s-44-8-44-20V30z" fill="#003b57" />
@@ -175,11 +196,128 @@ export function TechIcon({ name, className = "w-5 h-5" }: { name: string; classN
     );
   }
 
-  // Applied AI / Machine Learning
-  if (normalized.includes("ai") || normalized.includes("ml") || normalized.includes("inference") || normalized.includes("llm") || normalized.includes("rag")) {
+  // WebSockets / Socket.IO
+  if (normalized.includes("socket") || normalized.includes("websocket")) {
     return (
       <svg className={className} viewBox="0 0 128 128" fill="none">
-        <rect width="128" height="128" rx="24" fill="#6366f1" />
+        <rect width="128" height="128" rx="20" fill="#0e7490" />
+        <path d="M64 24L36 68h28l-8 36 36-48H64l8-32z" fill="#ffffff" />
+      </svg>
+    );
+  }
+
+  // Git / GitHub / Version Control
+  if (normalized.includes("git")) {
+    return (
+      <svg className={className} viewBox="0 0 128 128" fill="none">
+        <rect width="128" height="128" rx="20" fill="#f05032" />
+        <path d="M92 64a12 12 0 1 1-12-12 12 12 0 0 1 12 12zm-40 0a12 12 0 1 1-12-12 12 12 0 0 1 12 12zm0 28a12 12 0 1 1-12-12 12 12 0 0 1 12 12z" fill="#ffffff" />
+        <path d="M40 64v28M40 64h40" stroke="#ffffff" strokeWidth="8" strokeLinecap="round" />
+      </svg>
+    );
+  }
+
+  // Linux / RHEL
+  if (normalized.includes("linux") || normalized.includes("rhel")) {
+    return (
+      <svg className={className} viewBox="0 0 128 128" fill="none">
+        <rect width="128" height="128" rx="20" fill="#cc0000" />
+        <path d="M24 78c0-20 18-36 40-36s40 16 40 36H24z" fill="#ffffff" />
+        <circle cx="50" cy="62" r="5" fill="#000000" />
+        <circle cx="78" cy="62" r="5" fill="#000000" />
+        <ellipse cx="64" cy="74" rx="12" ry="6" fill="#f59e0b" />
+      </svg>
+    );
+  }
+
+  // Nginx
+  if (normalized.includes("nginx")) {
+    return (
+      <svg className={className} viewBox="0 0 128 128" fill="none">
+        <rect width="128" height="128" rx="20" fill="#009639" />
+        <path d="M36 36v56l56-56v56" stroke="#ffffff" strokeWidth="12" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    );
+  }
+
+  // BalkanJS / Graph Engine
+  if (normalized.includes("balkan") || normalized.includes("graph")) {
+    return (
+      <svg className={className} viewBox="0 0 128 128" fill="none">
+        <rect width="128" height="128" rx="20" fill="#6366f1" />
+        <circle cx="64" cy="36" r="14" fill="#ffffff" />
+        <circle cx="36" cy="92" r="14" fill="#ffffff" />
+        <circle cx="92" cy="92" r="14" fill="#ffffff" />
+        <path d="M64 50l-28 42M64 50l28 42" stroke="#ffffff" strokeWidth="6" />
+      </svg>
+    );
+  }
+
+  // Framer Motion
+  if (normalized.includes("motion") || normalized.includes("framer")) {
+    return (
+      <svg className={className} viewBox="0 0 128 128" fill="none">
+        <rect width="128" height="128" rx="20" fill="#ec4899" />
+        <path d="M36 28h56v36H64L36 28zm0 36h28l28 36H36V64zm28 36l28-28v28H64z" fill="#ffffff" />
+      </svg>
+    );
+  }
+
+  // Pydantic / Validation / Security
+  if (normalized.includes("pydantic") || normalized.includes("jwt") || normalized.includes("rbac") || normalized.includes("security")) {
+    return (
+      <svg className={className} viewBox="0 0 128 128" fill="none">
+        <rect width="128" height="128" rx="20" fill="#e11d48" />
+        <path d="M64 24l32 12v28c0 24-16 40-32 44-16-4-32-20-32-44V36l32-12z" fill="#ffffff" />
+        <path d="M54 64l8 8 16-16" stroke="#e11d48" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    );
+  }
+
+  // Testing / Pytest
+  if (normalized.includes("pytest") || normalized.includes("test")) {
+    return (
+      <svg className={className} viewBox="0 0 128 128" fill="none">
+        <rect width="128" height="128" rx="20" fill="#0284c7" />
+        <path d="M48 32h32v20l18 36a8 8 0 0 1-7 12H37a8 8 0 0 1-7-12l18-36V32z" stroke="#ffffff" strokeWidth="7" fill="none" strokeLinejoin="round" />
+        <circle cx="56" cy="80" r="4" fill="#ffffff" />
+        <circle cx="70" cy="74" r="5" fill="#ffffff" />
+      </svg>
+    );
+  }
+
+  // Shell / Bash
+  if (normalized.includes("bash") || normalized.includes("shell")) {
+    return (
+      <svg className={className} viewBox="0 0 128 128" fill="none">
+        <rect width="128" height="128" rx="20" fill="#1e293b" />
+        <path d="M34 46l20 18-20 18M60 82h34" stroke="#4ade80" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    );
+  }
+
+  // HTML / CSS
+  if (normalized.includes("html") || normalized.includes("css")) {
+    return (
+      <svg className={className} viewBox="0 0 128 128" fill="none">
+        <rect width="128" height="128" rx="20" fill="#e44d26" />
+        <path d="M32 32l6 64 26 8 26-8 6-64H32zm48 20H48l2 16h28l-2 18-12 4-12-4-1-8H40l2 16 22 7 22-7 4-42z" fill="#ffffff" />
+      </svg>
+    );
+  }
+
+  // Applied AI / Machine Learning / LLM / RAG
+  if (
+    normalized.includes("ai") ||
+    normalized.includes("ml") ||
+    normalized.includes("inference") ||
+    normalized.includes("llm") ||
+    normalized.includes("rag") ||
+    normalized.includes("model")
+  ) {
+    return (
+      <svg className={className} viewBox="0 0 128 128" fill="none">
+        <rect width="128" height="128" rx="20" fill="#8b5cf6" />
         <circle cx="64" cy="64" r="28" stroke="#ffffff" strokeWidth="6" />
         <circle cx="64" cy="64" r="12" fill="#ffffff" />
         <line x1="64" y1="12" x2="64" y2="36" stroke="#ffffff" strokeWidth="6" strokeLinecap="round" />
