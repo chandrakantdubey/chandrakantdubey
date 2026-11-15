@@ -35,14 +35,6 @@ Full-stack software engineer with **3+ years of experience** architecting high-s
 ### 📊 Real-Time GitHub & Profile Telemetry
 
 <div align="center">
-
-<!-- GitHub Trophies -->
-<a href="https://github.com/chandrakantdubey">
-  <img src="https://github-profile-trophy.vercel.app/?username=chandrakantdubey&theme=radical&no-frame=true&margin-w=4&row=1&column=7" alt="Chandrakant's GitHub Trophies" />
-</a>
-
-<br/><br/>
-
 <table border="0">
   <tr>
     <td width="50%">
@@ -164,11 +156,11 @@ Full-stack software engineer with **3+ years of experience** architecting high-s
                  ├── Real-time ML inference integration for customer risk scoring
                  └── Dockerized cloud deployments on AWS EC2 & RHEL
 
-2025             Full Stack Engineer @ Nutriiya (Mumbai, India)
+2025 - 2026      Full Stack Engineer @ Nutriiya (Mumbai, India)
                  ├── High-performance nutrition telemetry web features with Next.js & React
                  └── Microservice endpoints in FastAPI and automated CI/CD pipelines
 
-2024 – 2026      Full Stack Developer @ Kintree Pvt. Ltd. (Mumbai, India)
+2024 – 2025      Full Stack Developer @ Kintree Pvt. Ltd. (Mumbai, India)
                  ├── 500k+ kinship tree rendering with BalkanJS, React & Redux Toolkit
                  ├── Low-latency real-time collaboration with Node.js & Socket.IO
                  └── Django API performance redesign reducing query latency by 40%
