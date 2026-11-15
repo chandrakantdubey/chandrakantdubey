@@ -27,7 +27,7 @@ Full-stack software engineer with **3+ years of experience** architecting high-s
 
 - 📍 **Location**: Mumbai, Maharashtra, India 🇮🇳
 - 💼 **Current Role**: Full Stack Engineer at **Adeptken**
-- ⚡ **Core Strengths**: Enterprise Systems (IDBI Bank Platform), Sub-45ms ML Inference Microservices, 500k+ Node Graph Networks (Kintree), and High-Conversion E-Commerce.
+- ⚡ **Core Strengths**: Enterprise Systems, Sub-45ms ML Inference Microservices, 500k+ Node Graph Networks, and High-Conversion E-Commerce.
 - 🎯 **Primary Tech**: Python, FastAPI, Node.js, React 19, Next.js 15, TypeScript, Oracle Database, PostgreSQL, Docker, AWS.
 
 ---
