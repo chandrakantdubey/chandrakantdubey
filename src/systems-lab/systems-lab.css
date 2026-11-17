@@ -180,6 +180,14 @@ a { color: inherit; text-decoration: none; }
 .controls-top { padding-inline: 24px; }
 .controls-top > span { color: #e8eee4; }
 .controls-intro { padding: 24px 24px 14px; margin: 0; color: #b1bdb2; font-size: 13px; line-height: 1.7; }
+.scenario-presets { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; margin:0 24px 19px; }
+.scenario-preset { display:flex; flex-direction:column; gap:6px; align-items:flex-start; text-align:left; padding:11px; background:#202c26; border:1px solid #485b4d; color:#d7ded6; min-width:0; transition:background .2s,border-color .2s; }
+.scenario-preset span { font:600 12px "Space Grotesk",sans-serif; letter-spacing:-.02em; }
+.scenario-preset small { font-size:10px; line-height:1.4; color:#9ead9f; }
+.scenario-preset:hover { background:#293b30; border-color:#809281; }
+.scenario-preset[aria-pressed=true] { background:#41362e; border-color:var(--accent); }
+.scenario-preset[aria-pressed=true] span { color:#ffd4b9; }
+.scenario-preset[aria-pressed=true] small { color:#dfc0a9; }
 .lab-range { display: block; padding: 12px 24px 15px; }
 .range-title { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 12px; color: #c6cec4; }
 .range-title strong { color: #f0f0e5; font: 11px "IBM Plex Mono",monospace; }
@@ -330,6 +338,8 @@ a { color: inherit; text-decoration: none; }
   .lab-controls { grid-template-columns: 1fr; }
   .controls-intro,.controls-top,.control-divider,.sim-disclaimer { grid-column: 1; }
   .controls-intro { padding-inline: 18px; }
+  .scenario-presets { margin-inline:18px; }
+  .scenario-preset { padding:13px; }
   .lab-range { padding-inline: 18px; }
   .toggle-row { margin-inline: 18px; }
   .scenario-result { margin-inline: 18px; }
