@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { DEFAULT_SCENARIO, simulateScenario, explainTrace } from "../src/systems-lab/simulate.ts";
+import { SCENARIO_PRESETS, matchingPreset } from "../src/systems-lab/presets.ts";
 
 const baseline = simulateScenario(DEFAULT_SCENARIO);
 assert.equal(baseline.incoming, 1800);
@@ -46,6 +47,28 @@ for (const replicas of [1, 2, 3, 8]) {
       }
     }
   }
+}
+
+const seenPresets = new Set();
+for (const preset of SCENARIO_PRESETS) {
+  assert.ok(!seenPresets.has(preset.id), "Preset ID must be unique");
+  seenPresets.add(preset.id);
+  assert.equal(matchingPreset(preset.configuration), preset.id);
+  assert.equal(simulateScenario(preset.configuration).incoming, preset.configuration.requestsPerSecond);
+}
+assert.equal(matchingPreset(DEFAULT_SCENARIO), "baseline");
+assert.equal(matchingPreset({ ...DEFAULT_SCENARIO, replicas: 6 }), null);
+
+// Edge cases: request accounting must hold even for non-UI inputs.
+for (const config of [
+  {requestsPerSecond: 0, cacheHitRate: 0, replicas: 1, failure: true, retries: true},
+  {requestsPerSecond: Number.NaN, cacheHitRate: -100, replicas: 0, failure: false, retries: false},
+  {requestsPerSecond: 120000, cacheHitRate: 500, replicas: 200, failure: true, retries: true},
+]) {
+  const result = simulateScenario(config);
+  assert.equal(result.served + result.rejected, result.incoming);
+  assert.ok(result.successRate >= 0 && result.successRate <= 100);
+  assert.ok(result.capacity >= 0);
 }
 
 console.log("Systems Lab simulator checks passed.");
