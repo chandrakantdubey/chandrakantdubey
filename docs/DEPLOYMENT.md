@@ -57,10 +57,10 @@ Never commit tokens or .env files. The existing handler has process-local thrott
 
 ### Local verification
 
-\`\`\`bash
+```bash
 npm ci
 npm run build
 npm run dev
-\`\`\`
+```
 
 The simulator is entirely client-side and uses synthetic capacity assumptions. Do not treat its output as production telemetry.
