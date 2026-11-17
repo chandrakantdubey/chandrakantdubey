@@ -8,7 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "node --experimental-strip-types scripts/test-simulator.mjs"
+    "test": "node --experimental-strip-types scripts/test-simulator.mjs",
+    "lint:lab": "eslint src/systems-lab"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.3.3",
