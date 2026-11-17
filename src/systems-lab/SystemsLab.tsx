@@ -1,7 +1,7 @@
 import { useMemo, useState, type CSSProperties } from "react";
 import {
   Activity, ArrowDown, ArrowRight, ArrowUpRight, Check, ChevronRight,
-  Code2, ExternalLink, Github, Layers3, Linkedin, Menu, RotateCcw,
+  Code2, ExternalLink, GitBranch, Layers3, Briefcase, Menu, RotateCcw,
   ShieldCheck, TerminalSquare, X,
 } from "lucide-react";
 import { DEFAULT_SCENARIO, explainTrace, simulateScenario, type Scenario } from "./simulate";
@@ -276,7 +276,7 @@ export default function SystemsLab() {
           <div className="work-note"><ShieldCheck size={17}/><p>Professional systems are described at a high level to respect client confidentiality. The interactive lab is a synthetic demonstration, not a reproduction of an employer's architecture or metrics.</p></div>
         </section>
       </div>
-      <section className="contact-section" id="contact" aria-labelledby="contact-heading"><div className="site-width contact-inner"><div><div className="section-label"><span className="section-index">04 /</span> LET'S BUILD</div><h2 id="contact-heading">Have something<br/><em>worth solving?</em></h2><p>I'm interested in demanding engineering problems, thoughtful teams, and products where quality genuinely matters.</p></div><div className="contact-action"><a href="mailto:919chandrakant@gmail.com">Start a conversation <ArrowUpRight size={31}/></a><div className="contact-links"><a href="https://github.com/chandrakantdubey" target="_blank" rel="noopener noreferrer"><Github size={17}/> GitHub</a><a href="https://www.linkedin.com/in/chandra-kant-dubey/" target="_blank" rel="noopener noreferrer"><Linkedin size={17}/> LinkedIn</a><a href="/Chandrakant_Dubey.pdf" download><ArrowDown size={17}/> Résumé</a></div></div></div></section>
+      <section className="contact-section" id="contact" aria-labelledby="contact-heading"><div className="site-width contact-inner"><div><div className="section-label"><span className="section-index">04 /</span> LET'S BUILD</div><h2 id="contact-heading">Have something<br/><em>worth solving?</em></h2><p>I'm interested in demanding engineering problems, thoughtful teams, and products where quality genuinely matters.</p></div><div className="contact-action"><a href="mailto:919chandrakant@gmail.com">Start a conversation <ArrowUpRight size={31}/></a><div className="contact-links"><a href="https://github.com/chandrakantdubey" target="_blank" rel="noopener noreferrer"><GitBranch size={17}/> GitHub</a><a href="https://www.linkedin.com/in/chandra-kant-dubey/" target="_blank" rel="noopener noreferrer"><Briefcase size={17}/> LinkedIn</a><a href="/Chandrakant_Dubey.pdf" download><ArrowDown size={17}/> Résumé</a></div></div></div></section>
     </main>
     <footer className="site-footer"><div className="site-width footer-inner"><span className="footer-mark">CD<span>✳</span></span><p>© {year} Chandrakant Dubey.<br/>Designed and engineered with intent.</p><a href="#home">Back to top <ChevronRight size={17}/></a><span className="footer-location"><Check size={15}/> MADE IN MUMBAI</span></div></footer>
   </div>;
