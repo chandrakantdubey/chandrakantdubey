@@ -5,6 +5,7 @@ import {
   ShieldCheck, TerminalSquare, X,
 } from "lucide-react";
 import { DEFAULT_SCENARIO, explainTrace, simulateScenario, type Scenario } from "./simulate";
+import CaseStudyExplorer from "./CaseStudyExplorer";
 import "./systems-lab.css";
 
 type FeaturedProject = {
@@ -257,6 +258,7 @@ export default function SystemsLab() {
         <section className="section-block work-section" id="work" aria-labelledby="work-heading">
           <div className="section-head"><div><div className="section-label"><span className="section-index">01 /</span> SELECTED WORK</div><h2 id="work-heading">Systems with<br/><em>something to say.</em></h2></div><p>Software worth exploring beyond the screenshots. Each project links to its real source code, so you can trace the decisions from idea to implementation.</p></div>
           <div className="projects-grid">{projects.map(item=><ProjectCard key={item.slug} item={item}/>)}</div>
+          <CaseStudyExplorer/>
           <a className="all-repos" href="https://github.com/chandrakantdubey?tab=repositories" target="_blank" rel="noopener noreferrer">All public repositories <ArrowUpRight size={18}/></a>
         </section>
         <TraceSimulator/>
