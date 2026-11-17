@@ -36,13 +36,9 @@ If GitHub pushes create no Vercel deployment, first verify that Vercel's GitHub 
 
 ## Contact endpoint
 
-The redesigned website uses a direct mailto link, so launch does not depend on third-party email keys. The existing optional endpoint at /api/send-email still uses Resend. To enable it, configure these variables under **Vercel → Project → Settings → Environment Variables**:
+The website uses an email link (`mailto:`) and does **not** expose a public email-sending API. The old `/api/send-email` serverless handler was removed because it was unused by the redesigned site and had a process-local rate limiter that was unsuitable for a multi-instance serverless deployment.
 
-- RESEND_API_KEY (secret)
-- RESEND_FROM_EMAIL (verified sender)
-- CONTACT_EMAIL (recipient)
-
-Never commit tokens or .env files. The existing handler has process-local throttling, which is not distributed across serverless instances. If the contact form is brought back, use an edge/rate-limit service and bot-abuse mitigation before exposing it as a primary contact channel.
+There are **no required Resend environment variables** for this portfolio. Remove obsolete Resend keys from Vercel project settings if no other application depends on them. If a contact form is added later, implement distributed rate limiting, bot mitigation, bounded request bodies, and verified sending domains first.
 
 ## Smoke-test checklist
 
