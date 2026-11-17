@@ -14,7 +14,7 @@ export const SCENARIO_PRESETS: readonly ScenarioPreset[] = [
     description: "Moderate traffic with healthy replicas",
     configuration: {
       requestsPerSecond: 1800,
-      cacheHitRate: 40,
+      cacheHitRate: 42,
       replicas: 3,
       failure: false,
       retries: true,
