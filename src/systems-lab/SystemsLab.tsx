@@ -6,6 +6,7 @@ import {
 } from "lucide-react";
 import { DEFAULT_SCENARIO, explainTrace, simulateScenario, type Scenario } from "./simulate";
 import CaseStudyExplorer from "./CaseStudyExplorer";
+import { SCENARIO_PRESETS, matchingPreset } from "./presets";
 import "./systems-lab.css";
 
 type FeaturedProject = {
@@ -28,7 +29,6 @@ const projects: FeaturedProject[] = [
     stack: ["React", "TypeScript", "SVG", "Zustand"],
     href: "https://github.com/chandrakantdubey/style-scape",
     accent: "coral", highlight: "DETERMINISTIC RENDERING",
-    external: "https://style-scape-flax.vercel.app/",
   },
   {
     number: "02", title: "Pokédex RPG", slug: "pokedex", type: "API & GAME SYSTEMS",
@@ -67,7 +67,7 @@ function LabDiagram({ scenario, refresh }: { scenario: Scenario; refresh: number
   return (
     <div className="lab-diagram" aria-label="Illustrative request architecture from client through edge cache and application replicas to a data layer">
       <div className="diagram-topline">
-        <span><span className="led led-live" /> TOPOLOGY / SERVICE MESH</span>
+        <span><span className="led led-live" /> REQUEST PATH / COMPONENTS</span>
         <span className="mono muted">MODEL V1.0 / {String(refresh).padStart(3, "0")}</span>
       </div>
       <svg className="diagram-svg" key={refresh} viewBox="0 0 680 280" role="img" aria-label="Client connects to edge cache, then API service replicas and a database">
@@ -144,6 +144,7 @@ function TraceSimulator() {
   const [refresh, setRefresh] = useState(1);
   const model = useMemo(() => simulateScenario(scenario), [scenario]);
   const trace = useMemo(() => explainTrace(scenario, model), [scenario, model]);
+  const activePreset = matchingPreset(scenario);
   const update = (patch: Partial<Scenario>) => setScenario(current => ({...current, ...patch}));
   return (
     <section className="section-block lab-section" id="lab" aria-labelledby="lab-heading">
@@ -168,7 +169,17 @@ function TraceSimulator() {
         </div>
         <aside className="lab-controls" aria-label="Simulator controls">
           <div className="controls-top"><span className="mono">CONFIGURATION</span><button type="button" onClick={()=>{setScenario(DEFAULT_SCENARIO);setRefresh(x=>x+1)}} className="reset-button">Reset ↗</button></div>
-          <p className="controls-intro">Tune the workload. Observe how the system responds under stress.</p>
+          <p className="controls-intro">Start from a known workload, then tune the controls and observe the results.</p>
+          <div className="scenario-presets" role="group" aria-label="Example system configurations">
+            {SCENARIO_PRESETS.map(preset => (
+              <button key={preset.id} type="button" className="scenario-preset" aria-pressed={activePreset === preset.id}
+                title={preset.description}
+                onClick={() => { setScenario({ ...preset.configuration }); setRefresh(value => value + 1); }}>
+                <span>{preset.label}</span>
+                <small>{preset.description}</small>
+              </button>
+            ))}
+          </div>
           <RangeControl label="Incoming traffic" value={scenario.requestsPerSecond} min={100} max={6000} step={100} unit=" req/s" onChange={v=>update({requestsPerSecond:v})}/>
           <RangeControl label="Cache hit ratio" value={scenario.cacheHitRate} min={0} max={90} step={5} unit="%" onChange={v=>update({cacheHitRate:v})}/>
           <RangeControl label="API replicas" value={scenario.replicas} min={1} max={8} step={1} unit="" onChange={v=>update({replicas:v})}/>
@@ -270,10 +281,10 @@ export default function SystemsLab() {
             <div className="principle"><div className="principle-icon"><Code2 size={23}/></div><span>03 / INTERACTION DESIGN</span><h3>Make complexity legible.</h3><p>Powerful software should still feel intuitive. Performance, accessibility, and visual clarity are engineering requirements.</p></div>
           </div>
           <div className="experience-panel"><div><span className="mono">PROFESSIONAL EXPERIENCE / SELECTED</span><h3>Real work.<br/><em>Real constraints.</em></h3></div><div className="experience-rows">
-            <div><span>2026 — PRESENT</span><strong>Adeptken</strong><small>Enterprise applications · backend systems</small></div>
-            <div><span>2025 — 2026</span><strong>Nutriiya</strong><small>Full-stack product engineering</small></div>
-            <div><span>2024 — 2025</span><strong>Kintree</strong><small>Interactive graphs · APIs · collaboration</small></div>
-            <div><span>2023 — 2024</span><strong>Uvation</strong><small>Frontend engineering · commerce systems</small></div>
+            <div><span>JAN 2026 – PRESENT</span><strong>Adeptken</strong><small>Enterprise applications · backend systems</small></div>
+            <div><span>SEP – DEC 2025</span><strong>Nutriiya</strong><small>Full-stack product engineering</small></div>
+            <div><span>NOV 2024 – JAN 2026</span><strong>Kintree</strong><small>Interactive graphs · APIs · collaboration</small></div>
+            <div><span>AUG 2023 – OCT 2024</span><strong>Uvation</strong><small>Frontend engineering · commerce systems</small></div>
           </div></div>
           <div className="work-note"><ShieldCheck size={17}/><p>Professional systems are described at a high level to respect client confidentiality. The interactive lab is a synthetic demonstration, not a reproduction of an employer's architecture or metrics.</p></div>
         </section>

@@ -21,6 +21,8 @@ jobs:
           cache: npm
       - name: Install locked dependencies
         run: npm ci
+      - name: Audit production dependencies for high-severity advisories
+        run: npm audit --omit=dev --audit-level=high
       - name: Lint new application
         run: npm run lint:lab
       - name: Typecheck and build
@@ -32,3 +34,4 @@ jobs:
           test -f dist/index.html
           test -f dist/favicon.svg
           test -f dist/Chandrakant_Dubey.pdf
+          test ! -f api/send-email.ts
