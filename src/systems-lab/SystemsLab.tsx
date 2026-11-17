@@ -28,7 +28,6 @@ const projects: FeaturedProject[] = [
     stack: ["React", "TypeScript", "SVG", "Zustand"],
     href: "https://github.com/chandrakantdubey/style-scape",
     accent: "coral", highlight: "DETERMINISTIC RENDERING",
-    external: "https://style-scape-flax.vercel.app/",
   },
   {
     number: "02", title: "Pokédex RPG", slug: "pokedex", type: "API & GAME SYSTEMS",
@@ -270,10 +269,10 @@ export default function SystemsLab() {
             <div className="principle"><div className="principle-icon"><Code2 size={23}/></div><span>03 / INTERACTION DESIGN</span><h3>Make complexity legible.</h3><p>Powerful software should still feel intuitive. Performance, accessibility, and visual clarity are engineering requirements.</p></div>
           </div>
           <div className="experience-panel"><div><span className="mono">PROFESSIONAL EXPERIENCE / SELECTED</span><h3>Real work.<br/><em>Real constraints.</em></h3></div><div className="experience-rows">
-            <div><span>2026 — PRESENT</span><strong>Adeptken</strong><small>Enterprise applications · backend systems</small></div>
-            <div><span>2025 — 2026</span><strong>Nutriiya</strong><small>Full-stack product engineering</small></div>
-            <div><span>2024 — 2025</span><strong>Kintree</strong><small>Interactive graphs · APIs · collaboration</small></div>
-            <div><span>2023 — 2024</span><strong>Uvation</strong><small>Frontend engineering · commerce systems</small></div>
+            <div><span>JAN 2026 – PRESENT</span><strong>Adeptken</strong><small>Enterprise applications · backend systems</small></div>
+            <div><span>SEP – DEC 2025</span><strong>Nutriiya</strong><small>Full-stack product engineering</small></div>
+            <div><span>NOV 2024 – JAN 2026</span><strong>Kintree</strong><small>Interactive graphs · APIs · collaboration</small></div>
+            <div><span>AUG 2023 – OCT 2024</span><strong>Uvation</strong><small>Frontend engineering · commerce systems</small></div>
           </div></div>
           <div className="work-note"><ShieldCheck size={17}/><p>Professional systems are described at a high level to respect client confidentiality. The interactive lab is a synthetic demonstration, not a reproduction of an employer's architecture or metrics.</p></div>
         </section>
