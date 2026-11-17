@@ -1,7 +1,7 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, type CSSProperties } from "react";
 import {
   Activity, ArrowDown, ArrowRight, ArrowUpRight, Check, ChevronRight,
-  Code2, ExternalLink, Github, Layers3, Linkedin, Mail, Menu, RotateCcw,
+  Code2, ExternalLink, Github, Layers3, Linkedin, Menu, RotateCcw,
   ShieldCheck, TerminalSquare, X,
 } from "lucide-react";
 import { DEFAULT_SCENARIO, explainTrace, simulateScenario, type Scenario } from "./simulate";
@@ -131,7 +131,7 @@ function RangeControl({ label, value, min, max, step, unit, onChange }: {
     <label className="lab-range">
       <span className="range-title"><span>{label}</span><strong>{nf(value)}{unit}</strong></span>
       <input aria-label={label} type="range" min={min} max={max} step={step} value={value}
-        style={{ "--range-progress": percent+"%" } as React.CSSProperties}
+        style={{ "--range-progress": percent+"%" } as CSSProperties}
         onChange={e=>onChange(Number(e.target.value))}/>
       <span className="range-ends"><small>{nf(min)}{unit}</small><small>{nf(max)}{unit}</small></span>
     </label>
