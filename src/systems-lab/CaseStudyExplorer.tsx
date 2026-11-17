@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { ArrowUpRight, CheckCircle2, GitFork, Layers3, MoveRight } from "lucide-react";
+import "./case-studies.css";
 
 type ArchitectureNode = { id: string; label: string; description: string };
 type CaseStudy = {
