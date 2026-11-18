@@ -6,10 +6,10 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "lint": "eslint .",
+    "lint": "eslint src/arcade",
     "preview": "vite preview",
-    "test": "node --experimental-strip-types scripts/test-simulator.mjs",
-    "lint:lab": "eslint src/systems-lab"
+    "test": "node --experimental-strip-types scripts/test-arcade.mjs",
+    "lint:arcade": "eslint src/arcade"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.3.3",
