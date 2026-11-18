@@ -23,11 +23,11 @@ jobs:
         run: npm ci
       - name: Audit production dependencies for high-severity advisories
         run: npm audit --omit=dev --audit-level=high
-      - name: Lint new application
-        run: npm run lint:lab
+      - name: Lint playable application
+        run: npm run lint
       - name: Typecheck and build
         run: npm run build
-      - name: Validate simulator invariants
+      - name: Validate projects and playable mini-games
         run: npm test
       - name: Check output artifacts
         run: |
