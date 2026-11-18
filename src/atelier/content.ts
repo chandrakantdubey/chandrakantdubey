@@ -92,7 +92,7 @@ export const workExperience = [
     detail: "Enterprise workflow platforms, backend services and cloud infrastructure.",
   },
   {
-    company: "Nutriiya", title: "Full Stack Engineer · Contract", period: "Sep 2025 — Dec 2025",
+    company: "Nutriiya", title: "Full Stack Engineer · Contract", period: "Sep 2025 — Jan 2026",
     detail: "Product interfaces, caching and application features for nutritional health software.",
   },
   {
