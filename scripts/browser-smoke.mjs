@@ -113,16 +113,13 @@ try {
   assert.equal(desktop.overflow,false,"desktop horizontal overflow");
 
   const where = await client.eval("(()=>{const r=document.querySelector('canvas').getBoundingClientRect();return{x:r.x+r.width/2,y:r.y+r.height/2}})()");
-  const hit=await client.eval("(()=>{const r=document.querySelector('.kinetic-canvas').getBoundingClientRect();const p=document.elementFromPoint(r.x+r.width/2,r.y+r.height/2);return{tag:p?.tagName,cls:p?.className,rect:{x:r.x,y:r.y,w:r.width,h:r.height},hidden:document.hidden}})()");
-  console.log("Canvas hit-test", JSON.stringify(hit));
   await client.send("Input.dispatchMouseEvent",{type:"mouseMoved",x:where.x,y:where.y});
   await client.send("Input.dispatchMouseEvent",{type:"mousePressed",x:where.x,y:where.y,button:"left",clickCount:1});
   await client.send("Input.dispatchMouseEvent",{type:"mouseReleased",x:where.x,y:where.y,button:"left",clickCount:1});
   await delay(650);
   await client.eval("document.querySelector('.inspect-toggle').click()");
   await poll(()=>client.eval("!!document.querySelector('.field-inspector')"),"Inspector did not open");
-  const inspected = await client.eval("({metrics:document.querySelectorAll('.inspector-metrics strong').length,events:[...document.querySelectorAll('.inspector-list div')].find(x=>x.querySelector('dt')?.textContent==='Input events')?.querySelector('dd')?.textContent,source:document.querySelector('.inspector-source-links a')?.href})");
-  console.log("Inspector values", JSON.stringify(inspected));
+  const inspected = await client.eval("({metrics:document.querySelectorAll('.inspector-metrics strong').length,events:document.querySelector('.inspector-metrics>div:nth-child(4) strong')?.textContent,source:document.querySelector('.inspector-source-links a')?.href})");
   assert.equal(inspected.metrics,4);
   assert.ok(Number(inspected.events)>=1, "pointerdown should reach the simulation");
   assert.ok(inspected.source.endsWith("/src/field/typeEngine.ts"));
