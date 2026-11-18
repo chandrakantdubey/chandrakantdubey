@@ -10,25 +10,10 @@ import { EMPTY_TELEMETRY, type FieldTelemetry } from "../field/telemetry";
 import { normalizeSeed } from "../field/engine";
 import { featuredProjects, links, technologyGroups, workExperience, type FeaturedProject } from "./content";
 import ContactSection from "./ContactSection";
+import { publicTeamWork, internalTeamWork } from "./clientWork";
 import "./studio.css";
 
 type VisualMode = "type" | "mesh";
-
-const publicTeamWork = [
-  { title: "Uvation Marketplace", category: "E-commerce", url: "https://marketplace.uvation.com" },
-  { title: "Uvation Rewards", category: "Loyalty platform", url: "https://rewards.uvation.com" },
-  { title: "Kintree", category: "Family platform", url: "https://kintree.com" },
-  { title: "Bombay Dyeing Retail", category: "Retail experience", url: "https://retail.bombaydyeing.com/" },
-  { title: "Brush of Hope", category: "Public-interest platform", url: "https://brushofhope.life" },
-  { title: "Nutriiya", category: "Website & mobile-app backend", url: "https://nutriiya.com" },
-] as const;
-
-const internalTeamWork = [
-  { title:"i-Compass", kind:"Banking performance review management" },
-  { title:"VAMS", kind:"Vendor timesheet management" },
-  { title:"L&D Portal", kind:"Departmental learning & development" },
-  { title:"CSR Portal", kind:"Banking corporate social responsibility" },
-] as const;
 
 function initialSeed():number {
   if(typeof window==="undefined")return 2049;
