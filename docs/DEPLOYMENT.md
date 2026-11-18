@@ -1,4 +1,4 @@
-# Systems Lab deployment and Vercel connection
+# Interactive Portfolio deployment and Vercel connection
 
 This repository is **two things at once**:
 1. The GitHub profile README for @chandrakantdubey.
@@ -34,18 +34,25 @@ The deployment source must be **chandrakantdubey/chandrakantdubey**, not portfol
 
 If GitHub pushes create no Vercel deployment, first verify that Vercel's GitHub integration has repository access and that deployments are not explicitly disabled for this branch. An existing unlinked project will not be automatically repaired by vercel.json.
 
-## Contact endpoint
+## Contact form
 
-The website uses an email link (`mailto:`) and does **not** expose a public email-sending API. The old `/api/send-email` serverless handler was removed because it was unused by the redesigned site and had a process-local rate limiter that was unsuitable for a multi-instance serverless deployment.
+The contact composer uses a visitor-side `mailto:` link after validating
+name, email and message fields. Nothing is uploaded to the portfolio server;
+the visitor must send the composed email themselves.
 
-There are **no required Resend environment variables** for this portfolio. Remove obsolete Resend keys from Vercel project settings if no other application depends on them. If a contact form is added later, implement distributed rate limiting, bot mitigation, bounded request bodies, and verified sending domains first.
+No Resend or mail API environment variables are needed. A legacy
+`RESEND_API_KEY` may still exist in Vercel settings: it is unused by
+this version and should be retired if no other application needs it.
+
+If direct HTTP form submissions are later required, add a verified sender,
+bot mitigation and distributed abuse limits before enabling the endpoint.
 
 ## Smoke-test checklist
 
 - [ ] CI passes on the feature branch.
 - [ ] Preview homepage renders in desktop/mobile view.
 - [ ] All project source links resolve.
-- [ ] Simulator controls update results and replay animations.
+- [ ] Mini demos work: pattern generator, RPG encounter, running route, and sketch pad.
 - [ ] Reduced-motion mode, keyboard navigation, and focus states work.
 - [ ] /Chandrakant_Dubey.pdf and /favicon.svg return 200.
 - [ ] Production domain remains mapped to main.
@@ -59,4 +66,4 @@ npm run build
 npm run dev
 ```
 
-The simulator is entirely client-side and uses synthetic capacity assumptions. Do not treat its output as production telemetry.
+Mini demos are entirely client-side. The route animation is illustrative, not actual GPS telemetry.
