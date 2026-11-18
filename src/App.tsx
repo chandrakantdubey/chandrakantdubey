@@ -1,5 +1,5 @@
-import SystemsLab from "./systems-lab/SystemsLab";
+import PortfolioArcade from "./arcade/PortfolioArcade";
 
 export default function App() {
-  return <SystemsLab />;
+  return <PortfolioArcade />;
 }
