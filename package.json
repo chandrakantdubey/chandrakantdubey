@@ -8,7 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "eslint src/atelier src/field",
     "preview": "vite preview",
-    "test": "node --experimental-strip-types scripts/test-field.mjs",
+    "test": "node --experimental-strip-types scripts/test-field.mjs && node --experimental-strip-types scripts/test-contact.mjs",
     "test:browser": "node scripts/browser-smoke.mjs"
   },
   "dependencies": {
