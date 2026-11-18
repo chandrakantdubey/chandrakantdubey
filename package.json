@@ -9,7 +9,8 @@
     "lint": "eslint src/atelier src/field",
     "preview": "vite preview",
     "test": "node --experimental-strip-types scripts/test-field.mjs && node --experimental-strip-types scripts/test-contact.mjs",
-    "test:browser": "node scripts/browser-smoke.mjs"
+    "test:browser": "node scripts/browser-smoke.mjs",
+    "typecheck:api": "tsc -p tsconfig.api.json"
   },
   "dependencies": {
     "canvas-confetti": "^1.9.4",
