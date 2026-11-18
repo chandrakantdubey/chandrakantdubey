@@ -4,7 +4,8 @@ import {
   CirclePause, CirclePlay, Copy, ExternalLink, Mail,
   Menu, RotateCw, ScanEye, X,
 } from "lucide-react";
-import FieldCanvas, { EMPTY_TELEMETRY, type FieldTelemetry } from "../field/FieldCanvas";
+import FieldCanvas from "../field/FieldCanvas";
+import { EMPTY_TELEMETRY, type FieldTelemetry } from "../field/telemetry";
 import { normalizeSeed } from "../field/engine";
 import {
   featuredProjects, links, technologyGroups, workExperience,
