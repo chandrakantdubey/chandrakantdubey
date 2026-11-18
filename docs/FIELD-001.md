@@ -93,8 +93,9 @@ Featured six are grounded in repository READMEs:
 
 1. [Blackout Protocol](https://github.com/chandrakantdubey/blackout-protocol)
    — Next.js/Colyseus multiplayer rooms and relay grid.
-2. [AI Concepts Atlas](https://github.com/chandrakantdubey/ai-concepts-atlas)
-   — Next.js reference, canonical schemas, Python validation.
+2. [Timesheet](https://github.com/chandrakantdubey/timesheet)
+   — Oracle-backed timesheets and attendance, separate Express/HRMS services,
+   React frontend, and Chrome Manifest V3 companion. Prototype, not audited production software.
 3. [StyleScape](https://github.com/chandrakantdubey/style-scape)
    — deterministic SVG rendering and export.
 4. [Pokédex RPG](https://github.com/chandrakantdubey/pokedex-backend)
@@ -114,10 +115,27 @@ throughput or user-count claims are presented.
 
 ## Contact form
 
-The contact composer validates name, email and message with native HTML
-constraints, then opens the visitor's local mail application with a prefilled
-draft. It does not post data to a server or promise email delivery. The direct
-email address is copyable. No API key is exposed in browser code.
+The page always exposes a direct `mailto:` link, a copy-email action and
+a validated draft composer. On deployments with all necessary secrets, the
+form also supports a direct-send Vercel Function.
+
+The optional `/api/contact` handler uses Resend via server-only
+`RESEND_API_KEY`, a **verified** `RESEND_FROM_EMAIL`, and server-side
+Cloudflare Turnstile verification via `CONTACT_TURNSTILE_SECRET`.
+The Vite bundle only reads the public `VITE_TURNSTILE_SITE_KEY`.
+No environment keys are committed or sent from the browser.
+
+The endpoint validates content length, JSON types, email formatting,
+header-injection characters and matching request Origin. Turnstile tokens
+are validated with Cloudflare's server endpoint before Resend is contacted;
+missing credentials disable direct delivery (GET reports `enabled:false`).
+A honeypot adds friction to automated spam. The Resend request includes a
+unique idempotency key to avoid duplicate sends on retries.
+
+This is **not** a distributed rate limiter. Configure a platform WAF/edge
+rate-limit rule on `/api/contact` if enabling direct delivery at scale,
+and monitor Resend limits. When any configuration is missing or delivery
+fails, visitors can use the email-app fallback without losing their draft.
 
 ## Validation
 
