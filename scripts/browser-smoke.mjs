@@ -96,8 +96,12 @@ try {
   await client.send("Page.navigate", {url:"http://127.0.0.1:4173/"});
   await poll(() => client.eval("document.querySelectorAll('.work-card').length===6"), "React projects did not render");
 
-  const desktop = await client.eval("({projects:document.querySelectorAll('.work-card').length,names:[...document.querySelectorAll('.work-card h3')].map(x=>x.textContent),canvas:!!document.querySelector('.field-canvas'),overflow:document.documentElement.scrollWidth>innerWidth+3,hero:document.querySelector('h1')?.textContent})");
+  const desktop = await client.eval("({projects:document.querySelectorAll('.work-card').length,names:[...document.querySelectorAll('.work-card h3')].map(x=>x.textContent),canvas:!!document.querySelector('.kinetic-canvas'),teamLinks:document.querySelectorAll('.team-link').length,privateSystems:document.querySelectorAll('.internal-cell').length,compactCardHeight:Math.round(document.querySelector('.work-card').getBoundingClientRect().height),overflow:document.documentElement.scrollWidth>innerWidth+3,hero:document.querySelector('h1')?.textContent})");
   assert.equal(desktop.projects,6);
+  assert.equal(desktop.teamLinks,6,"six public company work links");
+  assert.equal(desktop.privateSystems,4,"four private intranet projects");
+  assert.ok(desktop.compactCardHeight<310,"project cards must be compact: "+desktop.compactCardHeight);
+  assert.ok(await client.eval("document.body.innerText.includes('Sep 2025 — Jan 2026')"),"corrected Nutriiya end date");
   assert.ok(await client.eval("document.querySelector('.submit-mail')?.textContent?.includes('Compose email')"),"fallback contact composer should work without backend credentials");
   assert.ok(await client.eval("!!document.querySelector('a[href^=\"mailto:\"]')"),"direct contact email must remain available");
   assert.ok(desktop.names.includes("Blackout Protocol"));
@@ -115,11 +119,19 @@ try {
   await delay(650);
   await client.eval("document.querySelector('.inspect-toggle').click()");
   await poll(()=>client.eval("!!document.querySelector('.field-inspector')"),"Inspector did not open");
-  const inspected = await client.eval("({metrics:document.querySelectorAll('.inspector-readouts strong').length,events:[...document.querySelectorAll('.inspector-details div')].find(x=>x.querySelector('dt')?.textContent==='Input events')?.querySelector('dd')?.textContent,source:document.querySelector('.inspector-source')?.href})");
+  const inspected = await client.eval("({metrics:document.querySelectorAll('.inspector-metrics strong').length,events:[...document.querySelectorAll('.inspector-list div')].find(x=>x.querySelector('dt')?.textContent==='Input events')?.querySelector('dd')?.textContent,source:document.querySelector('.inspector-source-links a')?.href})");
   assert.equal(inspected.metrics,4);
   assert.ok(Number(inspected.events)>=1, "pointerdown should reach the simulation");
-  assert.ok(inspected.source.endsWith("/src/field/engine.ts"));
+  assert.ok(inspected.source.endsWith("/src/field/typeEngine.ts"));
+  assert.ok(await client.eval("document.querySelector('.kinetic-canvas')?.toDataURL('image/png').startsWith('data:image/png')"),"canvas frame export should produce PNG");
+  await client.capture("desktop-inspector.png");
+  await client.eval("document.querySelector('.inspector-header button').click()");
+  await delay(120);
   await client.capture("desktop.png");
+  await client.eval("document.querySelector('.mode-switch button:nth-child(2)').click()");
+  assert.ok(await client.eval("!!document.querySelector('.field-canvas')"),"grid mode must work");
+  await client.eval("document.querySelector('.mode-switch button:first-child').click()");
+  assert.ok(await client.eval("!!document.querySelector('.kinetic-canvas')"),"type mode must restore");
 
   await client.send("Emulation.setDeviceMetricsOverride",{width:390,height:844,deviceScaleFactor:1,mobile:true,screenWidth:390,screenHeight:844});
   await delay(300);
@@ -129,6 +141,8 @@ try {
   assert.ok(mobile.menu!=="none");
   assert.ok(mobile.documentWidth<=mobile.viewport+3,"mobile horizontal overflow "+JSON.stringify(mobile));
   assert.ok(mobile.fieldWidth>200 && mobile.fieldWidth<420);
+  const mobileCardHeight=await client.eval("Math.round(document.querySelector('.work-card').getBoundingClientRect().height)");
+  assert.ok(mobileCardHeight<270,"mobile project card should remain compact: "+mobileCardHeight);
   await client.eval("document.querySelector('.mobile-menu').click()");
   assert.ok(await client.eval("document.querySelector('.nav-links').classList.contains('open')"));
   await client.eval("document.querySelector('.nav-links a').click()");
@@ -140,7 +154,7 @@ try {
   await client.send("Emulation.setEmulatedMedia",{features:[{name:"prefers-reduced-motion",value:"reduce"}]});
   await delay(400);
   assert.equal(await client.eval("matchMedia('(prefers-reduced-motion: reduce)').matches"),true);
-  console.log("Browser smoke PASS: desktop/mobile layout, six projects, live inspector, canvas pointer events, mobile menu, reduced motion.");
+  console.log("Browser smoke PASS: kinetic glyph rendering, two modes, six compact projects, ten company/intranet entries, corrected timeline, live inspector, desktop/mobile, reduced motion.");
   console.log("Captured screenshots in "+output);
 } finally {
   if (ws?.readyState===WebSocket.OPEN) ws.close();
