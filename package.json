@@ -8,7 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint src/atelier src/field",
     "preview": "vite preview",
-    "test": "node --experimental-strip-types scripts/test-field.mjs"
+    "test": "node --experimental-strip-types scripts/test-field.mjs",
+    "test:browser": "node scripts/browser-smoke.mjs"
   },
   "dependencies": {
     "canvas-confetti": "^1.9.4",
