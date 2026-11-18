@@ -44,6 +44,45 @@ If HTTP form delivery is later required, configure a verified sending domain,
 spam protection and distributed rate limiting. Do not expose any secret through
 the Vite browser environment.
 
+## Optional direct contact delivery
+
+The form always works as a mailto composer. The repository now also
+contains `api/contact.ts`, a Vercel Function that can deliver directly via
+Resend. **It fails closed** unless the following configuration is completed:
+
+| Variable | Scope | Requirement |
+| --- | --- | --- |
+| `RESEND_API_KEY` | Server-only secret | Existing Vercel variable; retain encrypted |
+| `RESEND_FROM_EMAIL` | Server-only | Verified Resend sender on a domain you control |
+| `CONTACT_TURNSTILE_SECRET` | Server-only secret | Cloudflare Turnstile widget secret |
+| `VITE_TURNSTILE_SITE_KEY` | Public build-time | Matching Turnstile site key |
+ 
+Turnstile must allow the production hostname
+`chandrakantdubey.vercel.app`. If enabling direct delivery on previews,
+configure the preview hostnames in Cloudflare as well. The Vite site key is
+public by design; never put the Resend or Turnstile secret in a `VITE_`
+variable. Updating build-time Vite variables requires a new deployment.
+
+The site asks `GET /api/contact` whether direct delivery is configured.
+If the answer is disabled or the public site key is missing, users see the
+existing compose-email workflow instead. When configured, POST submissions
+verify Origin, validate all fields, check the honeypot and Turnstile token
+server-side, then send through Resend with an idempotency key.
+
+The API has no global in-memory rate limit. Add a Vercel WAF rule with
+rate limits for `/api/contact` to protect the email quota at scale.
+Never ship a publicly callable Resend endpoint without abuse protection.
+
+Verify:
+- `GET /api/contact` reports `enabled:false` until the verified sender
+  and Turnstile secret exist.
+- The form still opens a visitor's email client when direct delivery
+  is unavailable.
+- After configuration, submit once with a real Turnstile token and verify
+  Resend's send history and actual receipt.
+- An invalid/replayed Turnstile token must be rejected.
+- The direct-send action must not claim success if Resend returns an error.
+
 ## Pre-merge and production verification
 
 ```bash
