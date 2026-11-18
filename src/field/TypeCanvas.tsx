@@ -34,8 +34,8 @@ function rasterize(width: number, height: number): { samples: TypeSample[]; face
   if(!ctx)return {samples:[],faces:[]};
   const wide=width>720;
   const words: Array<{text:string;tone:0|1;limit:number;y:number}>=[
-    {text:"CHANDRAKANT",tone:0,limit:wide?height*.24:height*.22,y:height*(wide?.36:.38)},
-    {text:"DUBEY",tone:1,limit:wide?height*.35:height*.31,y:height*(wide?.70:.68)},
+    {text:"CHANDRAKANT",tone:0,limit:wide?height*.28:height*.25,y:height*(wide?.34:.37)},
+    {text:"DUBEY",tone:1,limit:wide?height*.46:height*.42,y:height*(wide?.71:.69)},
   ];
   const faces:Typeface[]=[];
   ctx.fillStyle="#fff";
@@ -48,7 +48,7 @@ function rasterize(width: number, height: number): { samples: TypeSample[]; face
     faces.push({size,y:word.y,text:word.text,tone:word.tone});
   }
   const img=ctx.getImageData(0,0,buffer.width,buffer.height);
-  const step=Math.max(3,Math.min(11,Math.round(width/145)));
+  const step=Math.max(3,Math.min(8,Math.round(width/225)));
   const samples:TypeSample[]=[];
   const separator=(faces[0].y+faces[1].y)/2;
   for(let y=Math.floor(step/2);y<height;y+=step){
@@ -110,13 +110,15 @@ export default function TypeCanvas({seed,paused,onTelemetry}:Props) {
       for(let y=0;y<=height;y+=40){ctx.moveTo(0,y);ctx.lineTo(width,y);}
       ctx.stroke();
 
-      // Ghost outlines stabilize legibility as the dots physically displace.
+      // Stable low-contrast letterforms remain readable while live dots disperse.
       ctx.textAlign="center";
       ctx.textBaseline="middle";
       ctx.lineJoin="round";
       for(const face of faces){
         ctx.font="800 "+face.size+"px 'Space Grotesk', 'Arial Black', sans-serif";
-        ctx.strokeStyle=face.tone===0?"rgba(215,230,217,.12)":"rgba(231,164,129,.17)";
+        ctx.fillStyle=face.tone===0?"rgba(227,240,230,.22)":"rgba(237,159,125,.23)";
+        ctx.fillText(face.text,width/2,face.y);
+        ctx.strokeStyle=face.tone===0?"rgba(224,248,237,.28)":"rgba(249,187,151,.31)";
         ctx.lineWidth=1.2;
         ctx.strokeText(face.text,width/2,face.y);
       }
@@ -155,8 +157,8 @@ export default function TypeCanvas({seed,paused,onTelemetry}:Props) {
         const age=elapsed-pulse.born;
         if(age<0||age>1.55)continue;
         ctx.beginPath();ctx.arc(pulse.x,pulse.y,age*360,0,Math.PI*2);
-        ctx.lineWidth=1.4;
-        ctx.strokeStyle="rgba(255,206,147,"+(.56*(1-age/1.55))+")";
+        ctx.lineWidth=.8;
+        ctx.strokeStyle="rgba(255,206,147,"+(.19*(1-age/1.55))+")";
         ctx.stroke();
       }
 
