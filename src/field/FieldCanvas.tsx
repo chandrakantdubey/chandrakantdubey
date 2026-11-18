@@ -13,6 +13,13 @@ interface Props {
 
 export default function FieldCanvas({ seed, paused, onTelemetry }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const pausedRef = useRef(paused);
+  const syncPauseRef = useRef<(() => void) | null>(null);
+
+  useEffect(() => {
+    pausedRef.current = paused;
+    syncPauseRef.current?.();
+  }, [paused]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -38,7 +45,7 @@ export default function FieldCanvas({ seed, paused, onTelemetry }: Props) {
 
     const status = (): FieldTelemetry["status"] =>
       reduced ? "REDUCED MOTION" :
-      paused ? "PAUSED" :
+      pausedRef.current ? "PAUSED" :
       !visible || document.hidden ? "OFFSCREEN" : "RUNNING";
 
     function report() {
@@ -152,14 +159,14 @@ export default function FieldCanvas({ seed, paused, onTelemetry }: Props) {
     }
 
     function schedule() {
-      if (alive && raf === 0 && visible && !document.hidden && !reduced && !paused) {
+      if (alive && raf === 0 && visible && !document.hidden && !reduced && !pausedRef.current) {
         raf = window.requestAnimationFrame(tick);
       }
     }
 
     function tick(now: number) {
       raf = 0;
-      if (!alive || !visible || document.hidden || reduced || paused) return;
+      if (!alive || !visible || document.hidden || reduced || pausedRef.current) return;
       if (lastFrame) {
         const interval = Math.min(60, now - lastFrame);
         frameIntervals.push(interval);
@@ -187,7 +194,7 @@ export default function FieldCanvas({ seed, paused, onTelemetry }: Props) {
       pointer.x = x;
       pointer.y = y;
       pointer.active = e.pointerType !== "touch" || e.buttons > 0;
-      if (reduced || paused) { render(); report(); }
+      if (reduced || pausedRef.current) { render(); report(); }
     }
     function onDown(e: PointerEvent) {
       const [x, y] = coordinates(e);
@@ -195,11 +202,17 @@ export default function FieldCanvas({ seed, paused, onTelemetry }: Props) {
       interactions += 1;
       pulses.push({ x, y, born: elapsed });
       if (pulses.length > 5) pulses.shift();
-      if (reduced || paused) { render(); report(); }
+      if (reduced || pausedRef.current) { render(); report(); }
     }
     function onLeave() {
       pointer.active = false;
-      if (reduced || paused) { render(); report(); }
+      if (reduced || pausedRef.current) { render(); report(); }
+    }
+    function onUp(e: PointerEvent) {
+      if (e.pointerType === "touch" || e.pointerType === "pen") {
+        pointer.active = false;
+        if (reduced || pausedRef.current) { render(); report(); }
+      }
     }
     function onVisibility() {
       lastFrame = 0;
@@ -215,6 +228,15 @@ export default function FieldCanvas({ seed, paused, onTelemetry }: Props) {
       schedule();
     }
 
+    syncPauseRef.current = () => {
+      if (pausedRef.current && raf) { cancelAnimationFrame(raf); raf = 0; }
+      lastFrame = 0;
+      frameIntervals.length = 0;
+      render();
+      report();
+      schedule();
+    };
+
     const sizeObserver = new ResizeObserver(resize);
     sizeObserver.observe(canvas);
     const intersectionObserver = new IntersectionObserver(entries => {
@@ -227,6 +249,7 @@ export default function FieldCanvas({ seed, paused, onTelemetry }: Props) {
     canvas.addEventListener("pointermove", onMove, { passive: true });
     canvas.addEventListener("pointerdown", onDown, { passive: true });
     canvas.addEventListener("pointerleave", onLeave);
+    canvas.addEventListener("pointerup", onUp);
     canvas.addEventListener("pointercancel", onLeave);
     motionPreference.addEventListener("change", onMotionChange);
     resize();
@@ -241,10 +264,12 @@ export default function FieldCanvas({ seed, paused, onTelemetry }: Props) {
       canvas.removeEventListener("pointermove", onMove);
       canvas.removeEventListener("pointerdown", onDown);
       canvas.removeEventListener("pointerleave", onLeave);
+      canvas.removeEventListener("pointerup", onUp);
       canvas.removeEventListener("pointercancel", onLeave);
       motionPreference.removeEventListener("change", onMotionChange);
+      syncPauseRef.current = null;
     };
-  }, [seed, paused, onTelemetry]);
+  }, [seed, onTelemetry]);
 
   return <canvas
     ref={canvasRef}
