@@ -1,5 +1,5 @@
-import PortfolioArcade from "./arcade/PortfolioArcade";
+import Portfolio from "./atelier/Portfolio";
 
 export default function App() {
-  return <PortfolioArcade />;
+  return <Portfolio />;
 }
