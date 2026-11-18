@@ -1,5 +1,5 @@
-import Portfolio from "./atelier/Portfolio";
+import StudioPortfolio from "./atelier/StudioPortfolio";
 
 export default function App() {
-  return <Portfolio />;
+  return <StudioPortfolio />;
 }
