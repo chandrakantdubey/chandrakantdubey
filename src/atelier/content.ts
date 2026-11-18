@@ -1,4 +1,4 @@
-export type ProjectCategory = "realtime" | "data" | "creative" | "mobile" | "fullstack" | "platform";
+export type ProjectCategory = "realtime" | "operations" | "creative" | "mobile" | "fullstack" | "platform";
 
 export interface FeaturedProject {
   id: string;
@@ -27,15 +27,16 @@ export const featuredProjects: readonly FeaturedProject[] = [
     repository: "https://github.com/chandrakantdubey/blackout-protocol",
   },
   {
-    id: "atlas",
+    id: "timesheet",
     number: "02",
-    name: "AI Concepts Atlas",
-    category: "data",
-    label: "KNOWLEDGE SYSTEMS",
-    description: "A searchable AI reference built from a structured concept registry and connected, independently researched articles.",
-    implementation: "Canonical JSON schemas; typed concept relationships; Python content-integrity checks.",
-    stack: ["Next.js", "TypeScript", "Python", "JSON Schema"],
-    repository: "https://github.com/chandrakantdubey/ai-concepts-atlas",
+    name: "Timesheet",
+    category: "operations",
+    label: "ENTERPRISE APPLICATION",
+    description: "A workforce management application with timesheets, leave workflows, attendance tracking and a companion browser extension.",
+    implementation: "Independent Express and HRMS services; Oracle persistence; role-based access and a Manifest V3 companion.",
+    stack: ["React", "Node.js", "Oracle DB", "Chrome MV3"],
+    repository: "https://github.com/chandrakantdubey/timesheet",
+    status: "PROTOTYPE",
   },
   {
     id: "stylescape",
