@@ -66,7 +66,7 @@ export async function POST(request: Request): Promise<Response> {
   let data: unknown;
   try { data = JSON.parse(raw); } catch { return json({ error: "Invalid JSON." }, 400); }
   const parsed = validateContactPayload(data);
-  if (!parsed.ok) return json({ error: parsed.error }, 400);
+  if ("error" in parsed) return json({ error: parsed.error }, 400);
   const { name, email, message, website, token, requestId } = parsed.value;
 
   // Honeypot is a friction layer, not the security boundary.
