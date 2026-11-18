@@ -32,7 +32,7 @@ export function createTypeParticles(samples: readonly TypeSample[], seed: number
   for (let i=0; i<samples.length; i+=stride) {
     const source = samples[i];
     const phase = random() * Math.PI * 2;
-    const spread = (random() - .5) * 30;
+    const spread = (random() - .5) * 13;
     particles.push({
       homeX:source.x,homeY:source.y,x:source.x + Math.cos(phase)*spread,
       y:source.y + Math.sin(phase)*spread,
@@ -64,7 +64,7 @@ export function advanceTypeParticles(particles: TypeParticle[], frame: TypeFrame
       if(distSq>.01 && distSq<radiusSq){
         const dist=Math.sqrt(distSq);
         const weight=Math.pow(1-dist/pointerRadius,2);
-        fx+=(dx/dist)*weight*5100;
+        fx+=(dx/dist)*weight*3800;
         fy+=(dy/dist)*weight*5100;
       }
     }
@@ -76,7 +76,7 @@ export function advanceTypeParticles(particles: TypeParticle[], frame: TypeFrame
       if(dist<.5)continue;
       const front=age*360;
       const phase=(dist-front)/45;
-      const strength=Math.exp(-phase*phase)*(1-age/1.55)*8900;
+      const strength=Math.exp(-phase*phase)*(1-age/1.55)*5100;
       fx+=(dx/dist)*strength;
       fy+=(dy/dist)*strength;
     }
