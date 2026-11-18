@@ -196,18 +196,18 @@ export default function FieldCanvas({ seed, paused, onTelemetry }: Props) {
       schedule();
     }
 
-    function coordinates(e: globalThis.PointerEvent): [number, number] {
+    function coordinates(e: PointerEvent): [number, number] {
       const rect = canvas!.getBoundingClientRect();
       return [e.clientX - rect.left, e.clientY - rect.top];
     }
-    function onMove(e: globalThis.PointerEvent) {
+    function onMove(e: PointerEvent) {
       const [x, y] = coordinates(e);
       pointer.x = x;
       pointer.y = y;
       pointer.active = e.pointerType !== "touch" || e.buttons > 0;
       if (reduced || paused) { render(); report(); }
     }
-    function onDown(e: globalThis.PointerEvent) {
+    function onDown(e: PointerEvent) {
       const [x, y] = coordinates(e);
       pointer.x = x; pointer.y = y; pointer.active = true;
       interactions += 1;
