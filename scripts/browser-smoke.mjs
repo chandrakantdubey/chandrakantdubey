@@ -124,6 +124,7 @@ try {
   assert.ok(Number(inspected.events)>=1, "pointerdown should reach the simulation");
   assert.ok(inspected.source.endsWith("/src/field/typeEngine.ts"));
   assert.ok(await client.eval("document.querySelector('.kinetic-canvas')?.toDataURL('image/png').startsWith('data:image/png')"),"canvas frame export should produce PNG");
+  await delay(320);
   await client.capture("desktop-inspector.png");
   await client.eval("document.querySelector('.inspector-header button').click()");
   await delay(120);
