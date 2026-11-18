@@ -1,4 +1,4 @@
-import { clamp, randomFromSeed, type Pointer, type Pulse } from "./engine";
+import { clamp, randomFromSeed, type Pointer, type Pulse } from "./engine.ts";
 
 export interface TypeSample {
   x: number;
