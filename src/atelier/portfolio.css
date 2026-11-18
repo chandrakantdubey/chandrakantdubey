@@ -128,7 +128,7 @@ kbd { display: inline-grid; place-items: center; border: 1px solid currentColor;
 .relay-1 { transform: rotate(90deg); }
 .relay-2 { transform: rotate(180deg); }
 .relay-3 { transform: rotate(270deg); }
-.art-atlas { background: radial-gradient(circle at 50% 50%, #294541, #142c29 80%); }
+.art-timesheet { background: radial-gradient(circle at 50% 48%, #31534a, #122923 78%); }
 .art-stylescape { background: radial-gradient(circle at 56% 45%, #585870, #342f3c 55%, #1b242a); }
 .art-pokedex { background: linear-gradient(145deg,#26344b,#15212e); }
 .api-card { display: flex; flex-direction: column; gap: 8px; width: min(290px, 85%); position: absolute; top: 52%; left: 50%; transform: translate(-50%, -50%); }
@@ -196,6 +196,11 @@ kbd { display: inline-grid; place-items: center; border: 1px solid currentColor;
 .form-row:focus-within { border-color: #f1b69a; }
 .submit-mail { width: 100%; border: 1px solid #f1b69a; color: #172820!important; background: #f1b69a; display: flex; align-items: center; justify-content: space-between; font-size: 13px; font-weight: 700; padding: 16px 17px; }
 .submit-mail:hover { background: #ffd6bc; }
+.contact-honeypot { position: absolute; width: 1px; height: 1px; overflow: hidden; left: -9999px; pointer-events: none; }
+.contact-verification { display: flex; justify-content: flex-start; padding: 7px 0 18px; min-height: 78px; }
+.submit-mail:disabled { opacity: .64; cursor: wait; }
+.compose-fallback { display: inline-flex; align-items: center; gap: 8px; padding: 11px 0; color: #d5e5d7!important; background: transparent; border: 0; font-size: 12px; text-decoration: underline; text-underline-offset: 3px; }
+.compose-fallback:hover { color: #f1b69a!important; }
 .form-disclaimer { color: #adc5b7; font-size: 10px; line-height: 1.7; margin: 15px 0 0; }
 .contact-status { color: #f5cbac; margin: 12px 0 0; font-size: 12px; }
 .site-footer { background: #0e1b19; color: #abbfb4; border-top: 1px solid #3a5349; font-size: 10px; }
