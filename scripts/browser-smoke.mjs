@@ -99,7 +99,8 @@ try {
   const desktop = await client.eval("({projects:document.querySelectorAll('.work-card').length,names:[...document.querySelectorAll('.work-card h3')].map(x=>x.textContent),canvas:!!document.querySelector('.field-canvas'),overflow:document.documentElement.scrollWidth>innerWidth+3,hero:document.querySelector('h1')?.textContent})");
   assert.equal(desktop.projects,6);
   assert.ok(desktop.names.includes("Blackout Protocol"));
-  assert.ok(desktop.names.includes("AI Concepts Atlas"));
+  assert.ok(desktop.names.includes("Timesheet"));
+  assert.ok(!desktop.names.includes("AI Concepts Atlas"));
   assert.ok(desktop.names.includes("FarmPulse"));
   assert.ok(desktop.hero.includes("Chandrakant"));
   assert.ok(desktop.canvas);
