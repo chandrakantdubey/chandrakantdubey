@@ -107,6 +107,11 @@ a { color:inherit; text-decoration:none; }
 .project-tab-arrow { margin-left:auto; color:#728994; transition:transform .2s,color .2s; }
 .project-tab:hover .project-tab-arrow,.project-tab.is-active .project-tab-arrow { color:var(--lime); transform:translate(2px,-2px); }
 .selector-bottom { display:flex; gap:12px; flex-direction:column; padding:26px 24px; color:#6f8388; font:10px "IBM Plex Mono",monospace; letter-spacing:.07em; }
+.discovery-header {display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;color:#9ab6a4;font:10px "IBM Plex Mono",monospace;}
+.discovery-header>span:last-child {color:var(--lime);}
+.discovery-track {display:grid;grid-template-columns:repeat(4,1fr);gap:6px;width:100%;}
+.discovery-track i {height:7px;border:1px solid #465751;background:#18231f;transition:background .3s,border-color .3s;transform:skewX(-15deg);}
+.discovery-track i.collected {background:var(--lime);border-color:var(--lime);box-shadow:0 0 10px #d7ff7768;}
 .selector-bottom span:last-child { display:flex; align-items:center; gap:9px; color:#93af9e; }
 .showcase-view { display:flex; flex-direction:column; min-width:0; }
 .showcase-top { min-height:62px; padding:0 25px; border-bottom:1px solid #334049; display:flex; align-items:center; justify-content:space-between; gap:15px; color:#aab7bd; font:10px "IBM Plex Mono",monospace; letter-spacing:.055em; }
@@ -308,7 +313,9 @@ a { color:inherit; text-decoration:none; }
   .project-tabs {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));}
   .project-tab {min-height:101px;border-right:1px solid #313f42;padding:18px;}
   .project-tab-name strong {font-size:22px;}
-  .selector-bottom {display:none;}
+  .selector-bottom {display:flex;flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:space-between;padding:14px 18px;}
+  .discovery-track {max-width:130px;}
+  .selector-bottom>span:last-child {display:none;}
   .career-rail {display:grid;grid-template-columns:repeat(2,1fr);}
   .career-entry {min-height:104px;border-right:1px solid #37464c;}
   .skill-board {grid-template-columns:1fr;}
