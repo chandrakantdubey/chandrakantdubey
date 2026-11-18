@@ -27,6 +27,8 @@ jobs:
         run: npm run lint
       - name: Typecheck and build
         run: npm run build
+      - name: Typecheck serverless contact function
+        run: npm run typecheck:api
       - name: Validate field model and portfolio content
         run: npm test
       - name: Exercise real browser and mobile layout
