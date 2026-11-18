@@ -174,5 +174,9 @@ try {
   if (ws?.readyState===WebSocket.OPEN) ws.close();
   if (chrome && !chrome.killed) chrome.kill("SIGKILL");
   if (!preview.killed) preview.kill("SIGTERM");
-  rmSync(dir,{recursive:true,force:true});
+  // Headless Chrome can still have child processes flushing its profile after kill.
+  // Cleanup must never turn a successful browser assertion run into a false failure.
+  await delay(250);
+  try { rmSync(dir,{recursive:true,force:true,maxRetries:10,retryDelay:150}); }
+  catch(error) { console.warn("Chrome temp-profile cleanup deferred:", error.code || String(error)); }
 }
