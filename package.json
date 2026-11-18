@@ -8,7 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "eslint src/atelier src/field",
     "preview": "vite preview",
-    "test": "node --experimental-strip-types scripts/test-field.mjs && node --experimental-strip-types scripts/test-contact.mjs",
+    "test": "node --experimental-strip-types scripts/test-field.mjs && node --experimental-strip-types scripts/test-contact.mjs && node --experimental-strip-types scripts/test-type.mjs",
     "test:browser": "node scripts/browser-smoke.mjs",
     "typecheck:api": "tsc -p tsconfig.api.json"
   },
