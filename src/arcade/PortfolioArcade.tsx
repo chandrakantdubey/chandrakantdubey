@@ -1,4 +1,4 @@
-import { useRef, useState, type FormEvent, type PointerEvent as ReactPointerEvent } from "react";
+import { useRef, useState, type CSSProperties, type FormEvent, type PointerEvent as ReactPointerEvent } from "react";
 import {
   ArrowDown, ArrowLeft, ArrowRight, ArrowUpRight, Check, ChevronRight,
   Code2, Copy, Download, ExternalLink, Mail, Menu, MousePointer2, X,
@@ -75,7 +75,7 @@ function ProjectShowcase() {
             <ArrowUpRight size={19} className="project-tab-arrow" aria-hidden="true"/>
           </button>)}
         </div>
-        <div className="selector-bottom"><span>INTERACT, DON'T JUST SCROLL.</span><span><MousePointer2 size={15}/> PICK A MODULE</span></div>
+        <div className="selector-bottom"><span>PROJECTS / SOURCE + DEMO</span><span><MousePointer2 size={15}/> PICK A MODULE</span></div>
       </div>
       <div className="showcase-view" id="project-demo" role="tabpanel" aria-labelledby={"project-tab-"+project.id} tabIndex={0}>
         <div className="showcase-top"><div><span className="live-pip"/> LIVE MINI DEMO <span className="separator-slash">/</span> {project.interaction}</div><div className="showcase-arrows"><button type="button" aria-label="Previous project" onClick={()=>navigate(active-1)}><ArrowLeft size={17}/></button><button type="button" aria-label="Next project" onClick={()=>navigate(active+1)}><ArrowRight size={17}/></button></div></div>
@@ -102,7 +102,7 @@ function Experience() {
       <div className="career-panel" id="career-panel" role="tabpanel" aria-labelledby={"career-tab-"+selected} tabIndex={0}>
         <div className="career-panel-top"><span>EMPLOYMENT RECORD / {experience[selected].number}</span><span>CD.2026</span></div>
         <div className="career-panel-main" key={experience[selected].company}><span className="job-sticker">EXPERIENCE</span><div className="career-big-number">0{selected+1}</div><h3>{experience[selected].company}</h3><div className="career-role">{experience[selected].role}</div><p>{experience[selected].detail}</p><div className="career-date">{experience[selected].period}</div></div>
-        <div className="career-panel-bottom"><span>04 PLACES. ONE PATH.</span><span>FULL-STACK ENGINEERING</span></div>
+        <div className="career-panel-bottom"><span>WORK EXPERIENCE</span><span>FULL-STACK ENGINEERING</span></div>
       </div>
     </div>
   </section>;
@@ -117,8 +117,8 @@ function Skills() {
       {skillGroups.map((g,i)=><button key={g.id} type="button" role="tab" id={"skill-tab-"+g.id} aria-controls="skill-content" aria-selected={selected===i} tabIndex={selected===i?0:-1} onClick={()=>setSelected(i)} onKeyDown={e=>{if(e.key==="ArrowDown"||e.key==="ArrowUp"||e.key==="ArrowRight"||e.key==="ArrowLeft"){e.preventDefault();const next=(i+(e.key==="ArrowDown"||e.key==="ArrowRight"?1:-1)+skillGroups.length)%skillGroups.length;setSelected(next);document.getElementById("skill-tab-"+skillGroups[next].id)?.focus();}}}><span>0{i+1}</span>{g.name}<ArrowUpRight size={17}/></button>)}
     </div><div className="skill-content" id="skill-content" role="tabpanel" aria-labelledby={"skill-tab-"+group.id} tabIndex={0}>
       <div className="skill-content-top"><span>ACTIVE MODULE / 0{selected+1}</span><span className="skill-module-dot" style={{background:group.color}}/></div>
-      <div className="skill-grid" key={group.id}>{group.items.map((skill,i)=><div key={skill} className="skill-chip" style={{"--skill-color":group.color,"--chip-index":i} as React.CSSProperties}><span className="chip-icon"><Code2 size={18}/></span><strong>{skill}</strong><span className="chip-corner">+</span></div>)}</div>
-      <div className="skill-content-foot"><span>08 TECHNOLOGIES / CATEGORY</span><span>NO MADE-UP SKILL LEVELS</span></div>
+      <div className="skill-grid" key={group.id}>{group.items.map((skill,i)=><div key={skill} className="skill-chip" style={{"--skill-color":group.color,"--chip-index":i} as CSSProperties}><span className="chip-icon"><Code2 size={18}/></span><strong>{skill}</strong><span className="chip-corner">+</span></div>)}</div>
+      <div className="skill-content-foot"><span>08 TECHNOLOGIES / CATEGORY</span><span>SKILLS / TECH STACK</span></div>
     </div></div>
   </section>;
 }
