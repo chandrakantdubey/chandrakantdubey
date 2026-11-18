@@ -1,69 +1,108 @@
-# Interactive Portfolio deployment and Vercel connection
+# Deployment — Chandrakant Dubey portfolio
 
-This repository is **two things at once**:
-1. The GitHub profile README for @chandrakantdubey.
-2. The **Vite + React** portfolio deployed to https://chandrakantdubey.vercel.app/.
+The GitHub repository `chandrakantdubey/chandrakantdubey` contains both the
+GitHub profile README and the **Vite + React + TypeScript** portfolio website.
 
-The deployment source must be **chandrakantdubey/chandrakantdubey**, not portfolio-forge or landing-page-hub.
+Production website: https://chandrakantdubey.vercel.app/
 
-## Recommended Vercel project settings
+## Vercel configuration
 
 | Setting | Value |
 | --- | --- |
-| Git provider | GitHub |
-| Repository | chandrakantdubey/chandrakantdubey |
-| Production branch | main |
-| Root Directory | ./ (repository root) |
-| Framework Preset | Vite |
-| Install Command | npm ci |
-| Build Command | npm run build |
-| Output Directory | dist |
-| Node.js | 22.x |
-| Production domain | chandrakantdubey.vercel.app |
+| Git repository | `chandrakantdubey/chandrakantdubey` |
+| Production branch | `main` |
+| Root directory | `./` |
+| Framework | Vite |
+| Node version | 22.x |
+| Install | `npm ci` |
+| Build | `npm run build` |
+| Output | `dist` |
 
-**Build settings** in vercel.json explicitly set the Vite build and dist output. They apply on new deployments, but the **Git repository connection, Git permissions, production branch, project ownership and domain assignment are Vercel account/project settings**: these cannot be established solely by committing this file.
+The `vercel.json` file contains the build/output configuration and browser
+security headers. Vercel project ownership, domain assignment and GitHub
+integration are configured in Vercel rather than in the repository.
 
-## Fix an incorrect repository connection
+## Current application
 
-1. Open the relevant project in the [Vercel dashboard](https://vercel.com/dashboard).
-2. Open **Settings → Git** and confirm the connected repository is **chandrakantdubey/chandrakantdubey**. Reconnect the correct GitHub repository if necessary.
-3. Open **Settings → Build and Deployment** (or **Build & Development Settings**, depending on the dashboard) and verify the settings above. Remove stale custom overrides unless required.
-4. Confirm **Settings → Domains** contains **chandrakantdubey.vercel.app** assigned to the intended project. Reassign a domain from an old project in the Vercel dashboard if necessary.
-5. Check **Settings → Git** / Production Branch is **main**.
-6. Ensure PR and branch preview deployments are enabled. The redesign is developed on **feat/systems-lab-v1** and should create a separate Preview deployment; it should **not** be the Production deployment before review.
+- [Field 001 engineering specification](FIELD-001.md)
+- [Interactive Canvas renderer](../src/field/FieldCanvas.tsx)
+- [Pure deterministic field engine](../src/field/engine.ts)
+- [Portfolio and real source-based project content](../src/atelier/content.ts)
 
-If GitHub pushes create no Vercel deployment, first verify that Vercel's GitHub integration has repository access and that deployments are not explicitly disabled for this branch. An existing unlinked project will not be automatically repaired by vercel.json.
+The portfolio presents six repositories, experience, skills and contact.
+The field is **not** a fake infrastructure dashboard; the Inspect Mode shows
+measured browser renderer statistics.
 
-## Contact form
+## Contact
 
-The contact composer uses a visitor-side `mailto:` link after validating
-name, email and message fields. Nothing is uploaded to the portfolio server;
-the visitor must send the composed email themselves.
+The contact form opens the visitor's mail application with a prefilled draft.
+Visitors must send the message themselves. There is no public server-side
+email API in this build, and no Resend key is needed. The previously configured
+Vercel `RESEND_API_KEY` is not used by the site.
 
-No Resend or mail API environment variables are needed. A legacy
-`RESEND_API_KEY` may still exist in Vercel settings: it is unused by
-this version and should be retired if no other application needs it.
+If HTTP form delivery is later required, configure a verified sending domain,
+spam protection and distributed rate limiting. Do not expose any secret through
+the Vite browser environment.
 
-If direct HTTP form submissions are later required, add a verified sender,
-bot mitigation and distributed abuse limits before enabling the endpoint.
+## Optional direct contact delivery
 
-## Smoke-test checklist
+The form always works as a mailto composer. The repository now also
+contains `api/contact.ts`, a Vercel Function that can deliver directly via
+Resend. **It fails closed** unless the following configuration is completed:
 
-- [ ] CI passes on the feature branch.
-- [ ] Preview homepage renders in desktop/mobile view.
-- [ ] All project source links resolve.
-- [ ] Mini demos work: pattern generator, RPG encounter, running route, and sketch pad.
-- [ ] Reduced-motion mode, keyboard navigation, and focus states work.
-- [ ] /Chandrakant_Dubey.pdf and /favicon.svg return 200.
-- [ ] Production domain remains mapped to main.
-- [ ] After approved merge, verify the main production deployment.
+| Variable | Scope | Requirement |
+| --- | --- | --- |
+| `RESEND_API_KEY` | Server-only secret | Existing Vercel variable; retain encrypted |
+| `RESEND_FROM_EMAIL` | Server-only | Verified Resend sender on a domain you control |
+| `CONTACT_TURNSTILE_SECRET` | Server-only secret | Cloudflare Turnstile widget secret |
+| `VITE_TURNSTILE_SITE_KEY` | Public build-time | Matching Turnstile site key |
+ 
+Turnstile must allow the production hostname
+`chandrakantdubey.vercel.app`. If enabling direct delivery on previews,
+configure the preview hostnames in Cloudflare as well. The Vite site key is
+public by design; never put the Resend or Turnstile secret in a `VITE_`
+variable. Updating build-time Vite variables requires a new deployment.
 
-### Local verification
+The site asks `GET /api/contact` whether direct delivery is configured.
+If the answer is disabled or the public site key is missing, users see the
+existing compose-email workflow instead. When configured, POST submissions
+verify Origin, validate all fields, check the honeypot and Turnstile token
+server-side, then send through Resend with an idempotency key.
+
+The API has no global in-memory rate limit. Add a Vercel WAF rule with
+rate limits for `/api/contact` to protect the email quota at scale.
+Never ship a publicly callable Resend endpoint without abuse protection.
+
+Verify:
+- `GET /api/contact` reports `enabled:false` until the verified sender
+  and Turnstile secret exist.
+- The form still opens a visitor's email client when direct delivery
+  is unavailable.
+- After configuration, submit once with a real Turnstile token and verify
+  Resend's send history and actual receipt.
+- An invalid/replayed Turnstile token must be rejected.
+- The direct-send action must not claim success if Resend returns an error.
+
+## Pre-merge and production verification
 
 ```bash
 npm ci
+npm run lint
 npm run build
-npm run dev
+npm test
+npm audit --omit=dev --audit-level=high
 ```
 
-Mini demos are entirely client-side. The route animation is illustrative, not actual GPS telemetry.
+1. Make a pull request from the feature branch.
+2. Confirm GitHub Actions passes all checks.
+3. Confirm Vercel builds a READY **preview** from the exact feature SHA.
+4. Review the UI on narrow Android and desktop screens; confirm mobile navigation,
+   layout widths, tap ripples, physics pause/reseed and inspector.
+5. Check keyboard shortcuts (I, R, P), reduced-motion and focus visibility.
+6. Check all six GitHub source links and the résumé download.
+7. Merge only when ready to publish: Vercel automatically deploys `main` to
+   `chandrakantdubey.vercel.app` in this project.
+8. Confirm the new production deployment SHA matches GitHub `main` and is READY.
+
+A successful GitHub build does **not** prove that a Vercel deployment or browser
+smoke test succeeded. Check both separately.

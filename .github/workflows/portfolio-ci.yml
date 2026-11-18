@@ -23,12 +23,22 @@ jobs:
         run: npm ci
       - name: Audit production dependencies for high-severity advisories
         run: npm audit --omit=dev --audit-level=high
-      - name: Lint playable application
+      - name: Lint portfolio and engine
         run: npm run lint
       - name: Typecheck and build
         run: npm run build
-      - name: Validate projects and playable mini-games
+      - name: Validate field model and portfolio content
         run: npm test
+      - name: Exercise real browser and mobile layout
+        run: npm run test:browser
+      - name: Upload desktop and mobile QA screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: field-001-browser-screenshots
+          path: artifacts/browser/
+          if-no-files-found: ignore
+          retention-days: 7
       - name: Check output artifacts
         run: |
           test -f dist/index.html
