@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type PointerEvent, type CSSProperties } from "react";
 import { Pause, Play, RotateCcw, Sparkles, Trash2, Zap } from "lucide-react";
 import type { ProjectId } from "./data";
+import { INITIAL_ENCOUNTER, resolveTurn, encounterFinished, advanceRoute } from "./mini-games";
 
 const palettes = [
   ["#d9ff76", "#77d9ff", "#8b6dff", "#0a1232"],
@@ -38,20 +39,10 @@ function StudioDemo() {
   </div>;
 }
 
-type BattleState = { hero: number; enemy: number; turn: number; log: string };
-const startBattle: BattleState = {hero:100,enemy:100,turn:0,log:"A wild rival approaches. Choose your move."};
 function BattleDemo() {
-  const [battle, setBattle] = useState<BattleState>(startBattle);
-  const play=(guard:boolean)=>setBattle(current=>{
-    if(current.enemy<=0||current.hero<=0)return current;
-    const nextTurn=current.turn+1;
-    const dealt=guard?6:[21,16,27,18][current.turn%4];
-    const enemy=Math.max(0,current.enemy-dealt);
-    const incoming=enemy===0?0:(guard?4:[9,13,7,11][current.turn%4]);
-    const hero=Math.max(0,current.hero-incoming);
-    return {hero,enemy,turn:nextTurn,log:enemy===0?"VICTORY! Rival defeated.":hero===0?"OUT OF ENERGY — restart to play again.":guard?"You guarded. Countered for "+dealt+" damage.":"Hit for "+dealt+". Rival countered for "+incoming+"."};
-  });
-  const done=battle.enemy===0||battle.hero===0;
+  const [battle, setBattle] = useState(INITIAL_ENCOUNTER);
+  const play=(guard:boolean)=>setBattle(current=>resolveTurn(current,guard?"guard":"attack"));
+  const done=encounterFinished(battle);
   return <div className="demo-stage battle-demo">
     <div className="demo-chrome"><span>POKÉDEX RPG / MICRO ENCOUNTER</span><span>TURN {String(battle.turn+1).padStart(2,"0")}</span></div>
     <div className="battle-arena">
@@ -61,7 +52,7 @@ function BattleDemo() {
       <div className="battle-hud hero-hud"><div><span>YOU</span><strong>PLAYER 01</strong></div><div className="hp-bar hero-hp"><i style={{width:battle.hero+"%"}}/></div><span>{battle.hero} HP</span></div>
     </div>
     <div className="battle-dialogue" aria-live="polite">{battle.log}</div>
-    <div className="demo-controls battle-controls"><button type="button" disabled={done} className="demo-primary" onClick={()=>play(false)}><Zap size={15}/> ATTACK</button><button type="button" className="demo-outline" disabled={done} onClick={()=>play(true)}>GUARD</button><button type="button" className="demo-quiet" onClick={()=>setBattle(startBattle)}><RotateCcw size={14}/> RESTART</button></div>
+    <div className="demo-controls battle-controls"><button type="button" disabled={done} className="demo-primary" onClick={()=>play(false)}><Zap size={15}/> ATTACK</button><button type="button" className="demo-outline" disabled={done} onClick={()=>play(true)}>GUARD</button><button type="button" className="demo-quiet" onClick={()=>setBattle(INITIAL_ENCOUNTER)}><RotateCcw size={14}/> RESTART</button></div>
   </div>;
 }
 
@@ -70,7 +61,7 @@ function RunDemo() {
   const [running, setRunning] = useState(false);
   useEffect(()=>{
     if(!running || distance>=100)return;
-    const timer=setInterval(()=>setDistance(v=>Math.min(100,v+2)),180);
+    const timer=setInterval(()=>setDistance(advanceRoute),180);
     return ()=>clearInterval(timer);
   },[running,distance]);
   const complete=distance>=100;
