@@ -32,19 +32,26 @@ function ProjectArtwork({ category }: { category: ProjectCategory }) {
       <div className="art-bottom-label"><span>↳ ROOM STATE</span><span>COLYSEUS / WS</span></div>
     </div>;
   }
-  if (category === "data") {
-    const pts: Array<[number,number,string]> = [
-      [50,143,"01"],[123,70,"02"],[124,188,"03"],[217,117,"04"],
-      [295,56,"05"],[298,198,"06"],[381,128,"07"],
-    ];
-    const edges = [[0,1],[0,2],[1,3],[2,3],[3,4],[3,5],[3,6],[4,6],[5,6]];
-    return <div className="project-artwork art-atlas" aria-hidden="true">
-      <div className="art-top-label">ATLAS / CONCEPT GRAPH</div>
+  if (category === "operations") {
+    return <div className="project-artwork art-timesheet" aria-hidden="true">
+      <div className="art-top-label">TIMESHEET / FOUR BOUNDARIES</div>
       <svg viewBox="0 0 430 242" preserveAspectRatio="xMidYMid meet">
-        <g stroke="#6e988e" strokeWidth="1.1" opacity=".7">{edges.map(([a,b],i)=><line key={i} x1={pts[a][0]} y1={pts[a][1]} x2={pts[b][0]} y2={pts[b][1]}/>)}</g>
-        {pts.map(([x,y,t],i)=><g key={i}><circle cx={x} cy={y} r={i===3?24:17} fill={i===3?"#b8d0b3":"#223b39"} stroke={i===3?"#f3ad8b":"#8fb5a7"}/><text x={x} y={y+4} textAnchor="middle" fontSize="10" fill={i===3?"#17312f":"#d4e8db"} fontFamily="monospace">{t}</text></g>)}
+        <g fill="none" stroke="#9fbfb0" strokeWidth="1.5">
+          <path d="M115 95 H190 M263 95 H335 M225 123 V170 M180 95 H215"/>
+          <path d="M115 150 H174" strokeDasharray="3 6"/>
+        </g>
+        <g fontSize="10" fontFamily="monospace" textAnchor="middle">
+          <rect x="23" y="68" width="114" height="54" rx="2" fill="#243b38" stroke="#83a99a"/>
+          <text x="80" y="90" fill="#e7e7db">REACT UI</text><text x="80" y="108" fill="#b1d3c0">AG GRID</text>
+          <rect x="172" y="68" width="114" height="54" rx="2" fill="#395d54" stroke="#b0dfc6"/>
+          <text x="229" y="90" fill="#f4f3e7">EXPRESS</text><text x="229" y="108" fill="#cae7d5">API / RBAC</text>
+          <rect x="313" y="68" width="95" height="54" rx="2" fill="#243b38" stroke="#83a99a"/>
+          <text x="361" y="90" fill="#e7e7db">HRMS</text><text x="361" y="108" fill="#b1d3c0">SERVICE</text>
+          <rect x="169" y="171" width="120" height="40" rx="2" fill="#4c423a" stroke="#f0aa84"/>
+          <text x="229" y="195" fill="#f8e1d0">ORACLE DB</text>
+        </g>
       </svg>
-      <div className="art-bottom-label"><span>NODE → RELATIONSHIP</span><span>SCHEMA / GRAPH</span></div>
+      <div className="art-bottom-label"><span>API → HRMS / STORAGE</span><span>NODE + ORACLE</span></div>
     </div>;
   }
   if (category === "creative") {
