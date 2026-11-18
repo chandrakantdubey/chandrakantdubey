@@ -134,6 +134,13 @@ try {
   await client.eval("document.querySelector('.mode-switch button:first-child').click()");
   assert.ok(await client.eval("!!document.querySelector('.kinetic-canvas')"),"type mode must restore");
 
+  await client.eval("document.querySelector('#work').scrollIntoView({behavior:'instant'})");
+  await delay(160);
+  await client.capture("projects-desktop.png");
+  await client.eval("document.querySelector('#experience').scrollIntoView({behavior:'instant'})");
+  await delay(160);
+  await client.capture("experience-desktop.png");
+
   await client.send("Emulation.setDeviceMetricsOverride",{width:390,height:844,deviceScaleFactor:1,mobile:true,screenWidth:390,screenHeight:844});
   await delay(300);
   await client.eval("window.scrollTo(0,0)");
@@ -151,6 +158,12 @@ try {
   await client.eval("window.scrollTo(0,0)");
   await delay(160);
   await client.capture("mobile.png");
+  await client.eval("document.querySelector('#work').scrollIntoView({behavior:'instant'})");
+  await delay(160);
+  await client.capture("projects-mobile.png");
+  await client.eval("document.querySelector('.team-work').scrollIntoView({behavior:'instant'})");
+  await delay(160);
+  await client.capture("team-work-mobile.png");
 
   await client.send("Emulation.setEmulatedMedia",{features:[{name:"prefers-reduced-motion",value:"reduce"}]});
   await delay(400);
