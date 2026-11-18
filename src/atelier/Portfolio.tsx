@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState, type FormEvent } from "react";
 import {
-  ArrowDownRight, ArrowRight, ArrowUpRight, Check, ChevronUp,
+  ArrowDownRight, ArrowUpRight, Check, ChevronUp,
   CirclePause, CirclePlay, Copy, ExternalLink, Mail,
   Menu, RotateCw, ScanEye, X,
 } from "lucide-react";
