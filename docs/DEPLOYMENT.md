@@ -22,6 +22,21 @@ The `vercel.json` file contains the build/output configuration and browser
 security headers. Vercel project ownership, domain assignment and GitHub
 integration are configured in Vercel rather than in the repository.
 
+## Current creative studio
+
+The production entrypoint is `src/atelier/StudioPortfolio.tsx` with
+`src/atelier/studio.css`. The hero's actual typography particle engine is
+`src/field/typeEngine.ts`, rendered by `src/field/TypeCanvas.tsx`.
+Visitors can toggle the deterministic spring mesh, inspect real metrics,
+regenerate a shareable seed and export the canvas to PNG.
+
+See [KINETIC-STUDIO.md](KINETIC-STUDIO.md) for visual architecture and public
+team-built product references. `FIELD-001.md` documents the alternate mesh.
+
+Nutriiya's professional experience period ends in January 2026.
+The company work section lists six public URLs and four anonymous bank/intranet
+systems; no private intranet addresses are published.
+
 ## Current application
 
 - [Field 001 engineering specification](FIELD-001.md)
