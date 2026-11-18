@@ -98,6 +98,8 @@ try {
 
   const desktop = await client.eval("({projects:document.querySelectorAll('.work-card').length,names:[...document.querySelectorAll('.work-card h3')].map(x=>x.textContent),canvas:!!document.querySelector('.field-canvas'),overflow:document.documentElement.scrollWidth>innerWidth+3,hero:document.querySelector('h1')?.textContent})");
   assert.equal(desktop.projects,6);
+  assert.ok(await client.eval("document.querySelector('.submit-mail')?.textContent?.includes('Compose email')"),"fallback contact composer should work without backend credentials");
+  assert.ok(await client.eval("!!document.querySelector('a[href^=\"mailto:\"]')"),"direct contact email must remain available");
   assert.ok(desktop.names.includes("Blackout Protocol"));
   assert.ok(desktop.names.includes("Timesheet"));
   assert.ok(!desktop.names.includes("AI Concepts Atlas"));
