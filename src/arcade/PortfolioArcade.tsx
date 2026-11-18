@@ -49,19 +49,24 @@ function Halo() {
 
 function ProjectShowcase() {
   const [active,setActive]=useState(0);
+  const [visited,setVisited]=useState<ReadonlySet<number>>(()=>new Set([0]));
   const project=projects[active];
-  const navigate=(i:number)=>setActive((i+projects.length)%projects.length);
+  const navigate=(i:number)=>{
+    const next=(i+projects.length)%projects.length;
+    setActive(next);
+    setVisited(previous=>new Set([...previous,next]));
+  };
   return <section id="work" className="arc-section work-section" aria-labelledby="work-title">
     <div className="section-headline"><div><div className="section-kicker"><span className="kicker-index">01</span><span>WORK / PLAYABLE PREVIEWS</span></div><h2 id="work-title">SELECTED <i>WORK</i><span className="headline-spark">✳</span></h2></div><div className="section-count">0{projects.length} PROJECTS / 0{projects.length} MINI DEMOS</div></div>
     <div className="project-console">
       <div className="project-selector">
-        <div className="selector-label"><span><span className="live-pip"/> SELECT A PROJECT</span><span>01 — 04</span></div>
+        <div className="selector-label"><span><span className="live-pip"/> SELECT A PROJECT</span><span>{String(visited.size).padStart(2,"0")} / 04 FOUND</span></div>
         <div role="tablist" aria-label="Interactive project previews" className="project-tabs">
           {projects.map((item,i)=><button
             key={item.id} type="button" id={"project-tab-"+item.id} role="tab"
             aria-controls="project-demo" aria-selected={active===i}
             tabIndex={active===i?0:-1}
-            onClick={()=>setActive(i)}
+            onClick={()=>navigate(i)}
             onKeyDown={e=>{
               if(!["ArrowDown","ArrowUp","ArrowLeft","ArrowRight","Home","End"].includes(e.key))return;
               e.preventDefault();
@@ -70,12 +75,12 @@ function ProjectShowcase() {
               document.getElementById("project-tab-"+projects[next].id)?.focus();
             }}
             className={"project-tab "+(active===i?"is-active":"")}>
-            <span className="project-number">{item.number}</span>
+            <span className="project-number">{visited.has(i)?"✓":item.number}</span>
             <span className="project-tab-name"><strong>{item.name}</strong><small>{item.kind}</small></span>
             <ArrowUpRight size={19} className="project-tab-arrow" aria-hidden="true"/>
           </button>)}
         </div>
-        <div className="selector-bottom"><span>PROJECTS / SOURCE + DEMO</span><span><MousePointer2 size={15}/> PICK A MODULE</span></div>
+        <div className="selector-bottom"><div className="discovery-header"><span>DISCOVERED / {visited.size} OF 4</span><span>{visited.size===projects.length?"COMPLETE ✳":"IN PROGRESS"}</span></div><div className="discovery-track" role="meter" aria-label="Projects explored" aria-valuemin={0} aria-valuemax={4} aria-valuenow={visited.size}>{projects.map((p,i)=><i key={p.id} className={visited.has(i)?"collected":""}/>)}</div><span><MousePointer2 size={15}/> EXPLORE ALL FOUR PROJECTS</span></div>
       </div>
       <div className="showcase-view" id="project-demo" role="tabpanel" aria-labelledby={"project-tab-"+project.id} tabIndex={0}>
         <div className="showcase-top"><div><span className="live-pip"/> LIVE MINI DEMO <span className="separator-slash">/</span> {project.interaction}</div><div className="showcase-arrows"><button type="button" aria-label="Previous project" onClick={()=>navigate(active-1)}><ArrowLeft size={17}/></button><button type="button" aria-label="Next project" onClick={()=>navigate(active+1)}><ArrowRight size={17}/></button></div></div>
