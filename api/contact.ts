@@ -23,7 +23,10 @@ function json(body: Record<string, unknown>, status = 200): Response {
 }
 
 export function contactConfigured(env = process.env): boolean {
-  return Boolean(env.RESEND_API_KEY && env.RESEND_FROM_EMAIL && env.CONTACT_TURNSTILE_SECRET);
+  // All four settings are required: a server credential, a verified sender,
+  // and the matching Turnstile secret/public site key used by the client build.
+  return [env.RESEND_API_KEY, env.RESEND_FROM_EMAIL, env.CONTACT_TURNSTILE_SECRET, env.VITE_TURNSTILE_SITE_KEY]
+    .every(value => typeof value === "string" && value.trim().length > 0);
 }
 
 export function validateContactPayload(value: unknown): { ok: true; value: ContactPayload } | { ok: false; error: string } {
@@ -80,7 +83,8 @@ export async function POST(request: Request): Promise<Response> {
       body: JSON.stringify({
         secret: process.env.CONTACT_TURNSTILE_SECRET,
         response: token,
-        idempotency_key: requestId,
+        // Turnstile tokens are single-use. Only the Resend send uses the
+        // stable request id for de-duplication across client retries.
       }),
       signal: timeout,
     });
