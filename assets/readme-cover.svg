@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 410" width="1400" height="410" role="img" aria-labelledby="title desc">
+  <title id="title">Chandrakant Dubey — software engineer</title>
+  <desc id="desc">Editorial midnight blue and lime profile cover. Builds real software, fixes the bugs, ships again.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#10102b"/><stop offset="64%" stop-color="#14133b"/><stop offset="100%" stop-color="#21165b"/></linearGradient>
+    <linearGradient id="flare" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#e7ff8d"/><stop offset="100%" stop-color="#b9f8b0"/></linearGradient>
+    <pattern id="dots" width="24" height="24" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1" fill="#d0d0ff" opacity=".14"/></pattern>
+  </defs>
+  <rect width="1400" height="410" fill="url(#bg)"/>
+  <rect width="1400" height="410" fill="url(#dots)"/>
+  <path d="M -120 480 L 465 -70" stroke="#393382" stroke-width="90" opacity=".15"/>
+  <path d="M 730 0 L 730 410" stroke="#a8a2f2" stroke-opacity=".28" stroke-width="1"/>
+  <path d="M 0 0 L 1400 0" stroke="#e8ff8a" stroke-width="8"/>
+  <path d="M 76 80 L 112 80" stroke="#e8ff8a" stroke-width="4"/>
+  <text x="129" y="87" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="700" letter-spacing="4" fill="#cbd0fc">HI, INTERNET.</text>
+  <text x="63" y="200" font-family="Arial,Helvetica,sans-serif" font-size="82" font-weight="900" letter-spacing="-3" fill="#f7f3ec">CHANDRAKANT</text>
+  <text x="61" y="319" font-family="Arial,Helvetica,sans-serif" font-size="127" font-weight="900" letter-spacing="-7" fill="#f7f3ec">DUBEY<tspan fill="#f99377">.</tspan></text>
+  <text x="74" y="369" font-family="Arial,Helvetica,sans-serif" font-size="18" font-weight="600" letter-spacing="2" fill="#b8c0e7">FULL-STACK ENGINEER  /  MUMBAI</text>
+  <rect x="775" y="67" width="569" height="295" rx="3" fill="#0a0e2d" fill-opacity=".6" stroke="#7276b4" stroke-opacity=".4"/>
+  <rect x="775" y="67" width="9" height="295" fill="url(#flare)"/>
+  <text x="817" y="111" font-family="Arial,Helvetica,sans-serif" font-size="18" font-weight="700" letter-spacing="3" fill="#d9e9aa">THE DEVELOPMENT CYCLE</text>
+  <text x="809" y="178" font-family="Arial,Helvetica,sans-serif" font-size="56" font-weight="900" letter-spacing="-2" fill="#f7f3ec">BUILD IT.</text>
+  <text x="809" y="240" font-family="Arial,Helvetica,sans-serif" font-size="56" font-weight="900" letter-spacing="-2" fill="#f99377">BREAK IT.</text>
+  <text x="809" y="302" font-family="Arial,Helvetica,sans-serif" font-size="56" font-weight="900" letter-spacing="-2" fill="#e8ff8a">FIX IT. SHIP IT.</text>
+  <circle cx="1312" cy="103" r="10" fill="#e8ff8a"/>
+  <path d="M 0 405 L 1400 405" stroke="#f99377" stroke-width="5"/>
+</svg>
