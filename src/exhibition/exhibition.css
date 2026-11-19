@@ -286,7 +286,7 @@ a {color:inherit;text-decoration:none;}
 .contact-section {background:#f46c4e;color:#14111a;padding:105px clamp(21px,5.6vw,88px) 128px;position:relative;}
 .contact-heading {display:flex;justify-content:space-between;align-items:end;gap:20px;margin-bottom:55px;}
 .contact-heading .eyebrow {display:block;font:600 12px var(--mono);letter-spacing:.11em;border-top:1px solid #31251c;padding-top:16px;color:#352018;}
-.contact-heading h2 {font:800 clamp(64px,11.2vw,185px)/.9 "Bricolage Grotesque",sans-serif;letter-spacing:-.11em;margin:25px 0 0;max-width:840px;text-transform:uppercase;}
+.contact-heading h2 {font:800 clamp(64px,11.2vw,185px)/.9 "Bricolage Grotesque",sans-serif;letter-spacing:-.11em;margin:0;max-width:840px;text-transform:uppercase;}
 .contact-heading h2 .period-accent {color:#eaff86;}
 .contact-heading .heading-aside {font:600 12px var(--mono);color:#4c2924;white-space:nowrap;}
 .contact-layout {display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.95fr);gap:clamp(32px,6vw,110px);align-items:start;}
