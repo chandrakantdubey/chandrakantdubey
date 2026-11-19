@@ -229,11 +229,18 @@ try{
   const gameMobile=await cdp.eval("({body:document.documentElement.scrollWidth,width:innerWidth,board:document.querySelector('.duel-board').getBoundingClientRect().width})");
   assert.ok(gameMobile.body<=gameMobile.width+3,"games must fit mobile "+JSON.stringify(gameMobile));
   assert.ok(gameMobile.board<=gameMobile.width,"Hex board fits mobile "+JSON.stringify(gameMobile));
+  const nodesVisible=await cdp.eval("(()=>{const arena=document.querySelector('.duel-stage').getBoundingClientRect();const rects=[...document.querySelectorAll('.duel-hex')].map(x=>x.getBoundingClientRect());return {min:Math.min(...rects.map(r=>r.left)),max:Math.max(...rects.map(r=>r.right)),arenaLeft:arena.left,arenaRight:arena.right,visible:rects.length}})()");
+  assert.equal(nodesVisible.visible,49);
+  assert.ok(nodesVisible.min>=nodesVisible.arenaLeft-3 && nodesVisible.max<=nodesVisible.arenaRight+3,
+    "All 49 Hex tiles must remain visibly framed, not clipped "+JSON.stringify(nodesVisible));
 
   await cdp.send("Emulation.setDeviceMetricsOverride",{width:320,height:700,deviceScaleFactor:1,mobile:true,screenWidth:320,screenHeight:700});
   await delay(330);
   const narrow=await cdp.eval("({width:innerWidth,body:document.documentElement.scrollWidth})");
   assert.ok(narrow.body<=narrow.width+3,"Narrow 320px viewport must not horizontally overflow "+JSON.stringify(narrow));
+  const narrowNodes=await cdp.eval("(()=>{const arena=document.querySelector('.duel-stage').getBoundingClientRect();const rs=[...document.querySelectorAll('.duel-hex')].map(x=>x.getBoundingClientRect());return {min:Math.min(...rs.map(r=>r.left)),max:Math.max(...rs.map(r=>r.right)),left:arena.left,right:arena.right}})()");
+  assert.ok(narrowNodes.min>=narrowNodes.left-3 && narrowNodes.max<=narrowNodes.right+3,
+    "All Hex cells must also fit 320px width "+JSON.stringify(narrowNodes));
   await cdp.send("Emulation.setEmulatedMedia",{features:[{name:"prefers-reduced-motion",value:"reduce"}]});
   await delay(380);
   assert.ok(await cdp.eval("matchMedia('(prefers-reduced-motion: reduce)').matches"),"Reduced-motion preference supported");
