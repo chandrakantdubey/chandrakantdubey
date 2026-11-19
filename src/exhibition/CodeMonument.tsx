@@ -140,7 +140,7 @@ export default function CodeMonument() {
     let dragging=false,dragged=false,startX=0,startY=0,oldX=0,oldY=0;
     let yaw=-0.23,pitch=-0.19,targetYaw=-0.23,targetPitch=-0.19;
     let width=1,height=1,buildStarted=performance.now()+200,cycle=0;
-    const geometry=createCodeMonument(2026);
+    let geometry=createCodeMonument(2026);
     canvas.dataset.modules=String(geometry.modules);
 
     try{
@@ -225,6 +225,9 @@ export default function CodeMonument() {
       const rebuild=()=>{
         if(!alive||lost)return;
         cycle++;
+        geometry=createCodeMonument(2026+cycle);
+        gl.bindBuffer(gl.ARRAY_BUFFER,vertexBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER,geometry.vertices,gl.DYNAMIC_DRAW);
         canvas.dataset.rebuilds=String(cycle);
         buildStarted=performance.now()+80;
         canvas.dataset.assembly="assembling";
@@ -261,6 +264,7 @@ export default function CodeMonument() {
       const onLost=(e:Event)=>{
         e.preventDefault();
         lost=true;stop();canvas.dataset.renderer="fallback";host.classList.remove("code-render-ready");
+        rebuildRef.current=()=>{host.classList.remove("code-pulse");void host.offsetWidth;host.classList.add("code-pulse");};
       };
       const intersection=new IntersectionObserver(entries=>{
         visible=Boolean(entries[0]?.isIntersecting);
@@ -311,8 +315,8 @@ export default function CodeMonument() {
       aria-label="A three-dimensional CD monogram assembled from real generated code modules. Drag to rotate, tap or press Enter to rebuild."
       onKeyDown={event=>{if(event.key==="Enter"||event.key===" "){event.preventDefault();rebuildRef.current?.();}}}/>
     <div className="monument-source" aria-hidden="true">
-      <span className="monument-file">identity.ts <span>●</span></span>
-      <code><i>const</i> identity <b>=</b> <em>compile</em>(<strong>"CD"</strong>);</code>
+      <span className="monument-file">codeGeometry.ts <span>●</span></span>
+      <code><i>const</i> CD <b>=</b> <em>createCodeMonument</em>();</code>
       <small>source → modules → geometry</small>
     </div>
     <button className="monument-rebuild" type="button" onClick={()=>rebuildRef.current?.()} aria-label="Recompile the 3D CD monogram">
