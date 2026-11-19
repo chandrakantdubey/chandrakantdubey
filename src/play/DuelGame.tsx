@@ -184,13 +184,13 @@ export default function DuelGame({standalone=false}:{standalone?:boolean}) {
     try{await navigator.clipboard.writeText(url);setCopied(true);}
     catch{setCopied(false);}
   };
-  const winner=game.winner===1?"WEST → EAST":"NORTH → SOUTH";
-  const label=waiting?"WAITING FOR CHALLENGER":matchDone?winner+" CONNECTED":cpuThinking?"CPU THINKING":yourTurn?"YOUR TURN":"OPPONENT TURN";
+  const winner=game.winner===1?"CORAL":"LIME";
+  const label=waiting?"WAITING FOR YOUR RIVAL":matchDone?winner+" WINS. BRAG RESPONSIBLY.":cpuThinking?"THE BOT IS PLOTTING":yourTurn?"YOUR MOVE, GENIUS":"THEIR MOVE. SUSPICIOUS.";
 
   return <div className={standalone?"duel-experience duel-fullpage":"duel-experience"} data-mode={online.mode}>
-    <div className="duel-topline"><span>GAME 002 <i>◈</i> TRACE / HEX</span><span>{online.mode==="online"?"● LIVE ROOM":"LOCAL / PRACTICE"}</span></div>
+    <div className="duel-topline"><span>HEX ME IF YOU CAN <i>◈</i></span><span>{online.mode==="online"?"● SOMEONE ELSE IS HERE":"JUST YOU VS A VERY PATIENT BOT"}</span></div>
     <div className="duel-stage">
-      <div className="duel-backdrop" aria-hidden="true"><span>HEX</span><span>7×7</span></div>
+      <div className="duel-backdrop" aria-hidden="true"><span>NO</span><span>MERCY</span></div>
       <div className="duel-board-wrap">
         <div className="duel-edge duel-edge-top">NORTH / LIME</div>
         <div className="duel-board" role="group" aria-label="7 by 7 hex connection board">
@@ -228,14 +228,14 @@ export default function DuelGame({standalone=false}:{standalone?:boolean}) {
         <span className={game.turn===2?"duel-mark lime active":"duel-mark lime"}>✳</span></div>
     </div>
     <div className="duel-lobby">
-      <div className="duel-lobby-intro"><span>HOW TO PLAY</span><p>Claim adjacent hex nodes. Coral connects left to right; lime connects top to bottom. First complete circuit wins.</p></div>
+      <div className="duel-lobby-intro"><p>Connect coral from left to right, or lime from top to bottom. Sounds simple. So does fixing a one-line bug.</p></div>
       <div className="duel-room">
         {practiceMode?<>
-          <span className="duel-room-caption">PRACTICE AGAINST THE LOCAL CPU</span>
+          <span className="duel-room-caption">BEAT THE BOT. ITS EGO IS EXPENDABLE.</span>
           <div className="duel-commands">
             <button type="button" className="duel-button primary" onClick={restart}><RotateCcw size={17}/> NEW ROUND</button>
             {online.ready===true&&<button type="button" className="duel-button secondary" onClick={()=>void online.create()} disabled={online.busy}><Users size={17}/> CREATE ONLINE ROOM</button>}
-            {online.ready===false&&<small className="duel-online-unavailable">Online rooms are not configured. Solo play works without a server.</small>}
+            {online.ready===false&&<small className="duel-online-unavailable">The internet is taking a personal day. The bot is still here.</small>}
             {online.ready===null&&<small>CHECKING ONLINE AVAILABILITY…</small>}
           </div>
           {online.ready===true&&<div className="duel-join-line">
@@ -254,10 +254,10 @@ export default function DuelGame({standalone=false}:{standalone?:boolean}) {
           <small className="duel-sync-info">SYNC ~3S · TURN-BASED · ROOM EXPIRES IN 8 HOURS</small>
         </>}
         {online.error&&<p className="duel-error" role="alert">{online.error}</p>}
-        {!standalone&&<a href={url||"/play/duel"} className="duel-open-full" target="_blank" rel="noopener noreferrer">OPEN DEDICATED ARENA <ExternalLink size={17}/></a>}
-        {standalone&&<a className="duel-open-full" href="/#play">BACK TO EXHIBITION <ArrowLeft size={17}/></a>}
+        {!standalone&&<a href={url||"/play/duel"} className="duel-open-full" target="_blank" rel="noopener noreferrer">NEED MORE SCREEN? <ExternalLink size={17}/></a>}
+        {standalone&&<a className="duel-open-full" href="/#final-boss">BACK TO THE CHAOS <ArrowLeft size={17}/></a>}
       </div>
     </div>
-    <div className="duel-tail"><span>CONNECTIONS ARE COMPUTED WITH GRAPH SEARCH</span><span><Link2 size={13}/> TWO PLAYERS / ONE BOARD</span></div>
+    <div className="duel-tail"><span>FRIENDSHIP TESTED. RESULTS NOT GUARANTEED.</span><span><Link2 size={13}/> ONE BOARD. MULTIPLE REGRETS.</span></div>
   </div>;
 }
