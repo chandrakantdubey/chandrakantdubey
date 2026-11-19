@@ -54,7 +54,7 @@
 }
 .gallery-space-label {
   position:absolute;z-index:5;bottom:4.5%;right:4%;
-  font:600 10px "IBM Plex Mono",monospace;letter-spacing:.14em;color:#64616c;
+  font:600 10px "JetBrains Mono",monospace;letter-spacing:.14em;color:#64616c;
 }
 .gallery-stage-footer {margin-top:22px;}
 
@@ -126,12 +126,12 @@
   box-shadow:inset -18px -22px 30px #030b48a8,inset 10px 13px 22px #d6fbf983,15px 20px 26px #09114155,0 0 55px #f3fe92a2;
   transform:translateZ(54px);
 }
-.orbit-core span {font:800 clamp(45px,7.5vw,110px)/.85 "Space Grotesk",sans-serif;letter-spacing:-.12em;}
-.orbit-core small {margin-top:7px;font:600 9px "IBM Plex Mono",monospace;letter-spacing:.18em;color:#d3ef8a;}
+.orbit-core span {font:800 clamp(45px,7.5vw,110px)/.85 "Bricolage Grotesque",sans-serif;letter-spacing:-.12em;}
+.orbit-core small {margin-top:7px;font:600 9px "JetBrains Mono",monospace;letter-spacing:.18em;color:#d3ef8a;}
 .orbit-node {
   position:absolute;display:grid;place-items:center;width:13%;aspect-ratio:1;
   border-radius:50%;color:#152a39;
-  font:700 clamp(12px,1.7vw,25px) "Space Grotesk",sans-serif;
+  font:700 clamp(12px,1.7vw,25px) "Bricolage Grotesque",sans-serif;
   background:#fff5dd;border:2px solid #343c65;
   box-shadow:inset 5px 6px 14px #ffffffaf,6px 10px 15px #2132574a;
   animation:orbit-node-bob 4.3s ease-in-out infinite;
@@ -148,7 +148,7 @@
   position:absolute;pointer-events:auto;display:flex;gap:7px;align-items:center;
   border:1px solid #1c24466c;
   padding:11px 13px;
-  font:600 11px "IBM Plex Mono",monospace;color:#111831;
+  font:600 11px "JetBrains Mono",monospace;color:#111831;
   background:#edffa6b8;box-shadow:5px 6px 0 #1e296930;
   transition:background .2s,transform .2s,box-shadow .2s;
   backdrop-filter:blur(9px);
@@ -164,9 +164,9 @@
 .stack-orbit-number {opacity:.67;font-size:9px;}
 .stack-orbit-symbol {font-size:15px;margin-left:5px;}
 .stack-details {align-self:center;padding-top:25px;}
-.stack-details-eyebrow {display:flex;justify-content:space-between;gap:12px;border-top:1px solid #586741;padding-top:17px;font:600 10px "IBM Plex Mono",monospace;letter-spacing:.07em;}
+.stack-details-eyebrow {display:flex;justify-content:space-between;gap:12px;border-top:1px solid #586741;padding-top:17px;font:600 10px "JetBrains Mono",monospace;letter-spacing:.07em;}
 .stack-details h3 {
-  font:700 clamp(38px,4.7vw,72px)/.95 "Space Grotesk",sans-serif;letter-spacing:-.075em;
+  font:700 clamp(38px,4.7vw,72px)/.95 "Bricolage Grotesque",sans-serif;letter-spacing:-.075em;
   margin:31px 0 35px;min-height:80px;animation:stack-pick .38s ease-out both;
 }
 .stack-details h3 span {color:#f4694a;margin-left:12px;}
@@ -176,7 +176,7 @@
   display:inline-flex;gap:11px;align-items:center;
   border-bottom:1px solid #1f3930;background:#e7f78d;
   padding:11px 10px;
-  font:600 clamp(12px,1.25vw,16px) "DM Sans",sans-serif;
+  font:600 clamp(12px,1.25vw,16px) "Manrope",sans-serif;
   animation:stack-pick .47s ease-out both;
 }
 .stack-live-tags>span:nth-child(3n+2) {color:#2612b8;border-color:#2612b8;}
@@ -184,7 +184,7 @@
 .stack-switch {display:flex;align-items:center;justify-content:space-between;gap:13px;border-top:1px solid #596e48;padding-top:18px;margin-top:20px;}
 .stack-switch button {height:42px;width:50px;display:grid;place-items:center;border:1px solid #333d31;background:transparent;color:#1d2730;}
 .stack-switch button:hover {background:#2823a7;color:white;}
-.stack-switch span {font:600 9px "IBM Plex Mono",monospace;text-align:center;letter-spacing:.045em;color:#4b6241;}
+.stack-switch span {font:600 9px "JetBrains Mono",monospace;text-align:center;letter-spacing:.045em;color:#4b6241;}
 .skills-giant {opacity:.35;}
 /* The form itself becomes a tactile raised physical panel. */
 .contact-form {transform:perspective(1300px) rotateY(-3deg) rotateX(1deg);transform-origin:top right;transition:transform .45s,box-shadow .45s;box-shadow:25px 29px 0 #cb4b3e;}
