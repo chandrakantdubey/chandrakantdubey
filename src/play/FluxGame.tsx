@@ -250,7 +250,7 @@ export default function FluxGame() {
   },[sync]);
 
   return <div className="flux-experience" ref={stageRef} tabIndex={-1} aria-label="Signal Shift arcade game">
-    <div className="flux-topline"><span>GAME 001 <i>•</i> SIGNAL SHIFT</span><span><Zap size={14}/> LIVE SIMULATION</span></div>
+    <div className="flux-topline"><span>SIGNAL SHIFT <i>✳</i> YOUR REFLEXES ARE ON TRIAL</span><span><Zap size={14}/> PRESS PLAY. PANIC LATER.</span></div>
     <div className="flux-stage">
       <div className="flux-reticle" aria-hidden="true"/>
       <div className="flux-corner-ornament" aria-hidden="true"/>
@@ -259,12 +259,12 @@ export default function FluxGame() {
         role="img" aria-label="Navigate the glowing ship, collect diamond sparks, and avoid red hazards. Arrow keys, WASD or touch drag."/>
       {ui.phase!=="playing"&&<div className="flux-overlay">
         <div className="flux-overlay-content">
-          <span className="flux-overlay-eyebrow">{ui.phase==="over"?"RUN COMPLETE":ui.phase==="paused"?"SIGNAL HELD":"ARCADE / SINGLE PLAYER"}</span>
-          <h3>{ui.phase==="over"?"GAME OVER":ui.phase==="paused"?"PAUSED":"SIGNAL SHIFT"}</h3>
-          <p>{ui.phase==="over"?"Collect more sparks and beat your best run.":ui.phase==="paused"?"Your position is saved. Resume whenever you're ready.":"Collect the yellow sparks. Dodge red interference. Survive the waves."}</p>
+          <span className="flux-overlay-eyebrow">{ui.phase==="over"?"THAT ESCALATED":ui.phase==="paused"?"CAFFEINE BREAK":"THE KEYBOARD HAS ENTERED THE CHAT"}</span>
+          <h3>{ui.phase==="over"?"WELL, OOPS.":ui.phase==="paused"?"PAUSED":"SIGNAL SHIFT"}</h3>
+          <p>{ui.phase==="over"?"A strong effort. The hazards respectfully disagree.":ui.phase==="paused"?"The universe can wait. Your score can't.":"Grab the yellow sparks. Avoid red things. We believe in you. Barely."}</p>
           <button type="button" className="flux-play" onClick={start}><Play size={17}/>{ui.phase==="paused"?"RESUME":ui.phase==="over"?"RUN AGAIN":"START RUN"} <ArrowUpRight size={18}/></button>
         </div>
-        <div className="flux-overlay-decor" aria-hidden="true"><span>◌ / 01 — PLAY FIELD</span><span>MOVE / COLLECT / SURVIVE ✳</span></div>
+        <div className="flux-overlay-decor" aria-hidden="true"><span>NO REFUNDS ON LOST LIVES</span><span>MOVE / COLLECT / TRY NOT TO PANIC ✳</span></div>
       </div>}
     </div>
     <div className="flux-hud">
@@ -277,6 +277,6 @@ export default function FluxGame() {
         <button type="button" onClick={reset} aria-label="Reset Signal Shift"><RotateCcw size={17}/></button>
       </div>
     </div>
-    <div className="flux-instructions"><span>MOVE / WASD + ARROWS + DRAG</span><span>COLLECT ◈ <b>AVOID ◆</b></span><span>SPACE TO PAUSE</span></div>
+    <div className="flux-instructions"><span>WASD / ARROWS / DRAG</span><span>YELLOW GOOD <b>RED BAD</b></span><span>SPACE TO ESCAPE RESPONSIBILITY</span></div>
   </div>;
 }
