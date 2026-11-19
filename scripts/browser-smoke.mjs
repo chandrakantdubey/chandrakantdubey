@@ -219,7 +219,7 @@ try{
   await cdp.eval("document.querySelector('#work').scrollIntoView({behavior:'instant'})");
   await delay(450);
   await cdp.screenshot("gallery-mobile.png");
-  await cdp.eval("document.querySelector('.stack-theatre').scrollIntoView({behavior:'instant'})");
+  await cdp.eval("document.querySelector('.stack-reactor').scrollIntoView({behavior:'instant'})");
   await delay(310);
   await cdp.screenshot("orbit-mobile.png");
   const mobileReactor=await cdp.eval("(()=>{const view=document.querySelector('.reactor-view').getBoundingClientRect();const nodes=[...document.querySelectorAll('.reactor-node')].map(n=>n.getBoundingClientRect());return {viewLeft:view.left,viewRight:view.right,min:Math.min(...nodes.map(n=>n.left)),max:Math.max(...nodes.map(n=>n.right)),count:nodes.length}})()");
