@@ -174,7 +174,7 @@ try{
   await cdp.eval("document.querySelector('.flux-actions button:last-child').click()");
   await cdp.eval("document.querySelector('.duel-stage').scrollIntoView({behavior:'instant'})");
   await delay(300);
-  await cdp.eval("document.querySelector('.duel-hex[data-cell=0]').click()");
+  await cdp.eval("document.querySelector('.duel-hex').click()");
   await poll(()=>cdp.eval("document.querySelectorAll('.duel-hex.owned-one').length===1"),"Hex practice move");
   await delay(850);
   assert.ok(await cdp.eval("document.querySelectorAll('.duel-hex.owned-two').length>=1"),"local CPU responds");
