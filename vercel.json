@@ -27,5 +27,10 @@
       "source": "/play/:path*",
       "destination": "/index.html"
     }
-  ]
+  ],
+  "functions": {
+    "api/duel.ts": {
+      "includeFiles": "src/play/duelRules.js"
+    }
+  }
 }
