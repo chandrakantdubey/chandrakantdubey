@@ -144,6 +144,7 @@ function useOnlineGame(startRoom:string|null) {
 export default function DuelGame({standalone=false}:{standalone?:boolean}) {
   const initialRoom=useRef(roomFromUrl()).current;
   const online=useOnlineGame(initialRoom);
+  const setGame=online.setGame;
   const [copied,setCopied]=useState(false);
   const [entry,setEntry]=useState(initialRoom||"");
   const [cpuThinking,setCpuThinking]=useState(false);
@@ -159,7 +160,7 @@ export default function DuelGame({standalone=false}:{standalone?:boolean}) {
     if(!practiceMode||game.status!=="active"||game.turn!==2)return;
     setCpuThinking(true);
     cpuTimer.current=window.setTimeout(()=>{
-      online.setGame(current=>{
+      setGame(current=>{
         if(current.status!=="active"||current.turn!==2)return current;
         const index=choosePracticeMove(current);
         return index<0?current:toSnapshot(place(current,2,index));
@@ -167,7 +168,7 @@ export default function DuelGame({standalone=false}:{standalone?:boolean}) {
       setCpuThinking(false);
     },560);
     return()=>window.clearTimeout(cpuTimer.current);
-  },[practiceMode,game.turn,game.status,game.version,online.setGame]);
+  },[practiceMode,game.turn,game.status,game.version,setGame]);
 
   const select=async(index:number)=>{
     if(game.status!=="active"||!yourTurn||online.busy||cpuThinking)return;
