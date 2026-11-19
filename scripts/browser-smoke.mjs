@@ -168,7 +168,7 @@ try{
   assert.ok(parseFloat(reactorTypography.node)>=14,"technology labels must be readable");
   await cdp.screenshot("skills-desktop.png");
   await cdp.eval("document.querySelector('.stack-reactor').scrollIntoView({behavior:'instant'})");
-  await delay(280);
+  await delay(1250);
   await cdp.screenshot("orbit-desktop.png");
   await cdp.eval("document.querySelector('#play').scrollIntoView({behavior:'instant'})");
   await delay(350);
@@ -178,6 +178,8 @@ try{
   assert.ok(desktopFlux.offset<4,"Signal Shift center aligned "+JSON.stringify(desktopFlux));
   assert.ok(desktopFlux.titleFont>=45,"hero title must be prominent "+JSON.stringify(desktopFlux));
   assert.equal(desktopFlux.fit,"contain","entire playable arena must remain in view");
+  await cdp.eval("document.querySelector('.flux-stage').scrollIntoView({behavior:'instant',block:'center'})");
+  await delay(180);
   await cdp.screenshot("arcade-intro-desktop.png");
   await cdp.eval("document.querySelector('.flux-play').click()");
   await delay(240);
@@ -236,6 +238,8 @@ try{
   assert.ok(mobileFlux.offsetX<4 && mobileFlux.offsetY<12,"mobile Signal Shift composition is centered "+JSON.stringify(mobileFlux));
   assert.ok(mobileFlux.titleWidth<mobileFlux.stageWidth-12,"mobile arcade title remains in frame "+JSON.stringify(mobileFlux));
   assert.equal(mobileFlux.fit,"contain","mobile arena cannot crop hazards");
+  await cdp.eval("document.querySelector('.flux-stage').scrollIntoView({behavior:'instant',block:'center'})");
+  await delay(160);
   await cdp.screenshot("arcade-mobile.png");
   await cdp.eval("document.querySelector('.flux-play')?.click()");
   await delay(460);
