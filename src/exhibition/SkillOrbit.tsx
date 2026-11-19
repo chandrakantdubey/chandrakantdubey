@@ -10,8 +10,8 @@ import { technologyGroups } from "../atelier/content";
 const positions=[
   {x:20,y:25,z:94},
   {x:76,y:24,z:42},
-  {x:12,y:54,z:6},
-  {x:82,y:58,z:85},
+  {x:17,y:54,z:6},
+  {x:79,y:58,z:85},
   {x:42,y:12,z:24},
   {x:37,y:82,z:58},
   {x:66,y:84,z:8},
