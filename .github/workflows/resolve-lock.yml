@@ -1,23 +1,27 @@
-name: Generate Blob SDK lockfile
+name: Resolve Vercel Blob SDK lockfile
 on:
   push:
     branches: ["feat/immersive-playground"]
 permissions:
-  contents: read
+  contents: write
 jobs:
   lock:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
-      - name: Resolve locked dependencies
+      - name: Resolve dependencies
         run: npm install --package-lock-only --ignore-scripts --no-audit
-      - uses: actions/upload-artifact@v4
-        with:
-          name: resolved-blob-lock
-          path: |
-            package.json
-            package-lock.json
-          retention-days: 3
+      - name: Commit dependency lock
+        run: |
+          if ! git diff --quiet -- package-lock.json; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add package-lock.json
+            git commit -m "chore(deps): lock official Vercel Blob SDK"
+            git push origin HEAD:feat/immersive-playground
+          fi
