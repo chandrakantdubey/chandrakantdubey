@@ -98,13 +98,43 @@ required environment values are provided:
 | `CONTACT_TURNSTILE_SECRET` | Server-only | Cloudflare Turnstile secret |
 | `VITE_TURNSTILE_SITE_KEY` | Public build-time | Matching site key |
 
-`GET /api/contact` reports whether server delivery is enabled. A POST
-validates Origin, fields and Cloudflare Turnstile token before submitting to
-Resend. No keys are exposed in Vite client bundles. Protect this endpoint
-with a Vercel WAF/edge rate-limit policy before enabling direct delivery.
+`GET /api/contact` reports whether **all four** environment variables
+are present. The Vite client only enables direct send when the public site
+key exists and the endpoint reports `enabled:true`. A POST validates Origin,
+fields and the Cloudflare Turnstile token/hostname before contacting Resend.
+The recipient is a fixed address in the server function and the sender must
+belong to a domain verified in the same Resend account as the API key.
 
-Verify real receipt after enabling the variables; CI deliberately mocks
-third-party delivery so that it does not send actual messages.
+**Go-live checklist (Vercel project: `chandrakantdubey`):**
+
+1. Verify a domain you control under Resend > Domains. The `vercel.app`
+   subdomain is not a domain you can configure as an authenticated Resend sender.
+   In Vercel > Settings > Environment Variables, set `RESEND_FROM_EMAIL`
+   to e.g. `Portfolio <hello@your-verified-domain.example>` (use the **actual**
+   verified domain, not the example address). The Resend sandbox
+   `onboarding@resend.dev` is not a production substitute: it can only send
+   to the Resend account's email address.
+2. Create a Turnstile widget in Cloudflare with the production hostname
+   `chandrakantdubey.vercel.app` and copy its site key to
+   `VITE_TURNSTILE_SITE_KEY` (public build-time value) and secret to
+   `CONTACT_TURNSTILE_SECRET` (encrypted server-only Vercel variable).
+   For preview builds, allow the specific preview hostname and scope
+   credentials to preview separately if required.
+3. Keep `RESEND_API_KEY` encrypted and server-only. Never prefix a secret
+   with `VITE_`. Redeploy to load new build-time/runtime settings.
+4. Confirm `GET /api/contact` returns `{\"enabled\":true}`, pass
+   the Turnstile check in a browser, and submit a test message. The
+   success notice means Resend **accepted** the email, not that it arrived.
+   Confirm receipt in the inbox and inspect Resend's email logs.
+5. Protect `POST /api/contact` with a per-IP Vercel WAF rate limit if
+   available on the team's plan. The Hobby team rejected the custom rule
+   with HTTP 402 `payment_required`; verify quota/upgrade before enabling
+   a higher-volume public contact service. Turnstile verification stays
+   mandatory and server-side even without the WAF rule.
+
+The client has a prefilled email-app fallback regardless of server setup.
+CI uses mocked Cloudflare and Resend responses; it cannot prove actual inbox
+receipt without configured production credentials and a manual test.
 
 ## Production release
 

@@ -15,6 +15,7 @@ const saved = {
   RESEND_API_KEY:process.env.RESEND_API_KEY,
   RESEND_FROM_EMAIL:process.env.RESEND_FROM_EMAIL,
   CONTACT_TURNSTILE_SECRET:process.env.CONTACT_TURNSTILE_SECRET,
+  VITE_TURNSTILE_SITE_KEY:process.env.VITE_TURNSTILE_SITE_KEY,
 };
 const originalFetch = globalThis.fetch;
 const url = "https://chandrakantdubey.vercel.app/api/contact";
@@ -26,6 +27,7 @@ try {
   delete process.env.RESEND_API_KEY;
   delete process.env.RESEND_FROM_EMAIL;
   delete process.env.CONTACT_TURNSTILE_SECRET;
+  delete process.env.VITE_TURNSTILE_SITE_KEY;
   assert.equal(contactConfigured(),false);
   let result=await GET();
   assert.equal(result.status,200);
@@ -36,6 +38,13 @@ try {
   process.env.RESEND_API_KEY="re_test";
   process.env.RESEND_FROM_EMAIL="Portfolio <contact@example.com>";
   process.env.CONTACT_TURNSTILE_SECRET="turnstile-secret-test";
+  process.env.VITE_TURNSTILE_SITE_KEY="turnstile-public-site-key";
+  for (const key of ["RESEND_API_KEY","RESEND_FROM_EMAIL","CONTACT_TURNSTILE_SECRET","VITE_TURNSTILE_SITE_KEY"]) {
+    const value=process.env[key];
+    process.env[key]="  ";
+    assert.equal(contactConfigured(),false,key+" must not be blank");
+    process.env[key]=value;
+  }
   assert.equal(contactConfigured(),true);
   assert.equal((await GET()).status,200);
   assert.equal(validateContactPayload(payload).ok,true);
@@ -100,7 +109,30 @@ try {
   };
   result=await POST(makeRequest(payload));
   assert.equal(result.status,403);
-  console.log("Contact API unit tests: validation, configuration, origin, Turnstile and mocked Resend send — PASS");
+  globalThis.fetch=async input=>{
+    if(String(input).includes("/siteverify"))return Response.json({success:true});
+    throw Error("Resend must not send for a missing verification hostname");
+  };
+  result=await POST(makeRequest(payload));
+  assert.equal(result.status,403,"Turnstile siteverify must report the exact hostname");
+
+  globalThis.fetch=async input=>{
+    if(String(input).includes("/siteverify"))return Response.json({success:true,hostname:"chandrakantdubey.vercel.app"});
+    if(String(input).includes("api.resend.com/emails"))return Response.json({error:"upstream failure"},{status:403});
+    throw Error("unexpected network");
+  };
+  result=await POST(makeRequest(payload));
+  assert.equal(result.status,502,"Resend rejection must not be reported as success");
+
+  globalThis.fetch=async input=>{
+    if(String(input).includes("/siteverify"))return Response.json({success:true,hostname:"chandrakantdubey.vercel.app"});
+    if(String(input).includes("api.resend.com/emails"))return Response.json({});
+    throw Error("unexpected network");
+  };
+  result=await POST(makeRequest(payload));
+  assert.equal(result.status,502,"Resend must return a valid accepted-message id");
+
+  console.log("Contact API unit tests: validation, all env gates, origin, strict Turnstile and Resend receipts — PASS");
 }finally{
   globalThis.fetch=originalFetch;
   for(const [key,value] of Object.entries(saved)){

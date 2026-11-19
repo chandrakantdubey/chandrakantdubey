@@ -11,7 +11,7 @@ export type ContactPayload = {
   requestId: string;
 };
 
-const CONTACT_EMAIL = "919chandrakant@gmail.com";
+const CONTACT_EMAIL = "919chandrakant@gmail.com"; // Fixed recipient, never taken from a submitted form.
 const RESPONSE_HEADERS = {
   "Content-Type": "application/json; charset=utf-8",
   "Cache-Control": "no-store",
@@ -23,7 +23,10 @@ function json(body: Record<string, unknown>, status = 200): Response {
 }
 
 export function contactConfigured(env = process.env): boolean {
-  return Boolean(env.RESEND_API_KEY && env.RESEND_FROM_EMAIL && env.CONTACT_TURNSTILE_SECRET);
+  // All four settings are required: a server credential, a verified sender,
+  // and the matching Turnstile secret/public site key used by the client build.
+  return [env.RESEND_API_KEY, env.RESEND_FROM_EMAIL, env.CONTACT_TURNSTILE_SECRET, env.VITE_TURNSTILE_SITE_KEY]
+    .every(value => typeof value === "string" && value.trim().length > 0);
 }
 
 export function validateContactPayload(value: unknown): { ok: true; value: ContactPayload } | { ok: false; error: string } {
@@ -80,13 +83,14 @@ export async function POST(request: Request): Promise<Response> {
       body: JSON.stringify({
         secret: process.env.CONTACT_TURNSTILE_SECRET,
         response: token,
-        idempotency_key: requestId,
+        // Turnstile tokens are single-use. Only the Resend send uses the
+        // stable request id for de-duplication across client retries.
       }),
       signal: timeout,
     });
     if (!challengeResponse.ok) return json({ error: "Security verification unavailable." }, 502);
     const challenge = await challengeResponse.json() as { success?: boolean; hostname?: string };
-    if (!challenge.success || (challenge.hostname && challenge.hostname !== new URL(request.url).hostname)) {
+    if (challenge.success !== true || challenge.hostname !== new URL(request.url).hostname) {
       return json({ error: "Security verification failed. Please try again." }, 403);
     }
   } catch {
@@ -114,6 +118,11 @@ export async function POST(request: Request): Promise<Response> {
       // Avoid exposing upstream response contents or private configuration.
       return json({ error: "Email delivery failed. Please use the email link." }, 502);
     }
+    const receipt = await outgoing.json() as { id?: unknown };
+    if (typeof receipt.id !== "string" || !receipt.id) {
+      return json({ error: "Email provider did not confirm receipt. Please use the email link." }, 502);
+    }
+    // Resend accepted the message. This does not claim inbox delivery.
     return json({ sent: true });
   } catch {
     return json({ error: "Email delivery is currently unavailable. Please use the email link." }, 502);

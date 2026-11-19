@@ -59,6 +59,13 @@ class Cdp {
     writeFileSync(join(out,file),Buffer.from(r.data,"base64"));
   }
 }
+
+// Audit actual computed sizes, not only stylesheet declarations. Capture
+// direct text nodes so layout-only wrappers don't skew the results.
+async function assertMinimumTextSize(cdp,viewport) {
+  const offenders=await cdp.eval("(()=>{const out=[];for(const el of document.body.querySelectorAll('*')){if(out.length>=30)break;if(!Array.from(el.childNodes).some(n=>n.nodeType===Node.TEXT_NODE&&n.textContent?.trim()))continue;const cs=getComputedStyle(el),box=el.getBoundingClientRect();if(cs.display==='none'||cs.visibility==='hidden'||box.width===0||box.height===0||!el.getClientRects().length)continue;const px=parseFloat(cs.fontSize);if(Number.isFinite(px)&&px<11.99)out.push({tag:el.tagName,className:typeof el.className==='string'?el.className.slice(0,65):'',font:cs.fontSize,text:el.textContent?.trim().slice(0,60)});}return out})()");
+  assert.deepEqual(offenders,[],viewport+" has text smaller than 12px: "+JSON.stringify(offenders));
+}
 try{
   await poll(async()=>{
     const r=await fetch("http://127.0.0.1:4173/",{signal:AbortSignal.timeout(1100)});
@@ -95,6 +102,22 @@ try{
   assert.ok(desktop.modules>=60,"procedurally assembled letter geometry is present");
   assert.ok(["webgl","fallback"].includes(desktop.renderer),"Canvas must run WebGL or a designed fallback: "+JSON.stringify(desktop));
   assert.equal(desktop.overflow,false,"Desktop must not overflow horizontally");
+  await assertMinimumTextSize(cdp,"1440px desktop");
+  const pageStory=await cdp.eval("(()=>{const main=document.querySelector('main');const ribbon=document.querySelector('.marquee-track');const copies=[...ribbon.querySelectorAll('.marquee-copy')];const arcade=document.querySelector('.flux-experience').getBoundingClientRect();const hex=document.querySelector('.after-hours .duel-experience').getBoundingClientRect();return {lastSection:main.lastElementChild?.id,sectionMarkers:document.querySelectorAll('.section-topline').length,oldCopy:document.body.innerText.includes('Two fully functional games, embedded into the exhibition'),ribbonCopies:copies.map(x=>({text:x.textContent,width:x.getBoundingClientRect().width})),animation:getComputedStyle(ribbon).animationName,arcade:{left:arcade.left,right:arcade.right},hex:{left:hex.left,right:hex.right},viewport:document.documentElement.clientWidth}})()");
+  assert.equal(pageStory.lastSection,"final-boss","Hex must finish the page, after contact");
+  assert.equal(pageStory.sectionMarkers,0,"no ordinal section divider UI");
+  assert.equal(pageStory.oldCopy,false,"remove self-promotional game disclaimer");
+  assert.equal(pageStory.ribbonCopies.length,2,"marquee must duplicate the exact same group");
+  assert.equal(pageStory.ribbonCopies[0].text,pageStory.ribbonCopies[1].text);
+  assert.ok(Math.abs(pageStory.ribbonCopies[0].width-pageStory.ribbonCopies[1].width)<1,"identical ticker widths ensure a seamless loop");
+  assert.equal(pageStory.animation,"marquee-seamless","ticker must animate continuously");
+  assert.ok(pageStory.arcade.left<=2 && pageStory.arcade.right>=pageStory.viewport-2,"arcade must be full bleed "+JSON.stringify(pageStory));
+  assert.ok(pageStory.hex.left<=2 && pageStory.hex.right>=pageStory.viewport-2,"Hex game must be full bleed "+JSON.stringify(pageStory));
+  const tickerBefore=await cdp.eval("getComputedStyle(document.querySelector('.marquee-track')).transform");
+  await delay(230);
+  const tickerAfter=await cdp.eval("getComputedStyle(document.querySelector('.marquee-track')).transform");
+  if(!await cdp.eval("matchMedia('(prefers-reduced-motion: reduce)').matches"))
+    assert.notEqual(tickerBefore,tickerAfter,"marquee must physically move, not just declare an animation");
   assert.equal(desktop.hasOldMesh,false,"Remove mesh, inspector, and dev-tool clutter");
   assert.ok(desktop.source.includes("github.com/chandrakantdubey/blackout-protocol"));
   assert.ok(await cdp.eval("document.body.innerText.includes('Jan 2026')"));
@@ -177,6 +200,7 @@ try{
   const desktopFlux=await cdp.eval("(()=>{const stage=document.querySelector('.flux-stage').getBoundingClientRect();const content=document.querySelector('.flux-overlay-content').getBoundingClientRect();const title=document.querySelector('.flux-overlay h3');return {offset:Math.abs((stage.left+stage.width/2)-(content.left+content.width/2)),titleFont:parseFloat(getComputedStyle(title).fontSize),fit:getComputedStyle(document.querySelector('.flux-canvas')).objectFit}})()");
   assert.ok(desktopFlux.offset<4,"Signal Shift center aligned "+JSON.stringify(desktopFlux));
   assert.ok(desktopFlux.titleFont>=45,"hero title must be prominent "+JSON.stringify(desktopFlux));
+  assert.ok(await cdp.eval("getComputedStyle(document.querySelector('.duel-stage')).backgroundImage.includes('gradient')"),"Hex must use its redesigned immersive arena");
   assert.equal(desktopFlux.fit,"contain","entire playable arena must remain in view");
   await cdp.eval("document.querySelector('.flux-stage').scrollIntoView({behavior:'instant',block:'center'})");
   await delay(180);
@@ -200,6 +224,7 @@ try{
   await poll(()=>cdp.eval("!!document.querySelector('.duel-fullpage')"),"dedicated route");
   assert.equal(await cdp.eval("document.querySelectorAll('.duel-hex').length"),49);
   await cdp.screenshot("hex-dedicated-desktop.png");
+  await assertMinimumTextSize(cdp,"standalone duel desktop");
   await cdp.send("Page.navigate",{url:"http://127.0.0.1:4173/"});
   await poll(()=>cdp.eval("!!document.querySelector('#top')"),"exhibition after route");
 
@@ -213,6 +238,10 @@ try{
   assert.notEqual(mobile.menu,"none");
   assert.equal(mobile.gallery,6);
   assert.ok(mobile.sculptureWidth>240);
+  const mobileGames=await cdp.eval("(()=>{const a=document.querySelector('.flux-experience').getBoundingClientRect(),b=document.querySelector('.after-hours .duel-experience').getBoundingClientRect();return {aLeft:a.left,aRight:a.right,bLeft:b.left,bRight:b.right,width:document.documentElement.clientWidth}})()");
+  assert.ok(mobileGames.aLeft<=2 && mobileGames.aRight>=mobileGames.width-2,"arcade fills mobile width");
+  assert.ok(mobileGames.bLeft<=2 && mobileGames.bRight>=mobileGames.width-2,"Hex finale fills mobile width");
+  await assertMinimumTextSize(cdp,"390px mobile");
   await cdp.screenshot("hero-mobile.png");
   await cdp.eval("document.querySelector('.mobile-nav-toggle').click()");
   assert.ok(await cdp.eval("document.querySelector('.nav-items').classList.contains('nav-items-open')"));
@@ -259,6 +288,7 @@ try{
   await delay(330);
   const narrow=await cdp.eval("({width:innerWidth,body:document.documentElement.scrollWidth})");
   assert.ok(narrow.body<=narrow.width+3,"Narrow 320px viewport must not horizontally overflow "+JSON.stringify(narrow));
+  await assertMinimumTextSize(cdp,"320px mobile");
   const narrowNodes=await cdp.eval("(()=>{const arena=document.querySelector('.duel-stage').getBoundingClientRect();const rs=[...document.querySelectorAll('.duel-hex')].map(x=>x.getBoundingClientRect());return {min:Math.min(...rs.map(r=>r.left)),max:Math.max(...rs.map(r=>r.right)),left:arena.left,right:arena.right}})()");
   assert.ok(narrowNodes.min>=narrowNodes.left-3 && narrowNodes.max<=narrowNodes.right+3,
     "All Hex cells must also fit 320px width "+JSON.stringify(narrowNodes));

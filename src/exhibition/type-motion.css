@@ -24,12 +24,12 @@ button,input,textarea {font-family:var(--type-body);}
 .exhibition-site a,.exhibition-site button {text-underline-offset:4px;}
 .exhibition-site .brand-mark {font-weight:800;font-size:38px;letter-spacing:-.13em;}
 .exhibition-site .nav-items a {font-size:13px;font-weight:700;letter-spacing:-.015em;}
-.exhibition-site .nav-items small {font-size:10px;}
-.exhibition-site .nav-annotation {font-size:10px;letter-spacing:.05em;}
-.exhibition-site .nav-availability {font-size:11px;letter-spacing:0;}
+.exhibition-site .nav-items small {font-size:12px;}
+.exhibition-site .nav-annotation {font-size:12px;letter-spacing:.05em;}
+.exhibition-site .nav-availability {font-size:12px;letter-spacing:0;}
 .exhibition-site .hero-top-bar,
 .exhibition-site .hero-rotator-caption,
-.exhibition-site .hero-index {font-size:10px;line-height:1.6;}
+.exhibition-site .hero-index {font-size:12px;line-height:1.6;}
 .exhibition-site .hero-name-top {
   font-size:clamp(48px,9.3vw,171px);
   letter-spacing:-.108em;
@@ -42,7 +42,7 @@ button,input,textarea {font-family:var(--type-body);}
 }
 .exhibition-site .hero-meta>p {font-size:clamp(18px,2vw,25px);line-height:1.4;font-weight:650;}
 .exhibition-site .hero-meta-side>a {font-size:12px;font-weight:750;}
-.exhibition-site .hero-meta-side>span {font-size:11px;}
+.exhibition-site .hero-meta-side>span {font-size:12px;}
 .exhibition-site .identity-ribbon span {font-size:15px;font-weight:800;letter-spacing:.08em;word-spacing:25px;}
 .exhibition-site .section-topline {font:700 12px/1.5 var(--type-code);letter-spacing:.04em;}
 .exhibition-site .work-heading h2 {font-weight:800;font-size:clamp(62px,10.6vw,175px);letter-spacing:-.09em;line-height:.91;}
@@ -55,12 +55,12 @@ button,input,textarea {font-family:var(--type-body);}
   letter-spacing:-.01em;
 }
 .exhibition-site .gallery-row-content strong {font:750 clamp(20px,1.9vw,29px)/1.2 var(--type-display);letter-spacing:-.045em;}
-.exhibition-site .gallery-row-content small {font:600 11px/1.45 var(--type-code);letter-spacing:-.01em;}
+.exhibition-site .gallery-row-content small {font:600 12px/1.45 var(--type-code);letter-spacing:-.01em;}
 .exhibition-site .gallery-summary p {font:550 15px/1.75 var(--type-body);max-width:540px;}
-.exhibition-site .gallery-tags span,.exhibition-site .gallery-status {font:650 11px/1.35 var(--type-code);}
+.exhibition-site .gallery-tags span,.exhibition-site .gallery-status {font:650 12px/1.35 var(--type-code);}
 .exhibition-site .gallery-list-top,.exhibition-site .gallery-stage-footer>div>span,
 .exhibition-site .gallery-stage-footer a,.exhibition-site .gallery-row-number,
-.exhibition-site .gallery-prev-next {font-size:11px;line-height:1.5;}
+.exhibition-site .gallery-prev-next {font-size:12px;line-height:1.5;}
 .exhibition-site .gallery-stage-footer strong {font:750 clamp(28px,3vw,47px)/1.12 var(--type-display);letter-spacing:-.045em;}
 .exhibition-site .experience-heading-wrap h2 {letter-spacing:-.088em;}
 .exhibition-site .career-name h3 {font:750 clamp(31px,3.4vw,56px)/1.08 var(--type-display);letter-spacing:-.045em;}
@@ -69,16 +69,16 @@ button,input,textarea {font-family:var(--type-body);}
 .exhibition-site .career-role>span,.exhibition-site .career-number {font:550 12px/1.5 var(--type-code);}
 .exhibition-site .team-public-row strong {font:750 clamp(16px,1.5vw,21px)/1.25 var(--type-display);letter-spacing:-.02em;}
 .exhibition-site .team-public-row small,.exhibition-site .team-public-row>span,
-.exhibition-site .team-private-items small {font:550 11px/1.55 var(--type-code);}
+.exhibition-site .team-private-items small {font:550 12px/1.55 var(--type-code);}
 .exhibition-site .team-private-items strong {font:700 20px/1.2 var(--type-display);}
-.exhibition-site .team-heading>span,.exhibition-site .team-private>div:first-child {font-size:11px;}
+.exhibition-site .team-heading>span,.exhibition-site .team-private>div:first-child {font-size:12px;}
 .exhibition-site .skills-section h2 {letter-spacing:-.10em;font-weight:800;}
 .exhibition-site .play-header h2,
 .exhibition-site .game-transition h3 {font-weight:800;letter-spacing:-.095em;}
 .exhibition-site .flux-topline,.exhibition-site .duel-topline,
 .exhibition-site .game-index-band,.exhibition-site .flux-instructions,
-.exhibition-site .duel-tail {font:650 11px/1.55 var(--type-code);letter-spacing:.035em;}
-.exhibition-site .flux-score small,.exhibition-site .flux-stat small {font:700 11px/1.4 var(--type-code);}
+.exhibition-site .duel-tail {font:650 12px/1.55 var(--type-code);letter-spacing:.035em;}
+.exhibition-site .flux-score small,.exhibition-site .flux-stat small {font:700 12px/1.4 var(--type-code);}
 .exhibition-site .flux-overlay h3 {
   font-family:var(--type-display);
   font-weight:800;
@@ -95,10 +95,10 @@ button,input,textarea {font-family:var(--type-body);}
 .exhibition-site .flux-overlay p {font:550 15px/1.55 var(--type-body);max-width:440px;}
 .exhibition-site .flux-play {font:750 13px/1.4 var(--type-code);letter-spacing:0;}
 .exhibition-site .duel-player-indicator strong {font:750 15px/1.4 var(--type-display);}
-.exhibition-site .duel-player-indicator small,.exhibition-site .duel-status small {font-size:11px;}
+.exhibition-site .duel-player-indicator small,.exhibition-site .duel-status small {font-size:12px;}
 .exhibition-site .duel-status span {font-size:16px;}
 .exhibition-site .duel-lobby-intro p {font:500 16px/1.75 var(--type-body);}
-.exhibition-site .duel-room-caption,.exhibition-site .duel-lobby-intro>span {font-size:11px;}
+.exhibition-site .duel-room-caption,.exhibition-site .duel-lobby-intro>span {font-size:12px;}
 .exhibition-site .duel-button {font-size:12px;}
 .exhibition-site .contact-heading h2 {letter-spacing:-.09em;}
 .exhibition-site .contact-left>p {font-size:clamp(32px,3.6vw,56px);line-height:1.15;}
@@ -106,7 +106,7 @@ button,input,textarea {font-family:var(--type-body);}
 .exhibition-site .contact-form .form-row label {font-size:12px;}
 .exhibition-site .contact-form .form-row input,.exhibition-site .contact-form .form-row textarea {font:500 16px/1.6 var(--type-body);}
 .exhibition-site .contact-form .submit-mail {font-size:13px;}
-.exhibition-site .exhibition-footer>span,.exhibition-site .exhibition-footer>div a {font-size:11px;}
+.exhibition-site .exhibition-footer>span,.exhibition-site .exhibition-footer>div a {font-size:12px;}
 /* Align the arcade world with its stage and the title to the true stage center. */
 .exhibition-site .flux-stage {
   position:relative;
@@ -161,7 +161,7 @@ button,input,textarea {font-family:var(--type-body);}
 .flux-corner-ornament::before {content:"+";position:absolute;top:17px;left:18px;color:#edffa7;font:700 20px var(--type-code);}
 .flux-corner-ornament.flux-corner-bottom {top:auto;left:auto;bottom:5%;right:3%;transform:rotate(180deg);}
 .flux-overlay-decor {position:absolute;left:4%;bottom:7%;right:4%;z-index:2;display:flex;justify-content:space-between;pointer-events:none;
-  font:600 11px/1.2 var(--type-code);letter-spacing:.045em;color:#b4d6e9a3;
+  font:600 12px/1.2 var(--type-code);letter-spacing:.045em;color:#b4d6e9a3;
 }
 .flux-overlay-decor>span:last-child {color:#def7b3b8;}
 /* Per-section visual motion: layered but never obstructing content. */
@@ -179,13 +179,13 @@ button,input,textarea {font-family:var(--type-body);}
 @media(max-width:640px) {
   .exhibition-site .brand-mark {font-size:32px;}
   .exhibition-site .nav-items a {font-size:33px;}
-  .exhibition-site .nav-availability {font-size:10px;}
+  .exhibition-site .nav-availability {font-size:12px;}
   .exhibition-site .hero-name-top {font-size:9.5vw;letter-spacing:-.1em;}
   .exhibition-site .hero-name-bottom {font-size:22.5vw;letter-spacing:-.095em;}
   .exhibition-site .hero-meta>p {font-size:16px;line-height:1.45;}
-  .exhibition-site .hero-meta-side>a {font-size:10px;}
-  .exhibition-site .hero-meta-side>span {font-size:9px;}
-  .exhibition-site .section-topline {font-size:10px;}
+  .exhibition-site .hero-meta-side>a {font-size:12px;}
+  .exhibition-site .hero-meta-side>span {font-size:12px;}
+  .exhibition-site .section-topline {font-size:12px;}
   .exhibition-site .work-heading h2 {font-size:clamp(56px,13vw,90px);line-height:1.02;}
   .exhibition-site .work-heading>p,
   .exhibition-site .experience-heading-wrap>p,
@@ -209,25 +209,25 @@ button,input,textarea {font-family:var(--type-body);}
     white-space:nowrap;
   }
   .exhibition-site .flux-overlay-content {gap:11px;}
-  .exhibition-site .flux-overlay-eyebrow {font-size:10px;}
+  .exhibition-site .flux-overlay-eyebrow {font-size:12px;}
   .exhibition-site .flux-overlay p {font-size:12px;line-height:1.5;max-width:290px;}
-  .exhibition-site .flux-play {margin-top:6px;font-size:11px;padding:12px 14px;}
+  .exhibition-site .flux-play {margin-top:6px;font-size:12px;padding:12px 14px;}
   .exhibition-site .flux-topline,.exhibition-site .duel-topline,
-  .exhibition-site .game-index-band {font-size:9px;}
-  .exhibition-site .flux-score small,.exhibition-site .flux-stat small {font-size:9px;}
+  .exhibition-site .game-index-band {font-size:12px;}
+  .exhibition-site .flux-score small,.exhibition-site .flux-stat small {font-size:12px;}
   .exhibition-site .game-transition h3 {font-size:15.5vw;line-height:1;}
   .flux-reticle {inset:14% 7%;}
   .flux-reticle::before {width:64%;}
   .flux-reticle::after {width:92%;}
   .flux-corner-ornament {width:30px;height:30px;}
   .flux-corner-ornament::before {top:2px;left:6px;font-size:15px;}
-  .flux-overlay-decor {font-size:8px;bottom:5%;}
-  .exhibition-site .duel-player-indicator strong {font-size:11px;}
-  .exhibition-site .duel-player-indicator small {font-size:8px;}
+  .flux-overlay-decor {font-size:12px;bottom:5%;}
+  .exhibition-site .duel-player-indicator strong {font-size:12px;}
+  .exhibition-site .duel-player-indicator small {font-size:12px;}
   .exhibition-site .duel-lobby-intro p {font-size:14px;}
   .exhibition-site .contact-form .form-row input,.exhibition-site .contact-form .form-row textarea {font-size:16px;}
   .exhibition-site .contact-heading h2 {font-size:clamp(52px,12.8vw,80px);}
-  .exhibition-site .exhibition-footer>div a {font-size:10px;}
+  .exhibition-site .exhibition-footer>div a {font-size:12px;}
 }
 @media(prefers-reduced-motion:reduce) {
   .flux-reticle::before,.flux-reticle::after,

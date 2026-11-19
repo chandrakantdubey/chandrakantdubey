@@ -54,7 +54,7 @@
 }
 .gallery-space-label {
   position:absolute;z-index:5;bottom:4.5%;right:4%;
-  font:600 10px "JetBrains Mono",monospace;letter-spacing:.14em;color:#64616c;
+  font:600 12px "JetBrains Mono",monospace;letter-spacing:.14em;color:#64616c;
 }
 .gallery-stage-footer {margin-top:22px;}
 
@@ -107,7 +107,7 @@
   .gallery-depth-sheet {width:62%;height:60%;top:18%;opacity:.55;}
   .gallery-depth-prev {left:-5%;}
   .gallery-depth-next {right:-5%;}
-  .gallery-space-label {font-size:8px;bottom:2%;}
+  .gallery-space-label {font-size:12px;bottom:2%;}
   .career-row:hover {transform:none;}
   .team-public-row:hover {transform:none;}
   .contact-form:hover,.contact-form:focus-within {transform:none;box-shadow:9px 9px 0 #c74537;}
