@@ -89,8 +89,7 @@ export function place(snapshot:DuelSnapshot,side:Side,index:number):DuelMove {
   };
 }
 export function toSnapshot(move:DuelMove):DuelSnapshot {
-  const {valid:_,reason:__,...data}=move;
-  return data;
+  return {board:move.board,turn:move.turn,version:move.version,moves:move.moves,status:move.status,winner:move.winner,path:move.path,players:move.players,lastMove:move.lastMove};
 }
 
 /** Small evaluation for local practice. The API never uses a CPU opponent. */
