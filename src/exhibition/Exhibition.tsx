@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
-import { ArrowDown, ArrowLeft, ArrowRight, ArrowUpRight, Check, Menu, X } from "lucide-react";
+import { useEffect, useRef, useState, type RefObject } from "react";
+import { ArrowDown, ArrowLeft, ArrowRight, ArrowUpRight, Menu, X } from "lucide-react";
 import { featuredProjects, links, technologyGroups, workExperience } from "../atelier/content";
 import { internalTeamWork, publicTeamWork } from "../atelier/clientWork";
 import ContactSection from "../atelier/ContactSection";
@@ -7,7 +7,7 @@ import ChromaticSculpture from "./ChromaticSculpture";
 import ProjectPoster from "./ProjectPoster";
 import "./exhibition.css";
 
-function useScrollExperience(ref:React.RefObject<HTMLDivElement|null>) {
+function useScrollExperience(ref:RefObject<HTMLDivElement|null>) {
   useEffect(()=>{
     const progress=ref.current;
     let scheduled=false;
