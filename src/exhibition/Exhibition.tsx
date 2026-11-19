@@ -76,11 +76,11 @@ function Navigation() {
     <a className="skip-to-content" href="#main">Skip to content</a>
     <header className="exhibition-nav">
       <a href="#top" className="brand-mark" onClick={()=>setMenu(false)} aria-label="Chandrakant Dubey — top of page">c<span>d</span><i>®</i></a>
-      <span className="nav-annotation">CHANDRAKANT DUBEY <span> / </span> SOFTWARE ENGINEER</span>
+      <span className="nav-annotation">I WRITE CODE. IT SOMETIMES AGREES.</span>
       <nav className={menu?"nav-items nav-items-open":"nav-items"} aria-label="Primary navigation">
-        {[["Work","work"],["Experience","experience"],["Stack","skills"],["Play","play"],["Contact","contact"]].map(([name,id],i)=><a href={"#"+id} key={id} onClick={()=>setMenu(false)}><small>0{i+1}</small>{name}</a>)}
+        {[["Work","work"],["Experience","experience"],["Stack","skills"],["Play","play"],["Contact","contact"]].map(([name,id])=><a href={"#"+id} key={id} onClick={()=>setMenu(false)}>{name}</a>)}
       </nav>
-      <a className="nav-availability" href="#contact">LET'S TALK <ArrowUpRight size={17}/></a>
+      <a className="nav-availability" href="#contact">SAY HELLO <ArrowUpRight size={17}/></a>
       <button type="button" className="mobile-nav-toggle" onClick={()=>setMenu(value=>!value)} aria-expanded={menu} aria-label={menu?"Close navigation":"Open navigation"}>{menu?<X size={24}/>:<Menu size={24}/>}</button>
       <div className="scroll-progress" ref={progress} aria-hidden="true"/>
     </header>
@@ -90,18 +90,17 @@ function Navigation() {
 function Hero() {
   return <section className="exhibition-hero" id="top" aria-labelledby="hero-heading">
     <div className="hero-grain" aria-hidden="true"/>
-    <div className="hero-top-bar"><span>PORTFOLIO — EDITION 2026</span><span>BASED IN MUMBAI, INDIA</span></div>
+    <div className="hero-top-bar"><span>YES, I MADE THIS MYSELF.</span><span>MUMBAI, INDIA · USUALLY ONLINE</span></div>
     <h1 id="hero-heading" className="hero-title" aria-label="Chandrakant Dubey">
       <span className="hero-name-top" aria-hidden="true">{"CHANDRAKANT".split("").map((char,i)=><span key={i} className="hero-letter" style={{animationDelay:(.06+i*.045)+"s"}}>{char}</span>)}</span>
       <span className="hero-name-bottom" aria-hidden="true">DUBEY<span className="hero-dot">.</span></span>
     </h1>
     <div className="hero-sculpture"><CodeMonument/></div>
-    <span className="hero-rotator-caption">SOURCE MADE PHYSICAL <span> / </span> DRAG & RECOMPILE</span>
+    <span className="hero-rotator-caption">GO ON, POKE IT <span> / </span> IT WON'T BITE</span>
     <div className="hero-meta">
-      <p>Full-stack software engineer.</p>
-      <div className="hero-meta-side"><span>REACT / BACKEND / CLOUD</span><a href="#work">ENTER THE PORTFOLIO <ArrowDown size={18}/></a></div>
+      <p>Turning caffeine into deploys. Results may vary.</p>
+      <div className="hero-meta-side"><span>ZERO PERCENT STOCK TEMPLATE</span><a href="#work">SHOW ME THE CODE <ArrowDown size={18}/></a></div>
     </div>
-    <div className="hero-index" aria-hidden="true">CD—001 <span>CREATIVE CODE / 01</span></div>
   </section>;
 }
 
@@ -110,10 +109,9 @@ function Projects() {
   const selected=featuredProjects[active];
   const activate=(index:number)=>setActive((index+featuredProjects.length)%featuredProjects.length);
   return <section className="projects-section" id="work" aria-labelledby="projects-heading">
-    <div className="section-topline" data-reveal><span>01 / SELECTED WORK</span><span>2023 — 2026</span></div>
     <div className="work-heading" data-reveal>
-      <h2 id="projects-heading">THE <em>WORK.</em></h2>
-      <p>Six independent projects. A few different disciplines. One place to explore them.</p>
+      <h2 id="projects-heading">IT <em>SHIPS.</em></h2>
+      <p>Because “works on my machine” is not actually a launch strategy.</p>
     </div>
     <div className="gallery-layout">
       <div className="gallery-stage" role="tabpanel" aria-labelledby={"project-button-"+selected.id} id="project-stage" tabIndex={0}>
@@ -132,15 +130,13 @@ function Projects() {
           <div className="gallery-depth-sheet gallery-depth-prev" aria-hidden="true"><ProjectPoster category={featuredProjects[(active+5)%featuredProjects.length].category}/></div>
           <div className="gallery-depth-sheet gallery-depth-next" aria-hidden="true"><ProjectPoster category={featuredProjects[(active+1)%featuredProjects.length].category}/></div>
           <div className="gallery-scene gallery-scene-3d" key={selected.id}><ProjectPoster category={selected.category}/></div>
-          <span className="gallery-space-label">STAGE / 3D / {selected.number}</span>
         </div>
         <div className="gallery-stage-footer">
-          <div><span>PROJECT {selected.number} / 06</span><strong>{selected.name}</strong></div>
+          <div><strong>{selected.name}</strong></div>
           <a href={selected.repository} target="_blank" rel="noopener noreferrer" aria-label={"Explore "+selected.name+" source code"}>VIEW SOURCE <ArrowUpRight size={18}/></a>
         </div>
       </div>
       <div className="gallery-list">
-        <div className="gallery-list-top"><span>SELECT A PROJECT</span><span>06 / 06</span></div>
         <div className="gallery-buttons" role="tablist" aria-label="Selected engineering projects">
           {featuredProjects.map((project,i)=><button key={project.id} id={"project-button-"+project.id} type="button" role="tab" aria-controls="project-stage" aria-selected={active===i} tabIndex={active===i?0:-1} onClick={()=>activate(i)}
             onMouseEnter={()=>activate(i)}
@@ -152,7 +148,6 @@ function Projects() {
               document.getElementById("project-button-"+featuredProjects[next].id)?.focus();
             }}
             className={active===i?"gallery-row active":"gallery-row"}>
-            <span className="gallery-row-number">{project.number}</span>
             <span className="gallery-row-content"><strong>{project.name}</strong><small>{project.label}</small></span>
             <ArrowUpRight size={22} className="gallery-row-icon"/>
           </button>)}
@@ -166,29 +161,27 @@ function Projects() {
         <div className="gallery-prev-next"><button type="button" onClick={()=>activate(active-1)} aria-label="Previous project"><ArrowLeft size={18}/></button><span>{String(active+1).padStart(2,"0")} / 06</span><button type="button" onClick={()=>activate(active+1)} aria-label="Next project"><ArrowRight size={18}/></button></div>
       </div>
     </div>
-    <a className="projects-footer-link" href={links.github+"?tab=repositories"} target="_blank" rel="noopener noreferrer">ALL GITHUB REPOSITORIES <ArrowUpRight size={18}/></a>
+    <a className="projects-footer-link" href={links.github+"?tab=repositories"} target="_blank" rel="noopener noreferrer">YES, THE SOURCE IS PUBLIC <ArrowUpRight size={18}/></a>
   </section>;
 }
 
 function Experience() {
   return <section className="experience-section" id="experience" aria-labelledby="experience-heading">
-    <div className="section-topline inverse" data-reveal><span>02 / EXPERIENCE</span><span>THE PLACES I'VE BUILT WITH</span></div>
-    <div className="experience-heading-wrap" data-reveal><h2 id="experience-heading">WORK<br/><span>IN</span> <em>PROGRESS.</em></h2><p>Professional work, from product interfaces to enterprise platforms.</p></div>
+    <div className="experience-heading-wrap" data-reveal><h2 id="experience-heading">YES,<br/><span>I'VE</span> <em>WORKED.</em></h2><p>Real teams, real users, and deadlines that had absolutely no chill.</p></div>
     <div className="career-list">
-      {workExperience.map((job,i)=><article className="career-row" key={job.company} data-reveal>
-        <span className="career-number">0{i+1}</span>
+      {workExperience.map(job=><article className="career-row" key={job.company} data-reveal>
         <div className="career-name"><h3>{job.company}</h3><p>{job.detail}</p></div>
         <div className="career-role"><strong>{job.title}</strong><span>{job.period}</span></div>
         <span className="career-arrow" aria-hidden="true">↗</span>
       </article>)}
     </div>
     <div className="team-section">
-      <div className="team-heading" data-reveal><span>SELECTED TEAM CONTRIBUTIONS</span><h3>ALSO <em>BUILT.</em></h3><p>Products developed alongside teams. Internal bank systems are listed without private links or customer details.</p></div>
+      <div className="team-heading" data-reveal><h3>NOT <em>SOLO.</em></h3><p>Built with actual humans. Somehow, the standups were worth it.</p></div>
       <div className="team-public">
-        {publicTeamWork.map((item,i)=><a href={item.url} target="_blank" rel="noopener noreferrer" className="team-public-row" key={item.title}><span>{String(i+1).padStart(2,"0")}</span><strong>{item.title}</strong><small>{item.category}</small><ArrowUpRight size={17}/></a>)}
+        {publicTeamWork.map(item=><a href={item.url} target="_blank" rel="noopener noreferrer" className="team-public-row" key={item.title}><strong>{item.title}</strong><small>{item.category}</small><ArrowUpRight size={17}/></a>)}
       </div>
       <div className="team-private">
-        <div><span>PRIVATE DEPLOYMENTS</span><span>BANKING / INTRANET</span></div>
+        <div><span>THESE LIVE BEHIND BANK FIREWALLS. NICE TRY, INTERNET.</span></div>
         <div className="team-private-items">{internalTeamWork.map(item=><article key={item.title}><strong>{item.title}</strong><small>{item.kind}</small></article>)}</div>
       </div>
     </div>
@@ -197,8 +190,7 @@ function Experience() {
 
 function Skills() {
   return <section className="skills-section" id="skills" aria-labelledby="skills-heading">
-    <div className="section-topline skill-line" data-reveal><span>03 / CAPABILITIES</span><span>TOOLS I BUILD WITH</span></div>
-    <h2 id="skills-heading" data-reveal><span>THE</span><span>STACK<span className="skills-star">✳</span></span></h2>
+    <h2 id="skills-heading" data-reveal><span>NO</span><span>MAGIC<span className="skills-star">✳</span></span></h2>
     <SkillOrbit/>
     <div className="skills-giant" aria-hidden="true"><span>REACT</span><span>PYTHON</span><span>CLOUD</span><span>BUILD</span></div>
   </section>;
@@ -206,11 +198,20 @@ function Skills() {
 
 function PlaySection() {
   return <section className="exhibition-play" id="play" aria-labelledby="play-heading">
-    <div className="section-topline inverse" data-reveal><span>04 / PLAYGROUND</span><span>TWO ORIGINAL PLAYABLE EXPERIMENTS</span></div>
-    <div className="play-header" data-reveal><h2 id="play-heading">PLAY <em>HERE.</em></h2><p>Two fully functional games, embedded into the exhibition. No modal, no download, no reused project code.</p></div>
-    <div className="game-index-band"><span>EXPERIMENT 01 / REFLEX ARCADE</span><span>SOLO — INSTANT PLAY</span></div>
+    <div className="play-header" data-reveal>
+      <h2 id="play-heading">TAKE <em>FIVE.</em></h2>
+      <p>You came for the code. I brought a spaceship. This seems reasonable.</p>
+    </div>
     <FluxGame/>
-    <div className="game-transition" data-reveal><div><span>EXPERIMENT 02 / GRAPH THEORY</span><h3>TRACE <em>DUEL.</em></h3></div><p>A strategic connection battle. Practice locally or send a link to challenge someone on another device.</p></div>
+  </section>;
+}
+
+function FinalBoss() {
+  return <section className="after-hours" id="final-boss" aria-labelledby="final-boss-heading">
+    <div className="after-hours-heading" data-reveal>
+      <h2 id="final-boss-heading">ONE <em>MORE</em><br/>THING.</h2>
+      <p>Forty-nine hexes. Two egos. Zero peace treaties. Your move.</p>
+    </div>
     <DuelGame/>
   </section>;
 }
@@ -221,16 +222,17 @@ export default function Exhibition() {
     <Navigation/>
     <main id="main">
       <Hero/>
-      <div className="identity-ribbon" aria-hidden="true"><span>DESIGN × ENGINEERING × INTERACTION × EXPERIENCE × DESIGN × ENGINEERING × INTERACTION × EXPERIENCE ×</span></div>
+      <div className="identity-ribbon" aria-hidden="true"><div className="marquee-track"><span className="marquee-copy">PIXELS WERE HARMED IN THE MAKING OF THIS WEBSITE ✳ IT WORKED LOCALLY ✳ THEN WE DEPLOYED IT ✳ </span><span className="marquee-copy">PIXELS WERE HARMED IN THE MAKING OF THIS WEBSITE ✳ IT WORKED LOCALLY ✳ THEN WE DEPLOYED IT ✳ </span></div></div>
       <Projects/>
       <Experience/>
       <Skills/>
       <PlaySection/>
       <ContactSection/>
+      <FinalBoss/>
     </main>
     <footer className="exhibition-footer">
       <a href="#top" className="footer-identity">CD<span>®</span></a>
-      <span>© {new Date().getFullYear()} CHANDRAKANT DUBEY</span>
+      <span>© {new Date().getFullYear()} CD. DEPLOYED WITH QUESTIONABLE CONFIDENCE.</span>
       <div><a href={links.github} target="_blank" rel="noopener noreferrer">GITHUB ↗</a><a href={links.linkedin} target="_blank" rel="noopener noreferrer">LINKEDIN ↗</a><a href="#top">BACK TO TOP ↑</a></div>
     </footer>
   </div>;
