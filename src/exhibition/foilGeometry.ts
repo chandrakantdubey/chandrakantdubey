@@ -18,7 +18,7 @@ export function createFoilGeometry(segments=320,sides=16):{positions:Float32Arra
     const tangent=normal(add(curve(t+delta),scale(curve(t-delta),-1)));
     const base=normal(cross(tangent,[0,0,1]));
     const up=normal(cross(tangent,base));
-    const twist=t*1.5+Math.sin(3*t)*0.65;
+    const twist=t*2+Math.sin(3*t)*0.65;
     const u=add(scale(base,Math.cos(twist)),scale(up,Math.sin(twist)));
     const v=add(scale(base,-Math.sin(twist)),scale(up,Math.cos(twist)));
     const width=0.35+0.08*Math.sin(5*t+0.5),thickness=0.065+0.015*Math.cos(7*t);
