@@ -56,4 +56,4 @@ Other projects live inside bank intranets: **i-Compass** (performance reviews), 
 
 I prefer the boring kind of reliability and the interesting kind of product. If you are building something ambitious, [say hello](mailto:919chandrakant@gmail.com) or [explore the portfolio](https://chandrakantdubey.vercel.app/)—which includes playable games because apparently I cannot leave well enough alone.
 
-<div align="center"><sub>Built with curiosity, maintained with tests, occasionally repaired with coffee.</sub></div>
+<p align="center"><em>Built with curiosity, maintained with tests, occasionally repaired with coffee.</em></p>
