@@ -23,7 +23,6 @@ const symbols=["{ }","↳","⌘","∴"];
 export default function SkillOrbit() {
   const [active,setActive]=useState(0);
   const [focused,setFocused]=useState(0);
-  const [interacting,setInteracting]=useState(false);
   const view=useRef<HTMLDivElement>(null);
   const pointer=useRef<{x:number;y:number;id:number}|null>(null);
   const reduced=useRef(false);
@@ -74,10 +73,10 @@ export default function SkillOrbit() {
   return <div className="stack-reactor" style={{"--reactor-accent":accents[active]} as CSSProperties}>
     <div className="reactor-intro">
       <div className="reactor-intro-title">
-        <span className="reactor-eyebrow"><span className="reactor-led"/> INTERACTIVE STACK / 04 LAYERS</span>
-        <p>Choose a discipline. Explore the tools.</p>
+        <span className="reactor-eyebrow"><span className="reactor-led"/> NO, IT’S NOT ALL JAVASCRIPT.</span>
+        <p>Click around. The bugs are very well behaved today.</p>
       </div>
-      <span className="reactor-intro-hint">MOVE CURSOR / DRAG / SELECT <MoveUpRight size={18}/></span>
+      <span className="reactor-intro-hint">POKE THINGS. IT’S EDUCATIONAL. <MoveUpRight size={18}/></span>
     </div>
 
     <div className="reactor-layout">
@@ -94,21 +93,18 @@ export default function SkillOrbit() {
             chooseGroup(next);
             document.getElementById("stack-tab-"+next)?.focus();
           }}>
-          <span className="reactor-rail-number">0{index+1}</span>
           <span className="reactor-rail-label">{group.title}</span>
-          <span className="reactor-rail-code">{codes[index]}</span>
           <ArrowRight className="reactor-rail-arrow" size={21}/>
         </button>)}
         <div className="reactor-rail-bottom" aria-hidden="true">
-          <span>EXPLORE<br/>THE<br/>SYSTEM</span><span className="reactor-rail-asterisk">✳</span>
+          <span>NO<br/>MAGIC<br/>WAND</span><span className="reactor-rail-asterisk">✳</span>
         </div>
       </div>
 
       <div className="reactor-view" ref={view}
         role="group" aria-label={current.title+" technology installation"}
         onPointerMove={onMove}
-        onPointerEnter={()=>setInteracting(true)}
-        onPointerLeave={()=>{setInteracting(false);pointer.current=null;onLeave();}}
+        onPointerLeave={()=>{pointer.current=null;onLeave();}}
         onPointerDown={event=>{
           if(event.pointerType!=="touch"||!(event.target instanceof HTMLElement)||event.target.closest("button"))return;
           pointer.current={x:event.clientX,y:event.clientY,id:event.pointerId};
@@ -119,7 +115,7 @@ export default function SkillOrbit() {
         <div className="reactor-crosshair reactor-crosshair-b" aria-hidden="true"/>
         <div className="reactor-top">
           <span><span className="reactor-blink"/> {current.title.toUpperCase()}</span>
-          <span>0{active+1} / 04 <span className="reactor-divider">·</span> {String(current.tools.length).padStart(2,"0")} TOOLS</span>
+          <span>{current.tools.length} REAL TOOLS, ZERO PIXIE DUST</span>
         </div>
 
         <div className="reactor-world" data-discipline={active} key={"world-"+active}>
@@ -149,7 +145,6 @@ export default function SkillOrbit() {
             <div className="reactor-core-ring reactor-core-ring-b"/>
             <div className="reactor-core-disc">
               <span>{symbols[active]}</span>
-              <small>CD / {codes[active]}</small>
             </div>
           </div>
 
@@ -162,22 +157,19 @@ export default function SkillOrbit() {
               onFocus={()=>setFocused(index)}
               onClick={()=>setFocused(index)}
               aria-pressed={focused===index} aria-label={"Focus technology "+tool}>
-              <span className="reactor-node-number">{String(index+1).padStart(2,"0")} / {codes[active]}</span>
               <strong>{tool}</strong>
               <span className="reactor-node-glint" aria-hidden="true">↗</span>
             </button>;
           })}
         </div>
         <div className="reactor-bottom">
-          <div><span>FOCUSED TECHNOLOGY</span><strong key={selectedTool}>{selectedTool}</strong></div>
-          <span className="reactor-interaction-label">{interacting?"INTERACTING":"READY"} <span>●</span></span>
+          <div><span>THE CURRENT SUSPECT</span><strong key={selectedTool}>{selectedTool}</strong></div>
         </div>
       </div>
     </div>
     <div className="reactor-outro">
-      <span>SELECT A LAYER OR ANY TECHNOLOGY NODE</span>
-      <span>REAL TOOLS. NO SKILL PERCENTAGES.</span>
-      <button type="button" onClick={()=>{chooseGroup(0);onLeave();}} aria-label="Reset technology installation"><RotateCcw size={15}/> RESET VIEW</button>
+      <span>THERE ARE NO SKILL PERCENTAGES. HR WILL SURVIVE.</span>
+      <button type="button" onClick={()=>{chooseGroup(0);onLeave();}} aria-label="Reset technology installation"><RotateCcw size={15}/> REWIND THE CHAOS</button>
     </div>
   </div>;
 }
