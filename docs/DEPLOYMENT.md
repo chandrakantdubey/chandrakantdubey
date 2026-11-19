@@ -1,123 +1,81 @@
-# Deployment — Chandrakant Dubey portfolio
+# Deployment · Chromatic Exhibition
 
-The GitHub repository `chandrakantdubey/chandrakantdubey` contains both the
-GitHub profile README and the **Vite + React + TypeScript** portfolio website.
+This repository holds the GitHub profile README and the Vite/React portfolio.
 
-Production website: https://chandrakantdubey.vercel.app/
+- **Production**: https://chandrakantdubey.vercel.app/
+- **Source**: https://github.com/chandrakantdubey/chandrakantdubey
+- **Creative architecture**: [EXHIBITION.md](EXHIBITION.md)
 
-## Vercel configuration
+## GitHub → Vercel
 
 | Setting | Value |
 | --- | --- |
-| Git repository | `chandrakantdubey/chandrakantdubey` |
+| Repository | `chandrakantdubey/chandrakantdubey` |
 | Production branch | `main` |
 | Root directory | `./` |
 | Framework | Vite |
-| Node version | 22.x |
+| Node | 22.x |
 | Install | `npm ci` |
 | Build | `npm run build` |
 | Output | `dist` |
+| Default domain | `chandrakantdubey.vercel.app` |
 
-The `vercel.json` file contains the build/output configuration and browser
-security headers. Vercel project ownership, domain assignment and GitHub
-integration are configured in Vercel rather than in the repository.
+`vercel.json` controls framework/build/output and basic response headers.
+Vercel team ownership, Git integration and domain mapping live in the Vercel
+dashboard, not the Git repository. Merge into main only when the **exact**
+feature commit has passed GitHub Actions, the Vercel preview is READY, and the
+browser screenshot artifacts have been visually checked.
 
-## Current creative studio
+## Validation
 
-The production entrypoint is `src/atelier/StudioPortfolio.tsx` with
-`src/atelier/studio.css`. The hero's actual typography particle engine is
-`src/field/typeEngine.ts`, rendered by `src/field/TypeCanvas.tsx`.
-Visitors can toggle the deterministic spring mesh, inspect real metrics,
-regenerate a shareable seed and export the canvas to PNG.
-
-See [KINETIC-STUDIO.md](KINETIC-STUDIO.md) for visual architecture and public
-team-built product references. `FIELD-001.md` documents the alternate mesh.
-
-Nutriiya's professional experience period ends in January 2026.
-The company work section lists six public URLs and four anonymous bank/intranet
-systems; no private intranet addresses are published.
-
-## Current application
-
-- [Field 001 engineering specification](FIELD-001.md)
-- [Interactive Canvas renderer](../src/field/FieldCanvas.tsx)
-- [Pure deterministic field engine](../src/field/engine.ts)
-- [Portfolio and real source-based project content](../src/atelier/content.ts)
-
-The portfolio presents six repositories, experience, skills and contact.
-The field is **not** a fake infrastructure dashboard; the Inspect Mode shows
-measured browser renderer statistics.
-
-## Contact
-
-The contact form opens the visitor's mail application with a prefilled draft.
-Visitors must send the message themselves. There is no public server-side
-email API in this build, and no Resend key is needed. The previously configured
-Vercel `RESEND_API_KEY` is not used by the site.
-
-If HTTP form delivery is later required, configure a verified sending domain,
-spam protection and distributed rate limiting. Do not expose any secret through
-the Vite browser environment.
-
-## Optional direct contact delivery
-
-The form always works as a mailto composer. The repository now also
-contains `api/contact.ts`, a Vercel Function that can deliver directly via
-Resend. **It fails closed** unless the following configuration is completed:
-
-| Variable | Scope | Requirement |
-| --- | --- | --- |
-| `RESEND_API_KEY` | Server-only secret | Existing Vercel variable; retain encrypted |
-| `RESEND_FROM_EMAIL` | Server-only | Verified Resend sender on a domain you control |
-| `CONTACT_TURNSTILE_SECRET` | Server-only secret | Cloudflare Turnstile widget secret |
-| `VITE_TURNSTILE_SITE_KEY` | Public build-time | Matching Turnstile site key |
- 
-Turnstile must allow the production hostname
-`chandrakantdubey.vercel.app`. If enabling direct delivery on previews,
-configure the preview hostnames in Cloudflare as well. The Vite site key is
-public by design; never put the Resend or Turnstile secret in a `VITE_`
-variable. Updating build-time Vite variables requires a new deployment.
-
-The site asks `GET /api/contact` whether direct delivery is configured.
-If the answer is disabled or the public site key is missing, users see the
-existing compose-email workflow instead. When configured, POST submissions
-verify Origin, validate all fields, check the honeypot and Turnstile token
-server-side, then send through Resend with an idempotency key.
-
-The API has no global in-memory rate limit. Add a Vercel WAF rule with
-rate limits for `/api/contact` to protect the email quota at scale.
-Never ship a publicly callable Resend endpoint without abuse protection.
-
-Verify:
-- `GET /api/contact` reports `enabled:false` until the verified sender
-  and Turnstile secret exist.
-- The form still opens a visitor's email client when direct delivery
-  is unavailable.
-- After configuration, submit once with a real Turnstile token and verify
-  Resend's send history and actual receipt.
-- An invalid/replayed Turnstile token must be rejected.
-- The direct-send action must not claim success if Resend returns an error.
-
-## Pre-merge and production verification
-
-```bash
+```sh
 npm ci
+npm audit --omit=dev --audit-level=high
 npm run lint
 npm run build
+npm run typecheck:api
 npm test
-npm audit --omit=dev --audit-level=high
+npm run test:browser
 ```
 
-1. Make a pull request from the feature branch.
-2. Confirm GitHub Actions passes all checks.
-3. Confirm Vercel builds a READY **preview** from the exact feature SHA.
-4. Review the UI on narrow Android and desktop screens; confirm mobile navigation,
-   layout widths, tap ripples, physics pause/reseed and inspector.
-5. Check keyboard shortcuts (I, R, P), reduced-motion and focus visibility.
-6. Check all six GitHub source links and the résumé download.
-7. Merge only when ready to publish: Vercel automatically deploys `main` to
-   `chandrakantdubey.vercel.app` in this project.
-8. Confirm the new production deployment SHA matches GitHub `main` and is READY.
+The browser test uses headless Chromium/CDP and captures full-size screenshots
+of the hero, all principal sections and mobile at 390px. It verifies all six
+interactive gallery tabs, keyboard switching, a touch-sized mobile navigation,
+the WebGL renderer or its CSS fallback, no 320/390px horizontal overflow,
+reduced-motion support, company credits, resume and contact fallback.
 
-A successful GitHub build does **not** prove that a Vercel deployment or browser
-smoke test succeeded. Check both separately.
+The gallery contains original SVG and CSS compositions, **not screenshots** or
+production dashboards. Personal GitHub repositories are distinct from team
+contributions. Four intranet banking apps are described without private URLs.
+Nutriiya's employment period ends January 2026.
+
+## Contact delivery
+
+The public contact form always offers a direct email link and a prefilled
+email-app composer. Optional server-side delivery is disabled unless ALL
+required environment values are provided:
+
+| Variable | Availability | Requirement |
+| --- | --- | --- |
+| `RESEND_API_KEY` | Server-only | Resend API credential |
+| `RESEND_FROM_EMAIL` | Server-only | Resend-verified sender on a controlled domain |
+| `CONTACT_TURNSTILE_SECRET` | Server-only | Cloudflare Turnstile secret |
+| `VITE_TURNSTILE_SITE_KEY` | Public build-time | Matching site key |
+
+`GET /api/contact` reports whether server delivery is enabled. A POST
+validates Origin, fields and Cloudflare Turnstile token before submitting to
+Resend. No keys are exposed in Vite client bundles. Protect this endpoint
+with a Vercel WAF/edge rate-limit policy before enabling direct delivery.
+
+Verify real receipt after enabling the variables; CI deliberately mocks
+third-party delivery so that it does not send actual messages.
+
+## Production release
+
+1. Confirm GitHub Actions and Vercel preview are green on the exact PR SHA.
+2. Open the saved screenshots, check the actual mobile/desktop composition.
+3. Merge PR to main; confirm Vercel production is **READY** for the new SHA.
+4. Verify production HTML and compiled JS, favicon, resume and /api/contact.
+5. Try gallery switching, mobile navigation and the contact fallback.
+
+Never claim production is live based solely on a passing GitHub build.

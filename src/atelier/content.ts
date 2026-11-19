@@ -117,5 +117,4 @@ export const links = {
   github: "https://github.com/chandrakantdubey",
   linkedin: "https://www.linkedin.com/in/chandra-kant-dubey/",
   resume: "/Chandrakant_Dubey.pdf",
-  implementation: "https://github.com/chandrakantdubey/chandrakantdubey/blob/main/src/field/engine.ts",
 } as const;
