@@ -159,18 +159,18 @@ export default function ContactSection() {
   };
 
   return <section id="contact" className="contact-section" aria-labelledby="contact-title">
-    <div className="section-heading contact-heading"><div><span className="eyebrow">04 / CONTACT</span><h2 id="contact-title">Get in touch<span className="period-accent">.</span></h2></div><span className="heading-aside">DIRECT LINE / OPEN</span></div>
+    <div className="section-heading contact-heading"><div><h2 id="contact-title">SAY HI<span className="period-accent">.</span></h2></div></div>
     <div className="contact-layout">
       <div className="contact-left">
-        <p>For engineering work, projects and collaborations.</p>
-        <div className="contact-address"><span>EMAIL</span><div><a href={"mailto:" + links.email}>{links.email}</a><button type="button" onClick={copyEmail} aria-label="Copy email">{copied ? <Check size={18} /> : <Copy size={18} />}</button></div></div>
+        <p>Got a tricky problem? Excellent. I collect those professionally.</p>
+        <div className="contact-address"><span>AN ACTUAL HUMAN INBOX</span><div><a href={"mailto:" + links.email}>{links.email}</a><button type="button" onClick={copyEmail} aria-label="Copy email">{copied ? <Check size={18} /> : <Copy size={18} />}</button></div></div>
         <div className="social-links"><a href={links.github} target="_blank" rel="noopener noreferrer">GitHub <ArrowUpRight size={17}/></a><a href={links.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn <ArrowUpRight size={17}/></a><a href={links.resume} download>Résumé <ArrowUpRight size={17}/></a></div>
       </div>
       <form className="contact-form" onSubmit={onSubmit}>
-        <div className="form-top"><span>{directEnabled ? "SEND MESSAGE" : "COMPOSE MESSAGE"}</span><Mail size={18}/></div>
+        <div className="form-top"><span>NOW YOU HAVE MY ATTENTION</span><Mail size={18}/></div>
         <div className="form-row"><label htmlFor="contact-name">Name</label><input id="contact-name" type="text" autoComplete="name" required minLength={2} maxLength={100} value={name} onChange={e => setName(e.target.value)} placeholder="Your name"/></div>
         <div className="form-row"><label htmlFor="contact-email">Email</label><input id="contact-email" type="email" autoComplete="email" required maxLength={254} value={email} onChange={e => setEmail(e.target.value)} placeholder="you@company.com"/></div>
-        <div className="form-row"><label htmlFor="contact-message">Message</label><textarea id="contact-message" rows={4} minLength={10} maxLength={3000} required value={message} onChange={e => setMessage(e.target.value)} placeholder="What are you building?"/></div>
+        <div className="form-row"><label htmlFor="contact-message">Message</label><textarea id="contact-message" rows={4} minLength={10} maxLength={3000} required value={message} onChange={e => setMessage(e.target.value)} placeholder="What broke, what ships next, or just hello…"/></div>
         <div className="contact-honeypot" aria-hidden="true"><label htmlFor="contact-website">Website</label><input id="contact-website" type="text" autoComplete="off" tabIndex={-1} value={website} onChange={e => setWebsite(e.target.value)}/></div>
         {directEnabled && siteKey && <div className="contact-verification"><div id="contact-turnstile" aria-label="Human verification"/></div>}
         <button type="submit" disabled={sending || (directEnabled && !turnstileToken)} className="submit-mail">{sending ? "Sending…" : directEnabled ? (verifierReady ? "Send message" : "Loading verification…") : "Compose email"} <ArrowUpRight size={18}/></button>
