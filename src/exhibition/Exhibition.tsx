@@ -3,7 +3,7 @@ import { ArrowDown, ArrowLeft, ArrowRight, ArrowUpRight, Menu, X } from "lucide-
 import { featuredProjects, links, technologyGroups, workExperience } from "../atelier/content";
 import { internalTeamWork, publicTeamWork } from "../atelier/clientWork";
 import ContactSection from "../atelier/ContactSection";
-import ChromaticSculpture from "./ChromaticSculpture";
+import CodeMonument from "./CodeMonument";
 import ProjectPoster from "./ProjectPoster";
 import "./exhibition.css";
 
@@ -89,8 +89,8 @@ function Hero() {
       <span className="hero-name-top" aria-hidden="true">{"CHANDRAKANT".split("").map((char,i)=><span key={i} className="hero-letter" style={{animationDelay:(.06+i*.045)+"s"}}>{char}</span>)}</span>
       <span className="hero-name-bottom" aria-hidden="true">DUBEY<span className="hero-dot">.</span></span>
     </h1>
-    <div className="hero-sculpture"><ChromaticSculpture/></div>
-    <span className="hero-rotator-caption">AN INTERACTIVE OBJECT <span> / </span> DRAG TO ROTATE</span>
+    <div className="hero-sculpture"><CodeMonument/></div>
+    <span className="hero-rotator-caption">SOURCE MADE PHYSICAL <span> / </span> DRAG & RECOMPILE</span>
     <div className="hero-meta">
       <p>Full-stack software engineer.</p>
       <div className="hero-meta-side"><span>REACT / BACKEND / CLOUD</span><a href="#work">ENTER THE PORTFOLIO <ArrowDown size={18}/></a></div>

@@ -6,7 +6,7 @@ metrics dashboard, particle demo with debug controls, or ordinary grid of cards.
 ## Art direction
 
 - **Chapter 00**: cobalt/ultraviolet hero with oversized asymmetric name
-  typography, acid-yellow accents and a directly manipulable chrome object.
+  typography, acid-yellow accents and a procedurally assembled 3D CD monogram.
 - **Chapter 01**: warm paper project gallery with six original animated poster
   illustrations; only one project is featured at a time, keeping the entire
   section compact and visually meaningful.
@@ -22,30 +22,27 @@ rendering implementation detail; the front-end interaction is simply to drag
 or tap the sculptural object. The old spring-mesh UI, inspector, metrics,
 field test scripts and unused previous page components have been removed.
 
-## WebGL architecture
+## Hero: Code Monument
 
-`src/exhibition/ChromaticSculpture.tsx` creates an animated WebGL1 scene.
-`src/exhibition/foilGeometry.ts` creates a closed, deterministic ribbon
-whose centerline follows a parametric knot curve and whose cross sections
-twist continuously. The pure geometry is unit tested for finite coordinates,
-unit normals, bounded vertex/index counts, closed seams and determinism.
+The former abstract chrome loop is replaced by a genuinely interactive
+**CD monogram compiled from bitmap glyphs into extruded GPU modules**.
 
-The fragment shader is a self-contained chrome/iridescent material with soft
-environment bands, Fresnel edges and several simulated studio highlights.
-There are **no remote models, textures, 3D frameworks or GPU telemetry**.
-The fallback is a hand-styled CSS sculpture if WebGL is unavailable.
+- `src/exhibition/codeGeometry.ts` maps C and D into deterministic arrays
+  of individual 3D building blocks, complete with normals, UVs, and scatter targets.
+- `src/exhibition/CodeMonument.tsx` implements custom WebGL1 shaders to
+  assemble the blocks, animate the construction, and light their metallic faces.
+- Drag to rotate. Tap, press Enter or Space while focused, or select
+  **Recompile** to scatter and rebuild the initials.
+- Real source-to-geometry transformation, not a fabricated compilation
+  console, downloaded model, or decorative video.
+- Browser optimizations include capped pixel ratio, viewport visibility
+  pausing, reduced-motion handling, deterministic module layout, bounded
+  GPU buffers, pointer capture, context-loss fallback, and resource cleanup.
+- The CSS fallback displays extruded letters on devices without WebGL.
+- No spring-mesh experiment, inspector, or debug controls are shipped.
 
-- Frame loop: `requestAnimationFrame`, stopped when tab hidden or canvas
-  outside viewport.
-- Quality: device pixel ratio capped at 1.7 on desktop, 1.35 on mobile.
-- Device handling: drags use pointer capture; tap rotates; page stays
-  vertically scrollable on touch.
-- Accessible: meaningful canvas label and ordinary link/navigation fallbacks.
-- Motion: respects `prefers-reduced-motion` with still rendering.
-- Lifecycle: observers, listeners, GPU buffers, shader program and animation
-  frames cleaned up on unmount.
-- Error recovery: if context creation or shader compilation fails, show the
-  CSS fallback; if context is lost, stop drawing and reveal the fallback.
+`scripts/test-exhibition.mjs` validates geometry, determinism and content.
+`scripts/browser-smoke.mjs` checks real assembly and responsive input.
 
 ## Custom poster gallery
 

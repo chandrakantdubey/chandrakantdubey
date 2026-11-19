@@ -41,10 +41,10 @@ npm run test:browser
 The browser test uses headless Chromium/CDP and captures full-size screenshots
 of the hero, all principal sections and mobile at 390px. It verifies all six
 interactive gallery tabs, keyboard switching, a touch-sized mobile navigation,
-the WebGL renderer or its CSS fallback, no 320/390px horizontal overflow,
+the code-monument WebGL renderer or its CSS fallback, no 320/390px horizontal overflow,
 reduced-motion support, company credits, resume and contact fallback.
 
-The gallery contains original SVG and CSS compositions, **not screenshots** or
+The hero compiles CD bitmap glyphs into animated 3D modules. The gallery contains original SVG and CSS compositions, **not screenshots** or
 production dashboards. Personal GitHub repositories are distinct from team
 contributions. Four intranet banking apps are described without private URLs.
 Nutriiya's employment period ends January 2026.

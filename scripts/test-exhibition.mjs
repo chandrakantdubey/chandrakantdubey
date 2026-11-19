@@ -1,36 +1,33 @@
 import assert from "node:assert/strict";
-import { createFoilGeometry } from "../src/exhibition/foilGeometry.ts";
+import { createCodeMonument, GLYPHS, CODE_VERTEX_STRIDE } from "../src/exhibition/codeGeometry.ts";
 import { featuredProjects, workExperience, technologyGroups, links } from "../src/atelier/content.ts";
 import { publicTeamWork, internalTeamWork } from "../src/atelier/clientWork.ts";
 
-function inspectGeometry(segments,sides) {
-  const mesh=createFoilGeometry(segments,sides);
-  const ns=Math.max(36,Math.min(480,Math.floor(segments)));
-  const nc=Math.max(8,Math.min(24,Math.floor(sides)));
-  assert.equal(mesh.positions.length,(ns+1)*(nc+1)*6);
-  assert.equal(mesh.indices.length,ns*nc*6);
-  for(let i=0;i<mesh.positions.length;i+=6){
-    const p=mesh.positions.subarray(i,i+3);
-    const n=mesh.positions.subarray(i+3,i+6);
-    assert.ok([...p,...n].every(Number.isFinite),"All positions and normals are finite");
-    assert.ok(Math.abs(Math.hypot(...n)-1)<0.0005,"Normals must be unit length");
-  }
-  assert.ok([...mesh.indices].every(i=>i>=0 && i<mesh.positions.length/6),"Indices are valid");
-  for(let j=0;j<=nc;j++){
-    const first=j*6,last=(ns*(nc+1)+j)*6;
-    for(let k=0;k<6;k++){
-      assert.ok(Math.abs(mesh.positions[first+k]-mesh.positions[last+k])<.0006,"Foil surface closes without a seam");
-    }
-  }
-  return mesh;
-}
-const a=inspectGeometry(360,18);
-const b=inspectGeometry(360,18);
-assert.deepEqual(a.positions,b.positions,"Geometry is deterministic");
+assert.equal(GLYPHS.C.length,10);
+assert.equal(GLYPHS.D.length,10);
+assert.ok([...GLYPHS.C,...GLYPHS.D].every(row=>row.length===8 && /^[01]+$/.test(row)));
+const occupied=[...GLYPHS.C,...GLYPHS.D].join("").split("").filter(x=>x==="1").length;
+const a=createCodeMonument(2026),b=createCodeMonument(2026),c=createCodeMonument(2027);
+assert.equal(a.modules,occupied);
+assert.ok(a.modules>=60 && a.modules<=120,"letter geometry must be bounded");
+assert.equal(a.vertices.length,a.modules*24*CODE_VERTEX_STRIDE);
+assert.equal(a.indices.length,a.modules*36);
+assert.deepEqual(a.vertices,b.vertices,"same identity seed gives identical compiled geometry");
 assert.deepEqual(a.indices,b.indices);
-inspectGeometry(200,12);
-const bounded=inspectGeometry(1e6,1e6);
-assert.ok(bounded.positions.length/6<=12025,"Geometry stays within mobile/desktop caps");
+assert.notDeepEqual(a.vertices.slice(0,64),c.vertices.slice(0,64),"scatter positions vary with seed");
+assert.ok([...a.vertices].every(Number.isFinite),"all geometry components must be finite");
+assert.ok([...a.indices].every(i=>i>=0 && i<a.modules*24),"indices must be inside VBO");
+assert.ok(a.modules*24<65535,"WebGL1 Uint16 index range not exceeded");
+let chrome=0,lime=0,coral=0;
+for(let v=0;v<a.vertices.length;v+=CODE_VERTEX_STRIDE){
+  const nx=a.vertices[v+3],ny=a.vertices[v+4],nz=a.vertices[v+5];
+  assert.ok(Math.abs(Math.hypot(nx,ny,nz)-1)<.0001,"unit normal");
+  const material=a.vertices[v+15];
+  assert.ok([0,1,2].includes(material));
+  if(material===0)chrome++;else if(material===1)lime++;else coral++;
+}
+assert.ok(chrome>0 && lime>0 && coral>0,"geometry needs contrasting materials");
+assert.ok(a.vertices.byteLength<256*1024,"single GPU geometry stays small");
 
 assert.equal(featuredProjects.length,6);
 assert.deepEqual(featuredProjects.map(p=>p.name),["Blackout Protocol","Timesheet","StyleScape","Pokédex RPG","FitStream","FarmPulse"]);
@@ -43,6 +40,6 @@ assert.equal(internalTeamWork.length,4);
 assert.ok(publicTeamWork.some(p=>p.url==="https://retail.bombaydyeing.com/"));
 assert.ok(publicTeamWork.some(p=>p.url==="https://brushofhope.life"));
 assert.ok(publicTeamWork.some(p=>p.url==="https://nutriiya.com"));
-assert.ok(internalTeamWork.every(p=>!Object.hasOwn(p,"url")),"Private intranet work must have no fabricated public URLs");
+assert.ok(internalTeamWork.every(p=>!Object.hasOwn(p,"url")),"private work must not leak public URLs");
 assert.match(links.email,/^[^@\s]+@[^@\s]+\.[^@\s]+$/);
-console.log("Chromatic foil geometry, closed normals, bounded complexity and portfolio content: PASS.");
+console.log("Code monument geometry, bounded assembly, normal vectors, seed determinism and portfolio content: PASS");
