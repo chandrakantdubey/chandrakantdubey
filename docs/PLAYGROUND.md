@@ -12,7 +12,7 @@ are uploaded to the server and no remote player is simulated.
 **Trace / Hex** is an original 7×7 adversarial connection strategy game.
 Coral connects West to East, lime connects North to South. Valid turns,
 neighbors, and winning connections are computed from a real graph (BFS)
-in `src/play/duelEngine.ts`. An in-browser CPU opponent enables immediate
+in the shared runtime-neutral `src/play/duelRules.js` (with TypeScript contract in `duelEngine.ts`). An in-browser CPU opponent enables immediate
 practice even without a network.
 
 When storage is configured, two remote visitors can actually share a board:
