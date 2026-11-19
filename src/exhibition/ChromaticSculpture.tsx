@@ -112,6 +112,7 @@ export default function ChromaticSculpture() {
       const rotLoc=gl.getUniformLocation(program,"uRotation"),projLoc=gl.getUniformLocation(program,"uProjection");
       const timeLoc=gl.getUniformLocation(program,"uTime"),accentLoc=gl.getUniformLocation(program,"uAccent");
       canvas.dataset.renderer="webgl";
+      canvas.parentElement?.classList.add("render-ready");
       const draw=(now:number)=>{
         raf=0;
         if(!alive||!visible||document.hidden)return;
@@ -162,6 +163,7 @@ export default function ChromaticSculpture() {
         if(!wasDragged){desiredYaw+=.55;accent+=.35;activity=1;if(reduced){yaw=desiredYaw;stop();schedule();}}
       };
       const visibility=()=>{if(document.hidden)stop();else schedule();};
+      const contextLost=(event:Event)=>{event.preventDefault();stop();canvas.dataset.renderer="fallback";canvas.parentElement?.classList.remove("render-ready");};
       const motion=(e:MediaQueryListEvent)=>{reduced=e.matches;stop();schedule();};
       const observer=new IntersectionObserver(entries=>{visible=entries[0]?.isIntersecting??false;if(visible)schedule();else stop();},{threshold:.01});
       const sizeObserver=new ResizeObserver(resize);
@@ -172,6 +174,7 @@ export default function ChromaticSculpture() {
       canvas.addEventListener("pointercancel",up);
       canvas.addEventListener("lostpointercapture",up);
       document.addEventListener("visibilitychange",visibility);
+      canvas.addEventListener("webglcontextlost",contextLost);
       preference.addEventListener("change",motion);
       resize();
       return()=>{
@@ -182,6 +185,8 @@ export default function ChromaticSculpture() {
         canvas.removeEventListener("pointercancel",up);
         canvas.removeEventListener("lostpointercapture",up);
         document.removeEventListener("visibilitychange",visibility);
+        canvas.removeEventListener("webglcontextlost",contextLost);
+        canvas.parentElement?.classList.remove("render-ready");
         preference.removeEventListener("change",motion);
         if(vertexBuffer)gl.deleteBuffer(vertexBuffer);
         if(indexBuffer)gl.deleteBuffer(indexBuffer);
@@ -189,6 +194,7 @@ export default function ChromaticSculpture() {
       };
     }catch(error){
       canvas.dataset.renderer="fallback";
+      canvas.parentElement?.classList.remove("render-ready");
       console.warn("Chromatic sculpture using CSS fallback:",error);
       if(vertexBuffer)gl.deleteBuffer(vertexBuffer);
       if(indexBuffer)gl.deleteBuffer(indexBuffer);
