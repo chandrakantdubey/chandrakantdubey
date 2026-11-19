@@ -209,7 +209,7 @@ export default function CodeMonument() {
         gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
         gl.uniformMatrix3fv(uniforms.rotation,false,rotation(yaw,pitch));
         gl.uniformMatrix4fv(uniforms.projection,false,projection(width/height));
-        gl.uniform1f(uniforms.scale,Math.min(1.36,Math.max(.58,width/height*1.06)));
+        gl.uniform1f(uniforms.scale,width<750?Math.min(.75,Math.max(.52,width/height*.88)):Math.min(1.29,Math.max(.85,width/height*1.02)));
         gl.uniform1f(uniforms.build,built);
         gl.uniform1f(uniforms.time,now*.001);
         gl.drawElements(gl.TRIANGLES,geometry.indices.length,gl.UNSIGNED_SHORT,0);
