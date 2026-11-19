@@ -90,7 +90,7 @@ function Navigation() {
 function Hero() {
   return <section className="exhibition-hero" id="top" aria-labelledby="hero-heading">
     <div className="hero-grain" aria-hidden="true"/>
-    <div className="hero-top-bar"><span>YES, I MADE THIS MYSELF.</span><span>MUMBAI, INDIA · USUALLY ONLINE</span></div>
+    <div className="hero-top-bar"><span>NO TEMPLATE IN SIGHT.</span><span>MUMBAI · ONLINE</span></div>
     <h1 id="hero-heading" className="hero-title" aria-label="Chandrakant Dubey">
       <span className="hero-name-top" aria-hidden="true">{"CHANDRAKANT".split("").map((char,i)=><span key={i} className="hero-letter" style={{animationDelay:(.06+i*.045)+"s"}}>{char}</span>)}</span>
       <span className="hero-name-bottom" aria-hidden="true">DUBEY<span className="hero-dot">.</span></span>
@@ -98,8 +98,8 @@ function Hero() {
     <div className="hero-sculpture"><CodeMonument/></div>
     <span className="hero-rotator-caption">GO ON, POKE IT <span> / </span> IT WON'T BITE</span>
     <div className="hero-meta">
-      <p>Turning caffeine into deploys. Results may vary.</p>
-      <div className="hero-meta-side"><span>ZERO PERCENT STOCK TEMPLATE</span><a href="#work">SHOW ME THE CODE <ArrowDown size={18}/></a></div>
+      <p>It worked locally. Promise.</p>
+      <div className="hero-meta-side"><span>ZERO STOCK TEMPLATES</span><a href="#work">SHOW ME THE CODE <ArrowDown size={18}/></a></div>
     </div>
   </section>;
 }
