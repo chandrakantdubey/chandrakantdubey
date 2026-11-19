@@ -67,7 +67,7 @@ function curve(t:number):Vec3 {
   const loop=1.07+0.43*Math.cos(3*t);
   return [loop*Math.cos(2*t),loop*Math.sin(2*t),0.49*Math.sin(3*t)];
 }
-export function createFoilGeometry(segments=320,sides=16):{positions:Float32Array;indices:Uint16Array} {
+function createFoilGeometry(segments=320,sides=16):{positions:Float32Array;indices:Uint16Array} {
   const ns=Math.max(36,Math.min(480,Math.floor(segments)));
   const nc=Math.max(8,Math.min(24,Math.floor(sides)));
   const values:number[]=[];
