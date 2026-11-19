@@ -1,0 +1,23 @@
+name: Generate Blob SDK lockfile
+on:
+  push:
+    branches: ["feat/immersive-playground"]
+permissions:
+  contents: read
+jobs:
+  lock:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Resolve locked dependencies
+        run: npm install --package-lock-only --ignore-scripts --no-audit
+      - uses: actions/upload-artifact@v4
+        with:
+          name: resolved-blob-lock
+          path: |
+            package.json
+            package-lock.json
+          retention-days: 3
