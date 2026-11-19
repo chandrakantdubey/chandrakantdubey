@@ -129,8 +129,7 @@ try{
   assert.equal(initial.tabs,6);
   assert.ok(await cdp.eval("!!document.querySelector('.gallery-world .gallery-scene-3d')"),"3D project stage should be embedded");
   assert.equal(await cdp.eval("document.querySelectorAll('.gallery-depth-sheet').length"),2,"two offset poster layers exist");
-  const stage=await cdp.eval("(()=>{const r=document.querySelector('.gallery-world').getBoundingClientRect();return{x:r.x+r.width*.6,y:r.y+r.height*.4}})()");
-  await cdp.send("Input.dispatchMouseEvent",{type:"mouseMoved",x:stage.x,y:stage.y});
+  await cdp.eval("(()=>{const e=document.querySelector('.gallery-world'),r=e.getBoundingClientRect();e.dispatchEvent(new PointerEvent('pointermove',{pointerType:'mouse',bubbles:true,clientX:r.x+r.width*.6,clientY:r.y+r.height*.4}));return true})()");
   assert.ok(await cdp.eval("document.querySelector('.gallery-world').style.getPropertyValue('--gallery-ry').includes('deg')"),"gallery pointer tilt works");
   await cdp.screenshot("gallery-desktop.png");
   await cdp.eval("document.querySelectorAll('.gallery-row')[2].click()");
