@@ -1,10 +1,15 @@
 import { useEffect, useRef, useState, type RefObject } from "react";
 import { ArrowDown, ArrowLeft, ArrowRight, ArrowUpRight, Menu, X } from "lucide-react";
-import { featuredProjects, links, technologyGroups, workExperience } from "../atelier/content";
+import { featuredProjects, links, workExperience } from "../atelier/content";
 import { internalTeamWork, publicTeamWork } from "../atelier/clientWork";
 import ContactSection from "../atelier/ContactSection";
 import CodeMonument from "./CodeMonument";
 import ProjectPoster from "./ProjectPoster";
+import SkillOrbit from "./SkillOrbit";
+import FluxGame from "../play/FluxGame";
+import DuelGame from "../play/DuelGame";
+import "../play/play.css";
+import "./spatial.css";
 import "./exhibition.css";
 
 function useScrollExperience(ref:RefObject<HTMLDivElement|null>) {
@@ -72,7 +77,7 @@ function Navigation() {
       <a href="#top" className="brand-mark" onClick={()=>setMenu(false)} aria-label="Chandrakant Dubey — top of page">c<span>d</span><i>®</i></a>
       <span className="nav-annotation">CHANDRAKANT DUBEY <span> / </span> SOFTWARE ENGINEER</span>
       <nav className={menu?"nav-items nav-items-open":"nav-items"} aria-label="Primary navigation">
-        {[["Work","work"],["Experience","experience"],["Stack","skills"],["Contact","contact"]].map(([name,id],i)=><a href={"#"+id} key={id} onClick={()=>setMenu(false)}><small>0{i+1}</small>{name}</a>)}
+        {[["Work","work"],["Experience","experience"],["Stack","skills"],["Play","play"],["Contact","contact"]].map(([name,id],i)=><a href={"#"+id} key={id} onClick={()=>setMenu(false)}><small>0{i+1}</small>{name}</a>)}
       </nav>
       <a className="nav-availability" href="#contact">LET'S TALK <ArrowUpRight size={17}/></a>
       <button type="button" className="mobile-nav-toggle" onClick={()=>setMenu(value=>!value)} aria-expanded={menu} aria-label={menu?"Close navigation":"Open navigation"}>{menu?<X size={24}/>:<Menu size={24}/>}</button>
@@ -111,7 +116,23 @@ function Projects() {
     </div>
     <div className="gallery-layout">
       <div className="gallery-stage" role="tabpanel" aria-labelledby={"project-button-"+selected.id} id="project-stage" tabIndex={0}>
-        <div className="gallery-scene" key={selected.id}><ProjectPoster category={selected.category}/></div>
+        <div className="gallery-world" onPointerMove={event=>{
+          if(event.pointerType==="touch")return;
+          const rect=event.currentTarget.getBoundingClientRect();
+          const x=(event.clientX-rect.left)/rect.width-.5;
+          const y=(event.clientY-rect.top)/rect.height-.5;
+          event.currentTarget.style.setProperty("--gallery-ry",(x*13)+"deg");
+          event.currentTarget.style.setProperty("--gallery-rx",(-y*9)+"deg");
+        }} onPointerLeave={event=>{
+          event.currentTarget.style.setProperty("--gallery-ry","-7deg");
+          event.currentTarget.style.setProperty("--gallery-rx","5deg");
+        }}>
+          <div className="gallery-world-grid" aria-hidden="true"/>
+          <div className="gallery-depth-sheet gallery-depth-prev" aria-hidden="true"><ProjectPoster category={featuredProjects[(active+5)%featuredProjects.length].category}/></div>
+          <div className="gallery-depth-sheet gallery-depth-next" aria-hidden="true"><ProjectPoster category={featuredProjects[(active+1)%featuredProjects.length].category}/></div>
+          <div className="gallery-scene gallery-scene-3d" key={selected.id}><ProjectPoster category={selected.category}/></div>
+          <span className="gallery-space-label">STAGE / 3D / {selected.number}</span>
+        </div>
         <div className="gallery-stage-footer">
           <div><span>PROJECT {selected.number} / 06</span><strong>{selected.name}</strong></div>
           <a href={selected.repository} target="_blank" rel="noopener noreferrer" aria-label={"Explore "+selected.name+" source code"}>VIEW SOURCE <ArrowUpRight size={18}/></a>
@@ -177,11 +198,19 @@ function Skills() {
   return <section className="skills-section" id="skills" aria-labelledby="skills-heading">
     <div className="section-topline skill-line" data-reveal><span>03 / CAPABILITIES</span><span>TOOLS I BUILD WITH</span></div>
     <h2 id="skills-heading" data-reveal><span>THE</span><span>STACK<span className="skills-star">✳</span></span></h2>
-    <div className="skills-four">{technologyGroups.map((g,i)=><article className="skill-block" key={g.title} data-reveal>
-      <div className="skill-block-heading"><span>0{i+1}</span><h3>{g.title}</h3></div>
-      <div className="skill-words">{g.tools.map((tool,j)=><span key={tool} style={{transitionDelay:(j*25)+"ms"}}>{tool}</span>)}</div>
-    </article>)}</div>
+    <SkillOrbit/>
     <div className="skills-giant" aria-hidden="true"><span>REACT</span><span>PYTHON</span><span>CLOUD</span><span>BUILD</span></div>
+  </section>;
+}
+
+function PlaySection() {
+  return <section className="exhibition-play" id="play" aria-labelledby="play-heading">
+    <div className="section-topline inverse" data-reveal><span>04 / PLAYGROUND</span><span>TWO ORIGINAL PLAYABLE EXPERIMENTS</span></div>
+    <div className="play-header" data-reveal><h2 id="play-heading">PLAY <em>HERE.</em></h2><p>Two fully functional games, embedded into the exhibition. No modal, no download, no reused project code.</p></div>
+    <div className="game-index-band"><span>EXPERIMENT 01 / REFLEX ARCADE</span><span>SOLO — INSTANT PLAY</span></div>
+    <FluxGame/>
+    <div className="game-transition" data-reveal><div><span>EXPERIMENT 02 / GRAPH THEORY</span><h3>TRACE <em>DUEL.</em></h3></div><p>A strategic connection battle. Practice locally or send a link to challenge someone on another device.</p></div>
+    <DuelGame/>
   </section>;
 }
 
@@ -195,6 +224,7 @@ export default function Exhibition() {
       <Projects/>
       <Experience/>
       <Skills/>
+      <PlaySection/>
       <ContactSection/>
     </main>
     <footer className="exhibition-footer">

@@ -31,13 +31,17 @@ jobs:
         run: npm run typecheck:api
       - name: Validate field model and portfolio content
         run: npm test
+      - name: Install pinned browser for visual tests
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: stable
       - name: Exercise real browser and mobile layout
         run: npm run test:browser
       - name: Upload desktop and mobile QA screenshots
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: field-001-browser-screenshots
+          name: immersive-playground-browser-qa
           path: artifacts/browser/
           if-no-files-found: ignore
           retention-days: 7

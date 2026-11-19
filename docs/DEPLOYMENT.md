@@ -49,6 +49,42 @@ production dashboards. Personal GitHub repositories are distinct from team
 contributions. Four intranet banking apps are described without private URLs.
 Nutriiya's employment period ends January 2026.
 
+## Original games and Vercel multiplayer
+
+The exhibition includes two original embedded games: Signal Shift (solo
+Canvas arcade) and Trace / Hex (7×7 connection game), with the multiplayer
+arena accessible at `/play/duel`. Neither game reuses Blackout Protocol.
+
+The turn-based online mode uses the project's existing Node.js Vercel
+Functions and its connected **private Vercel Blob store**,
+`cd-hex-duel-rooms`. Server-only `BLOB_READ_WRITE_TOKEN` is created by
+the storage connection. **Never expose this variable with the VITE_ prefix.**
+
+Room actions are authenticated with browser-local player tokens, verified
+server-side against SHA-256 hashes. Moves use optimistic versions plus
+conditional ETag writes, preventing state loss when concurrent stateless
+Functions handle two players. Rooms logically expire in 8 hours; the Blob
+TTL removes records after one day. Clients refresh every ~3 seconds; this
+is near-real-time **turn-based multiplayer**, not a WebSocket action game.
+
+The API includes strict Origin and input validation and Vercel WAF limits
+`POST /api/duel` to 120 requests/minute/IP. Shared NATs count together.
+Do not remove rate limiting: rooms, invocations and Blob operations consume
+provider quota and may incur usage charges.
+
+Validate these routes after deployment:
+- `GET /api/duel` returns JSON with `enabled:true` when private Blob
+  credentials are configured, and does not throw a module load error
+- `GET /play/duel` returns the standalone game HTML (via Vite rewrite)
+- Create two sessions in different browsers and join by invitation URL
+- Alternate moves and verify both participants converge on the same board
+- Verify invalid/reused turns return HTTP 409 without changing state
+- Test a winning path, a rematch, and disconnected/reconnected sessions
+
+CI exercises both game engines, browser interactions and UI, but does not
+prove a real cross-instance Blob transaction until a deployed API test
+actually creates and joins a room.
+
 ## Contact delivery
 
 The public contact form always offers a direct email link and a prefilled
