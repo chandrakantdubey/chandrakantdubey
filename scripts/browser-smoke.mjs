@@ -10,7 +10,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 const delay = ms => new Promise(resolve=>setTimeout(resolve,ms));
-const candidates=["google-chrome","google-chrome-stable","chromium","chromium-browser"];
+const candidates=[process.env.CHROME_PATH,process.env.CHROMIUM_PATH,"google-chrome","google-chrome-stable","chromium","chromium-browser"].filter(Boolean);
 const executable=candidates.find(bin=>spawnSync(bin,["--version"],{timeout:2500}).status===0);
 if(!executable)throw Error("Chrome or Chromium required for visual CI.");
 const out=process.env.SCREENSHOT_DIR||"artifacts/browser";
