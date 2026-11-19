@@ -103,7 +103,7 @@ try{
   assert.ok(["webgl","fallback"].includes(desktop.renderer),"Canvas must run WebGL or a designed fallback: "+JSON.stringify(desktop));
   assert.equal(desktop.overflow,false,"Desktop must not overflow horizontally");
   await assertMinimumTextSize(cdp,"1440px desktop");
-  const pageStory=await cdp.eval("(()=>{const main=document.querySelector('main');const ribbon=document.querySelector('.marquee-track');const copies=[...ribbon.querySelectorAll('.marquee-copy')];const arcade=document.querySelector('.flux-experience').getBoundingClientRect();const hex=document.querySelector('.after-hours .duel-experience').getBoundingClientRect();return {lastSection:main.lastElementChild?.id,sectionMarkers:document.querySelectorAll('.section-topline').length,oldCopy:document.body.innerText.includes('Two fully functional games, embedded into the exhibition'),ribbonCopies:copies.map(x=>({text:x.textContent,width:x.getBoundingClientRect().width})),animation:getComputedStyle(ribbon).animationName,arcade:{left:arcade.left,right:arcade.right},hex:{left:hex.left,right:hex.right},viewport:innerWidth}})()");
+  const pageStory=await cdp.eval("(()=>{const main=document.querySelector('main');const ribbon=document.querySelector('.marquee-track');const copies=[...ribbon.querySelectorAll('.marquee-copy')];const arcade=document.querySelector('.flux-experience').getBoundingClientRect();const hex=document.querySelector('.after-hours .duel-experience').getBoundingClientRect();return {lastSection:main.lastElementChild?.id,sectionMarkers:document.querySelectorAll('.section-topline').length,oldCopy:document.body.innerText.includes('Two fully functional games, embedded into the exhibition'),ribbonCopies:copies.map(x=>({text:x.textContent,width:x.getBoundingClientRect().width})),animation:getComputedStyle(ribbon).animationName,arcade:{left:arcade.left,right:arcade.right},hex:{left:hex.left,right:hex.right},viewport:document.documentElement.clientWidth}})()");
   assert.equal(pageStory.lastSection,"final-boss","Hex must finish the page, after contact");
   assert.equal(pageStory.sectionMarkers,0,"no ordinal section divider UI");
   assert.equal(pageStory.oldCopy,false,"remove self-promotional game disclaimer");
@@ -111,8 +111,8 @@ try{
   assert.equal(pageStory.ribbonCopies[0].text,pageStory.ribbonCopies[1].text);
   assert.ok(Math.abs(pageStory.ribbonCopies[0].width-pageStory.ribbonCopies[1].width)<1,"identical ticker widths ensure a seamless loop");
   assert.equal(pageStory.animation,"marquee-seamless","ticker must animate continuously");
-  assert.ok(pageStory.arcade.left<=2 && pageStory.arcade.right>=pageStory.viewport-2,"arcade must be full bleed");
-  assert.ok(pageStory.hex.left<=2 && pageStory.hex.right>=pageStory.viewport-2,"Hex game must be full bleed");
+  assert.ok(pageStory.arcade.left<=2 && pageStory.arcade.right>=pageStory.viewport-2,"arcade must be full bleed "+JSON.stringify(pageStory));
+  assert.ok(pageStory.hex.left<=2 && pageStory.hex.right>=pageStory.viewport-2,"Hex game must be full bleed "+JSON.stringify(pageStory));
   const tickerBefore=await cdp.eval("getComputedStyle(document.querySelector('.marquee-track')).transform");
   await delay(230);
   const tickerAfter=await cdp.eval("getComputedStyle(document.querySelector('.marquee-track')).transform");
@@ -238,7 +238,7 @@ try{
   assert.notEqual(mobile.menu,"none");
   assert.equal(mobile.gallery,6);
   assert.ok(mobile.sculptureWidth>240);
-  const mobileGames=await cdp.eval("(()=>{const a=document.querySelector('.flux-experience').getBoundingClientRect(),b=document.querySelector('.after-hours .duel-experience').getBoundingClientRect();return {aLeft:a.left,aRight:a.right,bLeft:b.left,bRight:b.right,width:innerWidth}})()");
+  const mobileGames=await cdp.eval("(()=>{const a=document.querySelector('.flux-experience').getBoundingClientRect(),b=document.querySelector('.after-hours .duel-experience').getBoundingClientRect();return {aLeft:a.left,aRight:a.right,bLeft:b.left,bRight:b.right,width:document.documentElement.clientWidth}})()");
   assert.ok(mobileGames.aLeft<=2 && mobileGames.aRight>=mobileGames.width-2,"arcade fills mobile width");
   assert.ok(mobileGames.bLeft<=2 && mobileGames.bRight>=mobileGames.width-2,"Hex finale fills mobile width");
   await assertMinimumTextSize(cdp,"390px mobile");
