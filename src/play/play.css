@@ -175,8 +175,8 @@
   .game-transition h3 {font-size:16vw;}
   .game-transition p {font-size:11px;}
   .duel-stage {height:clamp(390px,125vw,505px);}
-  .duel-board {--hex-node:clamp(27px,7vw,34px);--hex-gap:2px;--row-step:calc(var(--hex-node)/2);padding-right:calc(var(--hex-node)*3 + 5px);transform:rotateX(5deg) rotateZ(-4deg);}
-  .duel-board:hover {transform:rotateX(5deg) rotateZ(-4deg);}
+    .duel-board {--hex-node:clamp(25px,8.5vw,34px);--hex-gap:2px;--row-step:calc(var(--hex-node)/2);padding-right:0;transform:rotateX(5deg) rotateZ(-2deg);margin-inline:auto;}
+  .duel-board:hover {transform:rotateX(5deg) rotateZ(-2deg);}
   .duel-board-row:not(:first-child) {margin-top:calc(var(--hex-node)*-.14);}
   .duel-edge-left,.duel-edge-right {font-size:8px;}
   .duel-edge {font-size:8px;}
