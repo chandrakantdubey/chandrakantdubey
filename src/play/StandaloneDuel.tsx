@@ -6,14 +6,14 @@ import "../exhibition/exhibition.css";
 export default function StandaloneDuel() {
   return <main className="duel-route">
     <header className="duel-route-nav">
-      <a href="/#play"><ArrowLeft size={18}/> CD / EXHIBITION</a>
-      <span>TRACE / HEX — TWO-PLAYER ARENA</span>
+      <a href="/#play"><ArrowLeft size={18}/> BACK TO THE MAIN EVENT</a>
+      <span>YES, THE ARGUMENT HAS ITS OWN URL</span>
       <a href="/#contact">CONTACT <ArrowUpRight size={15}/></a>
     </header>
-    <h1>TRACE <em>DUEL.</em></h1>
+    <h1>HEX <em>HAPPENS.</em></h1>
     <div className="duel-route-intro">
-      <p>Two players. Forty-nine nodes. No downloaded games, no separate game server. Claim a continuous circuit before your opponent.</p>
-      <p>Share a room link to play on another device. Each turn is verified and stored on Vercel.</p>
+      <p>Forty-nine hexes. One suspiciously confident opponent. Connect your sides before theirs.</p>
+      <p>Invite a friend. Or don’t. The bot has nowhere else to be.</p>
     </div>
     <DuelGame standalone/>
   </main>;
