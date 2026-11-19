@@ -11,7 +11,7 @@ export type ContactPayload = {
   requestId: string;
 };
 
-const CONTACT_EMAIL = "919chandrakant@gmail.com";
+const CONTACT_EMAIL = "919chandrakant@gmail.com"; // Fixed recipient, never taken from a submitted form.
 const RESPONSE_HEADERS = {
   "Content-Type": "application/json; charset=utf-8",
   "Cache-Control": "no-store",
@@ -86,7 +86,7 @@ export async function POST(request: Request): Promise<Response> {
     });
     if (!challengeResponse.ok) return json({ error: "Security verification unavailable." }, 502);
     const challenge = await challengeResponse.json() as { success?: boolean; hostname?: string };
-    if (!challenge.success || (challenge.hostname && challenge.hostname !== new URL(request.url).hostname)) {
+    if (challenge.success !== true || challenge.hostname !== new URL(request.url).hostname) {
       return json({ error: "Security verification failed. Please try again." }, 403);
     }
   } catch {
@@ -114,6 +114,11 @@ export async function POST(request: Request): Promise<Response> {
       // Avoid exposing upstream response contents or private configuration.
       return json({ error: "Email delivery failed. Please use the email link." }, 502);
     }
+    const receipt = await outgoing.json() as { id?: unknown };
+    if (typeof receipt.id !== "string" || !receipt.id) {
+      return json({ error: "Email provider did not confirm receipt. Please use the email link." }, 502);
+    }
+    // Resend accepted the message. This does not claim inbox delivery.
     return json({ sent: true });
   } catch {
     return json({ error: "Email delivery is currently unavailable. Please use the email link." }, 502);
