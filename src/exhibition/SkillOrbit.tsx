@@ -17,7 +17,6 @@ const positions=[
   {x:66,y:84,z:8},
 ] as const;
 const accents=["#ddff76","#ffab88","#a9b5ff","#8af2e6"];
-const codes=["FE","API","OPS","SYS"];
 const symbols=["{ }","↳","⌘","∴"];
 
 export default function SkillOrbit() {
