@@ -11,6 +11,7 @@ import DuelGame from "../play/DuelGame";
 import "../play/play.css";
 import "./spatial.css";
 import "./exhibition.css";
+import "./reactor.css";
 
 function useScrollExperience(ref:RefObject<HTMLDivElement|null>) {
   useEffect(()=>{
