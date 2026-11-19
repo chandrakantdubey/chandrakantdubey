@@ -192,8 +192,13 @@ export default function FluxGame() {
     };
     const position=(e:PointerEvent)=>{
       const r=canvas.getBoundingClientRect();
-      const x=(e.clientX-r.left)/r.width*WIDTH;
-      const y=(e.clientY-r.top)/r.height*HEIGHT;
+      // Mobile uses object-fit:cover. Map pointer through the center crop,
+      // not the element's stretched CSS rectangle.
+      const scale=Math.max(r.width/WIDTH,r.height/HEIGHT);
+      const cropX=(WIDTH*scale-r.width)/2;
+      const cropY=(HEIGHT*scale-r.height)/2;
+      const x=(e.clientX-r.left+cropX)/scale;
+      const y=(e.clientY-r.top+cropY)/scale;
       inputRef.current.x=Math.max(0,Math.min(WIDTH,x));
       inputRef.current.y=Math.max(0,Math.min(HEIGHT,y));
     };
