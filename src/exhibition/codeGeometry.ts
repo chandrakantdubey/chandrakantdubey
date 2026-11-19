@@ -33,7 +33,7 @@ export const GLYPHS = {
 export type CodeGeometry = { vertices:Float32Array; indices:Uint16Array; modules:number };
 const STRIDE=16;
 export const CODE_VERTEX_STRIDE=STRIDE;
-const sides:ReadonlyArray<{normal:[number,number,number];corners:readonly [number,number,number][]}>=[
+const sides:ReadonlyArray<{normal:[number,number,number];corners:ReadonlyArray<readonly [number,number,number]>}>=[
   {normal:[0,0,1],corners:[[-1,-1,1],[1,-1,1],[1,1,1],[-1,1,1]]},
   {normal:[0,0,-1],corners:[[1,-1,-1],[-1,-1,-1],[-1,1,-1],[1,1,-1]]},
   {normal:[1,0,0],corners:[[1,-1,1],[1,-1,-1],[1,1,-1],[1,1,1]]},
