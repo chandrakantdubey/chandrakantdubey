@@ -127,6 +127,11 @@ try{
   const initial=await cdp.eval("({selected:document.querySelector('.gallery-row[aria-selected=true] strong')?.textContent,poster:document.querySelector('.poster-canvas')?.className,tabs:document.querySelectorAll('[role=tab]').length})");
   assert.equal(initial.selected,"Blackout Protocol");
   assert.equal(initial.tabs,6);
+  assert.ok(await cdp.eval("!!document.querySelector('.gallery-world .gallery-scene-3d')"),"3D project stage should be embedded");
+  assert.equal(await cdp.eval("document.querySelectorAll('.gallery-depth-sheet').length"),2,"two offset poster layers exist");
+  const stage=await cdp.eval("(()=>{const r=document.querySelector('.gallery-world').getBoundingClientRect();return{x:r.x+r.width*.6,y:r.y+r.height*.4}})()");
+  await cdp.send("Input.dispatchMouseEvent",{type:"mouseMoved",x:stage.x,y:stage.y});
+  assert.ok(await cdp.eval("document.querySelector('.gallery-world').style.getPropertyValue('--gallery-ry').includes('deg')"),"gallery pointer tilt works");
   await cdp.screenshot("gallery-desktop.png");
   await cdp.eval("document.querySelectorAll('.gallery-row')[2].click()");
   await poll(()=>cdp.eval("document.querySelector('.gallery-row[aria-selected=true] strong')?.textContent==='StyleScape'"),"Gallery click didn't select StyleScape");
@@ -151,7 +156,37 @@ try{
   await cdp.screenshot("team-work-desktop.png");
   await cdp.eval("document.querySelector('#skills').scrollIntoView({behavior:'instant'})");
   await delay(400);
+  assert.equal(await cdp.eval("document.querySelectorAll('.stack-orbit-actions button').length"),4,"orbital skill categories");
+  await cdp.eval("document.querySelectorAll('.stack-orbit-actions button')[1].click()");
+  assert.ok(await cdp.eval("document.querySelector('#stack-details h3').textContent.includes('Backend')"),"skills interactive");
+  assert.ok(await cdp.eval("document.querySelector('#stack-details').textContent.includes('FastAPI')"));
   await cdp.screenshot("skills-desktop.png");
+  await cdp.eval("document.querySelector('#play').scrollIntoView({behavior:'instant'})");
+  await delay(350);
+  assert.ok(await cdp.eval("!!document.querySelector('.flux-canvas') && !!document.querySelector('.duel-board')"),"both real embedded games present");
+  assert.equal(await cdp.eval("document.querySelectorAll('.duel-hex').length"),49);
+  await cdp.screenshot("arcade-intro-desktop.png");
+  await cdp.eval("document.querySelector('.flux-play').click()");
+  await delay(240);
+  assert.ok(await cdp.eval("document.querySelector('.flux-overlay')===null"),"arcade starts");
+  await cdp.screenshot("arcade-running-desktop.png");
+  await cdp.eval("document.querySelector('.flux-actions button:first-child').click()");
+  assert.ok(await cdp.eval("document.querySelector('.flux-overlay').textContent.includes('PAUSED')"),"arcade pauses");
+  await cdp.eval("document.querySelector('.flux-actions button:last-child').click()");
+  await cdp.eval("document.querySelector('.duel-stage').scrollIntoView({behavior:'instant'})");
+  await delay(300);
+  await cdp.eval("document.querySelector('.duel-hex[data-cell=0]').click()");
+  await poll(()=>cdp.eval("document.querySelectorAll('.duel-hex.owned-one').length===1"),"Hex practice move");
+  await delay(850);
+  assert.ok(await cdp.eval("document.querySelectorAll('.duel-hex.owned-two').length>=1"),"local CPU responds");
+  await cdp.screenshot("hex-game-desktop.png");
+  assert.ok(await cdp.eval("!!document.querySelector('a[href^=\\\"/play/duel\\\"]')"),"dedicated game link present");
+  await cdp.send("Page.navigate",{url:"http://127.0.0.1:4173/play/duel"});
+  await poll(()=>cdp.eval("!!document.querySelector('.duel-fullpage')"),"dedicated route");
+  assert.equal(await cdp.eval("document.querySelectorAll('.duel-hex').length"),49);
+  await cdp.screenshot("hex-dedicated-desktop.png");
+  await cdp.send("Page.navigate",{url:"http://127.0.0.1:4173/"});
+  await poll(()=>cdp.eval("!!document.querySelector('#top')"),"exhibition after route");
 
   await cdp.send("Emulation.setDeviceMetricsOverride",{width:390,height:844,deviceScaleFactor:1,mobile:true,screenWidth:390,screenHeight:844});
   await delay(450);
@@ -177,6 +212,15 @@ try{
   await cdp.eval("document.querySelector('#contact').scrollIntoView({behavior:'instant'})");
   await delay(380);
   await cdp.screenshot("contact-mobile.png");
+  await cdp.eval("document.querySelector('#play').scrollIntoView({behavior:'instant'})");
+  await delay(380);
+  await cdp.screenshot("arcade-mobile.png");
+  await cdp.eval("document.querySelector('.duel-stage').scrollIntoView({behavior:'instant'})");
+  await delay(370);
+  await cdp.screenshot("hex-mobile.png");
+  const gameMobile=await cdp.eval("({body:document.documentElement.scrollWidth,width:innerWidth,board:document.querySelector('.duel-board').getBoundingClientRect().width})");
+  assert.ok(gameMobile.body<=gameMobile.width+3,"games must fit mobile "+JSON.stringify(gameMobile));
+  assert.ok(gameMobile.board<=gameMobile.width,"Hex board fits mobile "+JSON.stringify(gameMobile));
 
   await cdp.send("Emulation.setDeviceMetricsOverride",{width:320,height:700,deviceScaleFactor:1,mobile:true,screenWidth:320,screenHeight:700});
   await delay(330);
@@ -185,7 +229,7 @@ try{
   await cdp.send("Emulation.setEmulatedMedia",{features:[{name:"prefers-reduced-motion",value:"reduce"}]});
   await delay(380);
   assert.ok(await cdp.eval("matchMedia('(prefers-reduced-motion: reduce)').matches"),"Reduced-motion preference supported");
-  console.log("Code monument browser tests passed: procedural CD, drag, recompile, WebGL/fallback, six interactive posters, keyboard, work, contact and 1440/390/320px layout.");
+  console.log("Immersive portfolio QA PASS: 3D gallery, orbiting skills, arcade, Hex versus CPU, dedicated route and responsive viewport.");
   console.log("Visual QA saved to "+out);
 }finally{
   if(socket?.readyState===WebSocket.OPEN)socket.close();
