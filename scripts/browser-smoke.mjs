@@ -124,7 +124,7 @@ try{
 
   await cdp.eval("document.querySelector('#work').scrollIntoView({behavior:'instant'})");
   await delay(450);
-  const initial=await cdp.eval("({selected:document.querySelector('.gallery-row[aria-selected=true] strong')?.textContent,poster:document.querySelector('.poster-canvas')?.className,tabs:document.querySelectorAll('[role=tab]').length})");
+  const initial=await cdp.eval("({selected:document.querySelector('.gallery-row[aria-selected=true] strong')?.textContent,poster:document.querySelector('.poster-canvas')?.className,tabs:document.querySelectorAll('.gallery-buttons [role=tab]').length})");
   assert.equal(initial.selected,"Blackout Protocol");
   assert.equal(initial.tabs,6);
   assert.ok(await cdp.eval("!!document.querySelector('.gallery-world .gallery-scene-3d')"),"3D project stage should be embedded");
