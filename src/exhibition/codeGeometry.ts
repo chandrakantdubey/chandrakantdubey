@@ -71,7 +71,8 @@ export function createCodeMonument(seed=2026):CodeGeometry {
         const scatterX=x+Math.cos(angle)*reach;
         const scatterY=y+Math.sin(angle)*reach;
         const scatterZ=z+(random()-.38)*6;
-        const material=(random()<.12?2:random()<.26?1:0);
+        const swatch=random();
+        const material=swatch<.07?2:swatch<.21?1:0;
         const start=vertices.length/STRIDE;
         for(const side of sides){
           for(let corner=0;corner<4;corner++){
