@@ -1,0 +1,19 @@
+name: Verify production multiplayer
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  live-duel:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Test live two-player room lifecycle
+        env:
+          DUEL_BASE_URL: https://chandrakantdubey.vercel.app
+        run: node scripts/live-duel-smoke.mjs
