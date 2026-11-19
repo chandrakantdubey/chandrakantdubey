@@ -160,6 +160,9 @@ try{
   assert.ok(await cdp.eval("document.querySelector('#stack-details h3').textContent.includes('Backend')"),"skills interactive");
   assert.ok(await cdp.eval("document.querySelector('#stack-details').textContent.includes('FastAPI')"));
   await cdp.screenshot("skills-desktop.png");
+  await cdp.eval("document.querySelector('.stack-theatre').scrollIntoView({behavior:'instant'})");
+  await delay(280);
+  await cdp.screenshot("orbit-desktop.png");
   await cdp.eval("document.querySelector('#play').scrollIntoView({behavior:'instant'})");
   await delay(350);
   assert.ok(await cdp.eval("!!document.querySelector('.flux-canvas') && !!document.querySelector('.duel-board')"),"both real embedded games present");
@@ -205,6 +208,9 @@ try{
   await cdp.eval("document.querySelector('#work').scrollIntoView({behavior:'instant'})");
   await delay(450);
   await cdp.screenshot("gallery-mobile.png");
+  await cdp.eval("document.querySelector('.stack-theatre').scrollIntoView({behavior:'instant'})");
+  await delay(310);
+  await cdp.screenshot("orbit-mobile.png");
   await cdp.eval("document.querySelector('.team-section').scrollIntoView({behavior:'instant'})");
   await delay(380);
   await cdp.screenshot("team-mobile.png");
@@ -214,6 +220,9 @@ try{
   await cdp.eval("document.querySelector('#play').scrollIntoView({behavior:'instant'})");
   await delay(380);
   await cdp.screenshot("arcade-mobile.png");
+  await cdp.eval("document.querySelector('.flux-play')?.click()");
+  await delay(460);
+  await cdp.screenshot("arcade-running-mobile.png");
   await cdp.eval("document.querySelector('.duel-stage').scrollIntoView({behavior:'instant'})");
   await delay(370);
   await cdp.screenshot("hex-mobile.png");
