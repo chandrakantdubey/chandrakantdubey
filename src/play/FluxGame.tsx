@@ -192,13 +192,13 @@ export default function FluxGame() {
     };
     const position=(e:PointerEvent)=>{
       const r=canvas.getBoundingClientRect();
-      // Mobile uses object-fit:cover. Map pointer through the center crop,
-      // not the element's stretched CSS rectangle.
-      const scale=Math.max(r.width/WIDTH,r.height/HEIGHT);
-      const cropX=(WIDTH*scale-r.width)/2;
-      const cropY=(HEIGHT*scale-r.height)/2;
-      const x=(e.clientX-r.left+cropX)/scale;
-      const y=(e.clientY-r.top+cropY)/scale;
+      // The full 16:9 arena is letterboxed (object-fit:contain) on phones.
+      // Map taps through the exact centered bitmap bounds, never a crop.
+      const scale=Math.min(r.width/WIDTH,r.height/HEIGHT);
+      const padX=(r.width-WIDTH*scale)/2;
+      const padY=(r.height-HEIGHT*scale)/2;
+      const x=(e.clientX-r.left-padX)/scale;
+      const y=(e.clientY-r.top-padY)/scale;
       inputRef.current.x=Math.max(0,Math.min(WIDTH,x));
       inputRef.current.y=Math.max(0,Math.min(HEIGHT,y));
     };
@@ -252,13 +252,19 @@ export default function FluxGame() {
   return <div className="flux-experience" ref={stageRef} tabIndex={-1} aria-label="Signal Shift arcade game">
     <div className="flux-topline"><span>GAME 001 <i>•</i> SIGNAL SHIFT</span><span><Zap size={14}/> LIVE SIMULATION</span></div>
     <div className="flux-stage">
+      <div className="flux-reticle" aria-hidden="true"/>
+      <div className="flux-corner-ornament" aria-hidden="true"/>
+      <div className="flux-corner-ornament flux-corner-bottom" aria-hidden="true"/>
       <canvas width={WIDTH} height={HEIGHT} ref={canvasRef} className="flux-canvas"
         role="img" aria-label="Navigate the glowing ship, collect diamond sparks, and avoid red hazards. Arrow keys, WASD or touch drag."/>
       {ui.phase!=="playing"&&<div className="flux-overlay">
-        <span className="flux-overlay-eyebrow">{ui.phase==="over"?"RUN COMPLETE":ui.phase==="paused"?"SIGNAL HELD":"ARCADE / SINGLE PLAYER"}</span>
-        <h3>{ui.phase==="over"?"GAME OVER":ui.phase==="paused"?"PAUSED":"SIGNAL SHIFT"}</h3>
-        <p>{ui.phase==="over"?"Collect more sparks and beat your best run.":ui.phase==="paused"?"Your position is saved. Resume whenever you're ready.":"Collect the yellow sparks. Dodge red interference. Survive the waves."}</p>
-        <button type="button" className="flux-play" onClick={start}><Play size={17}/>{ui.phase==="paused"?"RESUME":ui.phase==="over"?"RUN AGAIN":"START RUN"} <ArrowUpRight size={18}/></button>
+        <div className="flux-overlay-content">
+          <span className="flux-overlay-eyebrow">{ui.phase==="over"?"RUN COMPLETE":ui.phase==="paused"?"SIGNAL HELD":"ARCADE / SINGLE PLAYER"}</span>
+          <h3>{ui.phase==="over"?"GAME OVER":ui.phase==="paused"?"PAUSED":"SIGNAL SHIFT"}</h3>
+          <p>{ui.phase==="over"?"Collect more sparks and beat your best run.":ui.phase==="paused"?"Your position is saved. Resume whenever you're ready.":"Collect the yellow sparks. Dodge red interference. Survive the waves."}</p>
+          <button type="button" className="flux-play" onClick={start}><Play size={17}/>{ui.phase==="paused"?"RESUME":ui.phase==="over"?"RUN AGAIN":"START RUN"} <ArrowUpRight size={18}/></button>
+        </div>
+        <div className="flux-overlay-decor" aria-hidden="true"><span>◌ / 01 — PLAY FIELD</span><span>MOVE / COLLECT / SURVIVE ✳</span></div>
       </div>}
     </div>
     <div className="flux-hud">
