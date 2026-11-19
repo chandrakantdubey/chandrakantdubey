@@ -8,7 +8,8 @@
  */
 import { createHash, randomBytes, timingSafeEqual } from "node:crypto";
 import { BlobPreconditionFailedError, get, put } from "@vercel/blob";
-import { freshGame, place, toSnapshot, type Side, type DuelSnapshot } from "../src/play/duelEngine.ts";
+import { freshGame, place, toSnapshot } from "../src/play/duelRules.js";
+import type { Side, DuelSnapshot } from "../src/play/duelEngine.ts";
 
 interface StoredRoom {
   id:string;
