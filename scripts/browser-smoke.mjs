@@ -86,12 +86,13 @@ try{
   await poll(()=>cdp.eval("document.querySelectorAll('.gallery-row').length===6"),"Exhibition failed to render");
   await delay(1100);
 
-  const desktop=await cdp.eval("({heading:document.querySelector('h1')?.getAttribute('aria-label'),gallery:document.querySelectorAll('.gallery-row').length,work:document.querySelectorAll('.team-public-row').length,privateSystems:document.querySelectorAll('.team-private-items article').length,sculpture:!!document.querySelector('canvas.chromatic-canvas'),renderer:document.querySelector('canvas.chromatic-canvas')?.dataset.renderer,overflow:document.documentElement.scrollWidth>innerWidth+3,theme:getComputedStyle(document.querySelector('.exhibition-hero')).backgroundColor,source:document.querySelector('.gallery-stage-footer a')?.href,hasOldMesh:!!document.querySelector('.field-canvas,.field-inspector,.inspect-toggle,.mode-switch')})");
+  const desktop=await cdp.eval("({heading:document.querySelector('h1')?.getAttribute('aria-label'),gallery:document.querySelectorAll('.gallery-row').length,work:document.querySelectorAll('.team-public-row').length,privateSystems:document.querySelectorAll('.team-private-items article').length,sculpture:!!document.querySelector('canvas.code-monument-canvas'),modules:Number(document.querySelector('canvas.code-monument-canvas')?.dataset.modules),renderer:document.querySelector('canvas.code-monument-canvas')?.dataset.renderer,overflow:document.documentElement.scrollWidth>innerWidth+3,theme:getComputedStyle(document.querySelector('.exhibition-hero')).backgroundColor,source:document.querySelector('.gallery-stage-footer a')?.href,hasOldMesh:!!document.querySelector('.field-canvas,.field-inspector,.inspect-toggle,.mode-switch')})");
   assert.equal(desktop.heading,"Chandrakant Dubey");
   assert.equal(desktop.gallery,6);
   assert.equal(desktop.work,6);
   assert.equal(desktop.privateSystems,4);
   assert.equal(desktop.sculpture,true);
+  assert.ok(desktop.modules>=60,"procedurally assembled letter geometry is present");
   assert.ok(["webgl","fallback"].includes(desktop.renderer),"Canvas must run WebGL or a designed fallback: "+JSON.stringify(desktop));
   assert.equal(desktop.overflow,false,"Desktop must not overflow horizontally");
   assert.equal(desktop.hasOldMesh,false,"Remove mesh, inspector, and dev-tool clutter");
@@ -103,13 +104,23 @@ try{
   console.log("Desktop renderer and content:",JSON.stringify(desktop));
   await cdp.screenshot("hero-desktop.png");
 
-  const pointer=await cdp.eval("(()=>{const r=document.querySelector('.chromatic-canvas').getBoundingClientRect();return{x:r.x+r.width*.5,y:r.y+r.height*.5}})()");
+  const pointer=await cdp.eval("(()=>{const r=document.querySelector('.code-monument-canvas').getBoundingClientRect();return{x:r.x+r.width*.5,y:r.y+r.height*.5}})()");
   await cdp.send("Input.dispatchMouseEvent",{type:"mouseMoved",x:pointer.x,y:pointer.y});
   await cdp.send("Input.dispatchMouseEvent",{type:"mousePressed",x:pointer.x,y:pointer.y,button:"left",clickCount:1});
   await cdp.send("Input.dispatchMouseEvent",{type:"mouseMoved",x:pointer.x+54,y:pointer.y+23,button:"left",buttons:1});
   await cdp.send("Input.dispatchMouseEvent",{type:"mouseReleased",x:pointer.x+54,y:pointer.y+23,button:"left",clickCount:1});
   await delay(300);
   await cdp.screenshot("hero-interacted.png");
+  const previousBuilds=await cdp.eval("Number(document.querySelector('.code-monument-canvas').dataset.rebuilds||0)");
+  await cdp.eval("document.querySelector('.monument-rebuild').click()");
+  if(desktop.renderer==="webgl") {
+    await poll(()=>cdp.eval("Number(document.querySelector('.code-monument-canvas').dataset.rebuilds||0)>"+previousBuilds),"Recompile action must restart assembly");
+    await delay(2250);
+    assert.equal(await cdp.eval("document.querySelector('.code-monument-canvas').dataset.assembly"),"assembled");
+  } else {
+    assert.ok(await cdp.eval("document.querySelector('.code-monument').classList.contains('code-pulse')"),"fallback is still interactive");
+  }
+  await cdp.screenshot("hero-recompiled.png");
 
   await cdp.eval("document.querySelector('#work').scrollIntoView({behavior:'instant'})");
   await delay(450);
@@ -146,7 +157,7 @@ try{
   await delay(450);
   await cdp.eval("window.scrollTo({top:0,behavior:'instant'})");
   await delay(400);
-  const mobile=await cdp.eval("({width:innerWidth,page:document.documentElement.scrollWidth,menu:getComputedStyle(document.querySelector('.mobile-nav-toggle')).display,gallery:document.querySelectorAll('.gallery-row').length,sculptureWidth:Math.round(document.querySelector('.chromatic-canvas').getBoundingClientRect().width)})");
+  const mobile=await cdp.eval("({width:innerWidth,page:document.documentElement.scrollWidth,menu:getComputedStyle(document.querySelector('.mobile-nav-toggle')).display,gallery:document.querySelectorAll('.gallery-row').length,sculptureWidth:Math.round(document.querySelector('.code-monument-canvas').getBoundingClientRect().width)})");
   assert.equal(mobile.width,390);
   assert.ok(mobile.page<=393,"390px mobile must not overflow "+JSON.stringify(mobile));
   assert.notEqual(mobile.menu,"none");
@@ -174,7 +185,7 @@ try{
   await cdp.send("Emulation.setEmulatedMedia",{features:[{name:"prefers-reduced-motion",value:"reduce"}]});
   await delay(380);
   assert.ok(await cdp.eval("matchMedia('(prefers-reduced-motion: reduce)').matches"),"Reduced-motion preference supported");
-  console.log("Chromatic exhibition browser tests passed: WebGL/fallback, drag, six interactive posters, keyboard, work, contact and 1440/390/320px layout.");
+  console.log("Code monument browser tests passed: procedural CD, drag, recompile, WebGL/fallback, six interactive posters, keyboard, work, contact and 1440/390/320px layout.");
   console.log("Visual QA saved to "+out);
 }finally{
   if(socket?.readyState===WebSocket.OPEN)socket.close();
