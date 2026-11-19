@@ -105,7 +105,7 @@ export async function POST(request:Request):Promise<Response> {
   let decoded:unknown;
   try{decoded=JSON.parse(raw);}catch{return json({error:"Malformed request."},400);}
   const input=parseAction(decoded);
-  if(!input.ok)return json({error:input.message},400);
+  if("message" in input)return json({error:input.message},400);
   const {action,room:roomId,token,index,version}=input.data;
 
   try{
