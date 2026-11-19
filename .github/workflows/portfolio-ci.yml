@@ -32,10 +32,13 @@ jobs:
       - name: Validate field model and portfolio content
         run: npm test
       - name: Install pinned browser for visual tests
+        id: chrome
         uses: browser-actions/setup-chrome@v1
         with:
           chrome-version: stable
       - name: Exercise real browser and mobile layout
+        env:
+          CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}
         run: npm run test:browser
       - name: Upload desktop and mobile QA screenshots
         if: always()
