@@ -105,7 +105,7 @@ a {color:inherit;text-decoration:none;}
 .timecard-back small {margin-top:auto;font:10px var(--mono);}
 .timecard-front {height:53%;width:63%;left:23%;top:27%;transform:rotate(6deg);background:#2537c1;color:#eff7de;border:1px solid #d5f7d3;z-index:2;}
 .timecard-label {font:600 11px var(--mono);letter-spacing:.1em;}
-.timecard-front strong {font:800 clamp(65px,8vw,120px)/1.1 "Space Grotesk",sans-serif;letter-spacing:-.11em;white-space:nowrap;flex:1;display:grid;place-items:center;}
+.timecard-front strong {font:800 clamp(65px,8vw,120px)/1.1 "Space Grotesk",sans-serif;letter-spacing:-.11em;white-space:nowrap;flex:1;display:flex;align-items:center;justify-content:center;}
 .timecard-front strong span {color:#cfff6a;}
 .timecard-front small {font:9px var(--mono);letter-spacing:.06em;}
 .timecard-bar {display:flex;gap:4px;margin-bottom:11px;}
