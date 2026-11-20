@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { RefreshCw } from "lucide-react";
-import { CODE_VERTEX_STRIDE, createCodeMonument } from "./codeGeometry.ts";
+import { CODE_VERTEX_STRIDE, createCodeMonument, codeMonumentCorners, fitCodeMonument } from "./codeGeometry.ts";
 
 /**
  * A developer's signature, literally compiled into a 3D object:
@@ -141,6 +141,7 @@ export default function CodeMonument() {
     let yaw=-0.23,pitch=-0.19,targetYaw=-0.23,targetPitch=-0.19;
     let width=1,height=1,buildStarted=performance.now()+200,cycle=0;
     let geometry=createCodeMonument(2026);
+    let homeCorners=codeMonumentCorners(geometry);
     canvas.dataset.modules=String(geometry.modules);
 
     try{
@@ -209,7 +210,9 @@ export default function CodeMonument() {
         gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
         gl.uniformMatrix3fv(uniforms.rotation,false,rotation(yaw,pitch));
         gl.uniformMatrix4fv(uniforms.projection,false,projection(width/height));
-        gl.uniform1f(uniforms.scale,width<750?Math.min(.75,Math.max(.52,width/height*.88)):Math.min(1.29,Math.max(.85,width/height*1.02)));
+        const fittedScale=fitCodeMonument(width/height,yaw,pitch,homeCorners);
+        gl.uniform1f(uniforms.scale,fittedScale);
+        canvas.dataset.fitScale=fittedScale.toFixed(3);
         gl.uniform1f(uniforms.build,built);
         gl.uniform1f(uniforms.time,now*.001);
         gl.drawElements(gl.TRIANGLES,geometry.indices.length,gl.UNSIGNED_SHORT,0);
@@ -226,6 +229,7 @@ export default function CodeMonument() {
         if(!alive||lost)return;
         cycle++;
         geometry=createCodeMonument(2026+cycle);
+        homeCorners=codeMonumentCorners(geometry);
         gl.bindBuffer(gl.ARRAY_BUFFER,vertexBuffer);
         gl.bufferData(gl.ARRAY_BUFFER,geometry.vertices,gl.DYNAMIC_DRAW);
         canvas.dataset.rebuilds=String(cycle);
