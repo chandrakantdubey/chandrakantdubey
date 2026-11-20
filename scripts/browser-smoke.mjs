@@ -130,6 +130,34 @@ try{
   assert.ok(await cdp.eval("document.querySelector('.submit-mail')?.textContent?.includes('Compose email')"));
   console.log("Desktop renderer and content:",JSON.stringify(desktop));
   await cdp.screenshot("hero-desktop.png");
+  assert.equal(await cdp.eval("document.querySelector('.exhibition-site').dataset.specimenState"),"sealed",
+    "portfolio starts in its complete professional form");
+  assert.ok(await cdp.eval("!!document.querySelector('.specimen-discovery')"),"glass specimen is discoverable in the hero");
+  assert.ok(await cdp.eval("!document.querySelector('.specimen-dock')"),"no transformation UI clutters first visit");
+  await cdp.eval("document.querySelector('.specimen-discovery').click()");
+  await poll(()=>cdp.eval("!!document.querySelector('[role=dialog].specimen-inspection')"),"specimen inspection opens");
+  assert.ok(await cdp.eval("document.querySelector('.specimen-inspection-copy h2').textContent.includes('Still sealed')"));
+  assert.ok(await cdp.eval("document.activeElement.classList.contains('specimen-close')"),"dialog focuses its close control");
+  await cdp.screenshot("specimen-inspection-desktop.png");
+  await cdp.send("Input.dispatchKeyEvent",{type:"keyDown",key:"Escape",code:"Escape",windowsVirtualKeyCode:27});
+  await cdp.send("Input.dispatchKeyEvent",{type:"keyUp",key:"Escape",code:"Escape",windowsVirtualKeyCode:27});
+  await poll(()=>cdp.eval("!document.querySelector('.specimen-inspection')"),"Escape closes inspection");
+  assert.equal(await cdp.eval("document.querySelector('.exhibition-site').dataset.specimenState"),"sealed");
+  await cdp.eval("document.querySelector('.specimen-discovery').click()");
+  await cdp.eval("document.querySelector('.specimen-primary').click()");
+  await poll(()=>cdp.eval("document.querySelector('.exhibition-site').dataset.specimenState==='awakened'"),
+    "unsealing is explicitly opt-in");
+  assert.ok(await cdp.eval("!!document.querySelector('.specimen-dock')"),"activated specimen exposes an unobtrusive control");
+  assert.ok(await cdp.eval("document.querySelector('.specimen-dock-panel p').textContent.length>8"),
+    "character makes a contextual remark");
+  await delay(1730);
+  assert.ok(await cdp.eval("!document.querySelector('.specimen-apparition')"),"cinematic overlay always completes");
+  await cdp.screenshot("specimen-awakened-desktop.png");
+  await cdp.eval("document.querySelector('.specimen-dock-links button[aria-label=\"Restore original experience\"]').click()");
+  assert.equal(await cdp.eval("document.querySelector('.exhibition-site').dataset.specimenState"),"sealed",
+    "restoration must reverse the transformation without a reload");
+  assert.ok(await cdp.eval("!document.querySelector('.specimen-dock')"),"restoration removes the controls");
+
 
   const pointer=await cdp.eval("(()=>{const r=document.querySelector('.code-monument-canvas').getBoundingClientRect();return{x:r.x+r.width*.5,y:r.y+r.height*.5}})()");
   await cdp.send("Input.dispatchMouseEvent",{type:"mouseMoved",x:pointer.x,y:pointer.y});
@@ -290,6 +318,23 @@ try{
   assert.ok(mobileGames.bLeft<=2 && mobileGames.bRight>=mobileGames.width-2,"Packet Panic fills mobile width");
   await assertMinimumTextSize(cdp,"390px mobile");
   await cdp.screenshot("hero-mobile.png");
+  await cdp.eval("document.querySelector('.specimen-discovery').click()");
+  await poll(()=>cdp.eval("!!document.querySelector('.specimen-inspection')"),"specimen inspection on phone");
+  const vialMobile=await cdp.eval("(()=>{const r=document.querySelector('.specimen-inspection').getBoundingClientRect();return {left:r.left,right:r.right,top:r.top,bottom:r.bottom,width:innerWidth,height:innerHeight,page:document.documentElement.scrollWidth}})()");
+  assert.ok(vialMobile.left>=-1&&vialMobile.right<=vialMobile.width+1,
+    "vial inspection fits mobile width "+JSON.stringify(vialMobile));
+  assert.ok(vialMobile.bottom<=vialMobile.height+2,"inspection fits 390px phone height "+JSON.stringify(vialMobile));
+  await cdp.screenshot("specimen-inspection-mobile.png");
+  await cdp.eval("document.querySelector('.specimen-primary').click()");
+  await poll(()=>cdp.eval("document.querySelector('.exhibition-site').dataset.specimenState==='awakened'"),
+    "phone activation is responsive");
+  await delay(1680);
+  await cdp.screenshot("specimen-awakened-mobile.png");
+  assert.ok(await cdp.eval("document.documentElement.scrollWidth<=innerWidth+3"),
+    "activated mode cannot create horizontal overflow");
+  await cdp.eval("document.querySelector('.specimen-dock-links button[aria-label=\"Restore original experience\"]').click()");
+  assert.equal(await cdp.eval("document.querySelector('.exhibition-site').dataset.specimenState"),"sealed");
+
   await cdp.eval("document.querySelector('.mobile-nav-toggle').click()");
   assert.ok(await cdp.eval("document.querySelector('.nav-items').classList.contains('nav-items-open')"));
   await cdp.eval("document.querySelector('.nav-items a').click()");
@@ -358,6 +403,16 @@ try{
   await cdp.send("Emulation.setEmulatedMedia",{features:[{name:"prefers-reduced-motion",value:"reduce"}]});
   await delay(380);
   assert.ok(await cdp.eval("matchMedia('(prefers-reduced-motion: reduce)').matches"),"Reduced-motion preference supported");
+  await cdp.eval("document.querySelector('.specimen-discovery').click()");
+  await cdp.eval("document.querySelector('.specimen-primary').click()");
+  assert.equal(await cdp.eval("document.querySelector('.exhibition-site').dataset.specimenState"),"awakened");
+  assert.equal(await cdp.eval("!!document.querySelector('.specimen-apparition')"),false,
+    "reduced motion must not render the apparition at all");
+  await cdp.eval("document.querySelector('.specimen-dock-links button[aria-label=\"Restore original experience\"]').click()");
+  assert.equal(await cdp.eval("document.querySelector('.exhibition-site').dataset.specimenState"),"sealed");
+  assert.ok(await cdp.eval("document.documentElement.scrollWidth<=innerWidth+3"),
+    "no 320px overflow after complete specimen cycle");
+
   console.log("Typography edition QA PASS: typography, reactor interactions, centered uncropped Signal Shift, spatial gallery, Packet Panic, Signal Shift and 320/390px.");
   console.log("Visual QA saved to "+out);
 }finally{
