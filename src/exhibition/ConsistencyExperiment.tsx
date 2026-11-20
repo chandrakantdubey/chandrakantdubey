@@ -8,7 +8,7 @@ export default function ConsistencyExperiment() {
   const [step,setStep]=useState<0|1|2>(0);
   const outcome=simulateCasRace(winner);
   const select=(value:Racer)=>{setWinner(value);setStep(0);};
-  return <section id="consistency" className="consistency-experiment" aria-labelledby="consistency-heading">
+  return <section className="consistency-experiment" aria-labelledby="consistency-heading">
     <div className="consistency-head">
       <div>
         <span className="consistency-eyebrow"><GitMerge size={16}/> RECOVERED EXPERIMENT / 001</span>
