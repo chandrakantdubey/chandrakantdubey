@@ -9,6 +9,7 @@ import SkillOrbit from "./SkillOrbit";
 import RootAccess from "./RootAccess";
 import VisitorResponse from "./VisitorResponse";
 import IncidentReplay from "./IncidentReplay";
+import SpecimenExperience from "./SpecimenExperience";
 import FluxGame from "../play/FluxGame";
 import PacketPanic from "../play/PacketPanic";
 import "../play/play.css";
@@ -91,7 +92,7 @@ function Navigation() {
   </>;
 }
 
-function Hero() {
+function Hero({awakened,onChange}:{awakened:boolean;onChange:(value:boolean)=>void}) {
   return <section className="exhibition-hero" id="top" aria-labelledby="hero-heading">
     <div className="hero-grain" aria-hidden="true"/>
     <div className="hero-top-bar"><span>NO TEMPLATE IN SIGHT.</span><span>MUMBAI · ONLINE</span></div>
@@ -100,6 +101,7 @@ function Hero() {
       <span className="hero-name-bottom" aria-hidden="true">DUBEY<span className="hero-dot">.</span></span>
     </h1>
     <div className="hero-sculpture"><CodeMonument/></div>
+    <SpecimenExperience awakened={awakened} onChange={onChange}/>
     <span className="hero-rotator-caption">GO ON, POKE IT <span> / </span> IT WON'T BITE</span>
     <div className="hero-meta">
       <p>It worked locally. Promise.</p>
@@ -223,10 +225,19 @@ function FinalBoss() {
 
 export default function Exhibition() {
   useReveal();
-  return <div className="exhibition-site">
+  const [awakened,setAwakened]=useState(()=>{
+    try{return window.sessionStorage.getItem("cd-specimen-state")==="awakened";}
+    catch{return false;}
+  });
+  useEffect(()=>{
+    try{window.sessionStorage.setItem("cd-specimen-state",awakened?"awakened":"sealed");}
+    catch{/* optional session preference */}
+  },[awakened]);
+  return <div className={awakened?"exhibition-site specimen-awakened":"exhibition-site"}
+    data-specimen-state={awakened?"awakened":"sealed"}>
     <Navigation/>
     <main id="main">
-      <Hero/>
+      <Hero awakened={awakened} onChange={setAwakened}/>
       <div className="identity-ribbon" aria-hidden="true"><div className="marquee-track"><span className="marquee-copy">PIXELS WERE HARMED IN THE MAKING OF THIS WEBSITE ✳ IT WORKED LOCALLY ✳ THEN WE DEPLOYED IT ✳ </span><span className="marquee-copy">PIXELS WERE HARMED IN THE MAKING OF THIS WEBSITE ✳ IT WORKED LOCALLY ✳ THEN WE DEPLOYED IT ✳ </span></div></div>
       <Projects/>
       <IncidentReplay/>
