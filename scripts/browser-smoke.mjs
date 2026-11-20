@@ -262,6 +262,56 @@ try{
   await cdp.screenshot("root-access-desktop.png");
   await cdp.eval("document.querySelector('.root-terminal-close').click()");
   assert.ok(await cdp.eval("!document.querySelector('.root-terminal')"),"terminal closes without navigating");
+  // Awakening now reveals source-backed notes rather than a purely cosmetic mode.
+  assert.equal(await cdp.eval("!!document.querySelector('.signal-dossier')"),false,
+    "normal portfolio never hides essential content behind an extra discovery widget");
+  await cdp.eval("document.querySelector('.specimen-discovery').click()");
+  await cdp.eval("document.querySelector('.specimen-primary').click()");
+  await poll(()=>cdp.eval("document.querySelector('.exhibition-site').dataset.specimenState==='awakened'"),
+    "awakened signal trail activates");
+  await cdp.eval("document.querySelector('#work').scrollIntoView({behavior:'instant'})");
+  await cdp.eval("document.querySelector('.signal-dossier-trigger').click()");
+  assert.ok(await cdp.eval("document.querySelector('.signal-dossier-body').textContent.includes('DESIGN QUESTION')"),
+    "archive note contains a project-specific technical question");
+  assert.ok(await cdp.eval("document.querySelector('.signal-dossier-body a').href.includes('github.com')"),
+    "archive notes link to actual repository code");
+  await cdp.screenshot("signal-archive-desktop.png");
+  await cdp.eval("document.querySelector('#incident').scrollIntoView({behavior:'instant'})");
+  await cdp.eval("document.querySelector('.incident-phase-tabs [data-step=investigate]').click()");
+  await cdp.eval("document.querySelector('.signal-lab-trigger').click()");
+  assert.ok(await cdp.eval("document.querySelector('.signal-lab-analysis').textContent.includes('93.1%')"),
+    "Lab note explains trace latency attribution");
+  await cdp.screenshot("signal-lab-desktop.png");
+  await cdp.eval("document.querySelector('#final-boss').scrollIntoView({behavior:'instant'})");
+  await cdp.eval("document.querySelector('.signal-arcade-trigger').click()");
+  assert.ok(await cdp.eval("document.querySelector('.signal-arcade-manual').textContent.includes('520 ms')"),
+    "arcade note documents deterministic fixed ticks");
+  assert.ok(await cdp.eval("document.querySelector('.signal-arcade-manual').textContent.includes('not WebSocket')"),
+    "game documentation accurately identifies synchronization model");
+  assert.equal(await cdp.eval("JSON.parse(sessionStorage.getItem('cd-signal-trail')).length"),3,
+    "all three distinct discoveries persist locally");
+  await cdp.screenshot("signal-arcade-desktop.png");
+  await cdp.eval("document.querySelector('.root-discovery').click()");
+  await cdp.eval("document.querySelector('#root-command').focus()");
+  await cdp.send("Input.insertText",{text:"signals"});
+  await cdp.eval("document.querySelector('.root-terminal-prompt').requestSubmit()");
+  assert.ok(await cdp.eval("document.querySelector('.root-terminal-history').textContent.includes('3/3 RECOVERED')"),
+    "terminal reconstructs only collected evidence");
+  await cdp.send("Input.insertText",{text:"cat /signals/report"});
+  await cdp.eval("document.querySelector('.root-terminal-prompt').requestSubmit()");
+  assert.ok(await cdp.eval("document.querySelector('.root-terminal-history').textContent.includes('Explicit state ownership')"),
+    "terminal provides a coherent technical conclusion, not a joke-only unlock");
+  await cdp.screenshot("signal-index-desktop.png");
+  await cdp.send("Input.insertText",{text:"signals --reset"});
+  await cdp.eval("document.querySelector('.root-terminal-prompt').requestSubmit()");
+  await poll(()=>cdp.eval("JSON.parse(sessionStorage.getItem('cd-signal-trail')).length===0"),
+    "notes are explicitly reset without affecting the portfolio");
+  await cdp.eval("document.querySelector('.root-terminal-close').click()");
+  await cdp.eval("if(!document.querySelector('.specimen-dock-panel'))document.querySelector('.specimen-dock-toggle').click()");
+  await cdp.eval("document.querySelector('.specimen-dock-links button[aria-label=\\\"Restore original experience\\\"]').click()");
+  assert.equal(await cdp.eval("document.querySelector('.exhibition-site').dataset.specimenState"),"sealed",
+    "restoration works after the complete discovery circuit");
+
   await cdp.eval("document.querySelector('#play').scrollIntoView({behavior:'instant'})");
   await delay(350);
   assert.ok(await cdp.eval("!!document.querySelector('.flux-canvas') && !!document.querySelector('.packet-board')"),"both embedded arcade games present");
@@ -336,6 +386,13 @@ try{
     "phone activation is responsive");
   await delay(1680);
   await cdp.screenshot("specimen-awakened-mobile.png");
+  await cdp.eval("document.querySelector('.signal-dossier-trigger').click()");
+  assert.ok(await cdp.eval("!!document.querySelector('.signal-dossier-body')"),
+    "awakened project notes work on touch-sized displays");
+  assert.ok(await cdp.eval("document.documentElement.scrollWidth<=innerWidth+3"),
+    "engineering dossier cannot cause horizontal overflow on 390px phone");
+  await cdp.screenshot("signal-archive-mobile.png");
+
   assert.ok(await cdp.eval("document.documentElement.scrollWidth<=innerWidth+3"),
     "activated mode cannot create horizontal overflow");
   await cdp.eval("document.querySelector('.specimen-dock-links button[aria-label=\"Restore original experience\"]').click()");
