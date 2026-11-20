@@ -142,3 +142,15 @@
   .incident-status-led {animation:none;}
   .incident-primary {transition:none;}
 }
+
+/* The case study is reachable directly from the work gallery. */
+.projects-incident-link {
+  display:inline-flex;align-items:center;gap:11px;margin:20px 26px 0 0;
+  padding-bottom:9px;border-bottom:1px solid #527376;
+  font:700 12px "JetBrains Mono",monospace;letter-spacing:.05em;
+  color:#294e59;transition:color .2s,gap .2s;
+}
+.projects-incident-link:hover {color:#e35e45;gap:16px;}
+@media(max-width:640px){
+  .projects-incident-link {margin-top:25px;margin-right:0;line-height:1.5;}
+}
