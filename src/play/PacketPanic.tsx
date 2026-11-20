@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ArrowLeft, ArrowUpRight, Check, Copy, Headphones, HeadphoneOff, Play, RotateCcw, ShieldPlus, Users } from "lucide-react";
+import { ArrowLeft, ArrowUpRight, CalendarDays, Check, Copy, Headphones, HeadphoneOff, Play, RotateCcw, ShieldPlus, Share2, Users } from "lucide-react";
 import {
   COLS, ROWS, ROUND_MS, KINDS, newPacketGame, beginPacketGame,
   advancePacketGame, rotatePacketTile, patchPacketNetwork, timeRemaining, waveForTick,
   type PacketGameState,
 } from "./packetEngine.js";
+import { challengeSeed, resultShareText, utcChallengeDay } from "./dailyChallenge";
 
 type Mode="solo"|"online";
 type RoomResponse={
@@ -75,6 +76,13 @@ export default function PacketPanic({standalone=false}:{standalone?:boolean}) {
   const [notice,setNotice]=useState("");
   const [now,setNow]=useState(()=>Date.now());
   const [soundOn,setSoundOn]=useState(false);
+  const challengeDay=useRef(utcChallengeDay()).current;
+  const [daily,setDaily]=useState(false);
+  const [dailyBest,setDailyBest]=useState(()=>{
+    try{return Number(localStorage.getItem("cd-packet-daily-"+utcChallengeDay())||0)||0;}
+    catch{return 0;}
+  });
+  const reported=useRef("");
   const audio=useRef<AudioContext|null>(null);
   const lastEventId=useRef(-1);
   const pollBusy=useRef(false);
@@ -88,6 +96,8 @@ export default function PacketPanic({standalone=false}:{standalone?:boolean}) {
   const canPlay=playing&&!busy;
   const inviteLink=room?window.location.origin+"/play/packet?room="+encodeURIComponent(room):"";
   const activePlayers=connected?game.players:1;
+  const myColumns=player===1?"01–04":"05–07";
+  const challengeId=challengeDay.replaceAll("-","");
 
   useEffect(()=>{
     mounted.current=true;
@@ -142,9 +152,31 @@ export default function PacketPanic({standalone=false}:{standalone?:boolean}) {
 
   useEffect(()=>()=>{if(audio.current)void audio.current.close();},[]);
 
+  useEffect(()=>{
+    if(!finished||game.startedAt===null)return;
+    const key=[mode,room,game.seed,game.startedAt].join(":");
+    if(reported.current===key)return;
+    reported.current=key;
+    window.dispatchEvent(new CustomEvent("cd:packet-result",{
+      detail:{won:game.phase==="won",score:game.score,integrity:game.integrity,
+        delivered:game.delivered,cooperative:mode==="online"},
+    }));
+    if(mode==="solo"&&daily&&game.score>dailyBest){
+      setDailyBest(game.score);
+      try{localStorage.setItem("cd-packet-daily-"+challengeDay,String(game.score));}
+      catch{/* local personal best is optional */}
+    }
+  },[finished,game.phase,game.startedAt,game.seed,game.score,game.integrity,game.delivered,mode,room,daily,dailyBest,challengeDay]);
+
   const solo=()=>{
     setMode("solo");setGame(newPacketGame(Date.now(),1));setRoom("");setToken("");
-    setInvite("");setNotice("");setCopied(false);setLinkRoom(null);
+    setInvite("");setNotice("");setCopied(false);setLinkRoom(null);setDaily(false);
+  };
+  const startDaily=()=>{
+    setMode("solo");setDaily(true);setRoom("");setToken("");setInvite("");
+    setNotice("");setLinkRoom(null);
+    setGame(beginPacketGame(newPacketGame(challengeSeed(challengeDay),1),Date.now()));
+    if(soundOn)tone(audio,670,.14);
   };
   const playSolo=()=>{
     setMode("solo");setNotice("");setGame(previous=>beginPacketGame(previous,Date.now()));
@@ -157,7 +189,7 @@ export default function PacketPanic({standalone=false}:{standalone?:boolean}) {
       if(!response.room||!response.token||!response.game)throw Error("Incomplete room response.");
       saveToken(response.room,response.token);
       setRoom(response.room);setToken(response.token);setPlayer(1);
-      setMode("online");setGame(response.game);setInvite("");setRoomEntry(response.room);
+      setMode("online");setDaily(false);setGame(response.game);setInvite("");setRoomEntry(response.room);
       setLinkRoom(response.room);
     }catch(error){setNotice(messageFrom(error));}
     finally{setBusy(false);}
@@ -173,7 +205,7 @@ export default function PacketPanic({standalone=false}:{standalone?:boolean}) {
       if(!response.game||(!response.token&&!existing))throw Error("Incomplete room response.");
       const secret=response.token||existing;
       saveToken(value,secret);
-      setRoom(value);setToken(secret);setMode("online");
+      setRoom(value);setToken(secret);setMode("online");setDaily(false);
       setPlayer(response.player||2);setGame(response.game);
       setInvite("");setRoomEntry(value);setLinkRoom(value);
     }catch(error){setNotice(messageFrom(error));}
@@ -205,13 +237,18 @@ export default function PacketPanic({standalone=false}:{standalone?:boolean}) {
     }else void send("patch");
   };
   const restart=()=>{
-    if(mode==="solo")solo();
+    if(mode==="solo"){if(daily)startDaily();else solo();}
     else void send("restart");
   };
   const share=async()=>{
     if(!inviteLink)return;
     try{await navigator.clipboard.writeText(inviteLink);setCopied(true);setNotice("Invite link copied. Find a competent co-pilot.");}
     catch{setNotice("Copy the room link from your address bar.");}
+  };
+  const shareScore=async()=>{
+    const message=resultShareText(challengeDay,game.score,game.delivered,game.integrity,game.phase==="won");
+    try{await navigator.clipboard.writeText(message);setNotice("Result copied. Go humble somebody.");}
+    catch{setNotice("Clipboard unavailable. The score is still visible above.");}
   };
   const toggleSound=()=>{
     setSoundOn(enabled=>!enabled);
