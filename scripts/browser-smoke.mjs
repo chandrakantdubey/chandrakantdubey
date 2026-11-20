@@ -404,6 +404,9 @@ try{
 
   assert.ok(await cdp.eval("document.documentElement.scrollWidth<=innerWidth+3"),
     "activated mode cannot create horizontal overflow");
+  await cdp.eval("if(!document.querySelector('.specimen-dock-panel'))document.querySelector('.specimen-dock-toggle').click()");
+  await poll(()=>cdp.eval("!!document.querySelector('.specimen-dock-links button[aria-label=\\\"Restore original experience\\\"]')"),
+    "visitor can reopen the collapsed companion after scrolling the note");
   await cdp.eval("document.querySelector('.specimen-dock-links button[aria-label=\"Restore original experience\"]').click()");
   assert.equal(await cdp.eval("document.querySelector('.exhibition-site').dataset.specimenState"),"sealed");
 
