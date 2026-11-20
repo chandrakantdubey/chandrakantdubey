@@ -26,7 +26,7 @@ export default function IncidentReplay({awakened,onDiscover,signals}:IncidentRep
   const solved=selected?.correct===true;
   const reset=()=>{setPhase(0);setEvidence("traces");setChoice(null);setTraceOpen(false);};
   const navigate=(next:number)=>{if(next>=0&&next<=3&&(next!==3||solved))setPhase(next as 0|1|2|3);};
-  return <section className="incident-replay" id="incident" aria-labelledby="incident-heading">
+  return <section className="incident-replay" aria-labelledby="incident-heading">
     <header className="incident-intro" data-reveal>
       <div><span className="incident-eyebrow"><Activity size={16}/> THE ENGINEERING LAB / SCENARIO 042</span>
         <h2 id="incident-heading">DEBUG THE<br/><em>DISASTER.</em></h2>
