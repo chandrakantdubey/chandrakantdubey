@@ -29,7 +29,7 @@ export function runRootCommand(raw:string,context:RootContext={awakened:false,si
     ?combinedSignalReport(context.signals)
     :["The signal index is dormant."],effect:null};
   if(text.startsWith("cat /signals/")){
-    const id=text.slice("cat /signals/".length).replace(/\\.note$/,"");
+    const id=text.slice("cat /signals/".length).replace(/\.note$/,"");
     if(isSignalId(id))return {lines:context.awakened
       ?signalFile(id,context.signals):["The signal index is dormant."],effect:null};
   }
