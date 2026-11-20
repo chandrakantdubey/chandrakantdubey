@@ -13,6 +13,13 @@ export default function DeferredExperience({id,kind,label,children}:Props) {
   const [mounted,setMounted]=useState(false);
   const onReady=useCallback(()=>setMounted(true),[]);
   useEffect(()=>{
+    // Client-rendered routes may create the target after the browser's
+    // native initial-hash scroll. Honor the deep link when the anchor mounts.
+    if(!id||window.location.hash!=="#"+id)return;
+    const frame=requestAnimationFrame(()=>node.current?.scrollIntoView({behavior:"instant",block:"start"}));
+    return()=>cancelAnimationFrame(frame);
+  },[id]);
+  useEffect(()=>{
     const element=node.current;
     if(!element)return;
     if(!("IntersectionObserver" in window)){
