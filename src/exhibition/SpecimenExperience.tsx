@@ -4,7 +4,7 @@ import { ArrowUpRight, FlaskConical, RotateCcw, Volume2, VolumeX, X } from "luci
 import { shouldComment, specimenLine, type SpecimenMoment } from "./specimenCharacter";
 import "./specimen.css";
 
-type Props={awakened:boolean;onChange:(next:boolean)=>void};
+type Props={awakened:boolean;onChange:(next:boolean)=>void;signalCount:number};
 const KEY="cd-specimen-voice";
 
 function GlassVial({large=false}:{large?:boolean}) {
@@ -105,7 +105,7 @@ function Apparition() {
 }
 
 /** A small optional discovery on the hero; all real content stays available. */
-export default function SpecimenExperience({awakened,onChange}:Props) {
+export default function SpecimenExperience({awakened,onChange,signalCount}:Props) {
   const [open,setOpen]=useState(false);
   const [expanded,setExpanded]=useState(false);
   const [surge,setSurge]=useState(false);
@@ -267,11 +267,13 @@ export default function SpecimenExperience({awakened,onChange}:Props) {
       </div>}
       {awakened&&<aside className="specimen-dock" aria-label="Specimen experience controls">
         {expanded&&<div className="specimen-dock-panel">
-          <div className="specimen-dock-heading"><FlaskConical size={15}/> EXPERIMENT 001 <span>ACTIVE</span></div>
+          <div className="specimen-dock-heading"><FlaskConical size={15}/> EXPERIMENT 001 <span>NOTES {signalCount}/3</span></div>
           <p aria-live="polite">{line}</p>
           <div className="specimen-dock-links">
+            <a href="#work" onClick={()=>setExpanded(false)}>ARCHIVE <ArrowUpRight size={13}/></a>
             <a href="#incident" onClick={()=>setExpanded(false)}>LAB <ArrowUpRight size={13}/></a>
             <a href="#final-boss" onClick={()=>setExpanded(false)}>ARCADE <ArrowUpRight size={13}/></a>
+            <a href="#site-footer" onClick={()=>setExpanded(false)}>INDEX <ArrowUpRight size={13}/></a>
             {voiceAvailable&&<button type="button" onClick={toggleVoice}
               aria-label={voice?"Mute character":"Enable character voice"}>
               {voice?<Volume2 size={16}/>:<VolumeX size={16}/>}
@@ -281,7 +283,7 @@ export default function SpecimenExperience({awakened,onChange}:Props) {
         </div>}
         <button className="specimen-dock-toggle" type="button" onClick={()=>setExpanded(v=>!v)}
           aria-expanded={expanded} aria-label={expanded?"Collapse specimen controls":"Open specimen controls"}>
-          <span className="specimen-dock-led"/><span>001 / ACTIVE</span><span>{expanded?"−":"+"}</span>
+          <span className="specimen-dock-led"/><span>001 / {signalCount}/3</span><span>{expanded?"−":"+"}</span>
         </button>
       </aside>}
     </>,document.body)}
