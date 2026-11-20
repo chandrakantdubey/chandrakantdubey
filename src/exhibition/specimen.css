@@ -1,0 +1,203 @@
+/* SPECIMEN 001 — an unobtrusive physical artifact, not an alternate UI theme. */
+.specimen-discovery {
+  position:absolute;z-index:8;left:clamp(22px,4.4vw,72px);top:35%;
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  width:100px;padding:0 6px 9px;background:transparent;border:0;
+  color:#e5e9ff;transform:rotate(-7deg);
+  filter:drop-shadow(0 13px 11px #130b6280);
+  transition:transform .32s cubic-bezier(.2,.8,.2,1),filter .32s;
+}
+.specimen-discovery:hover {transform:rotate(0) translateY(-7px);filter:drop-shadow(0 18px 15px #100548b0);}
+.specimen-discovery:focus-visible {outline:3px solid #f4ffa5;outline-offset:5px;border-radius:10px;}
+.specimen-vial-halo {
+  position:absolute;inset:31px 4px 25px;border-radius:50%;
+  background:radial-gradient(circle,#f0e4ff42,#a3a1fc10 58%,transparent 77%);
+  pointer-events:none;
+}
+.specimen-glass {width:78px;height:auto;display:block;overflow:visible;position:relative;}
+.specimen-discovery-caption {
+  font:600 11px/1.4 "JetBrains Mono",monospace;letter-spacing:.06em;
+  color:#d9d5fa;white-space:nowrap;opacity:.8;
+}
+.specimen-discovery-caption span {color:#dbf6a0;}
+.specimen-bubble {transform-box:fill-box;transform-origin:center;}
+.specimen-discovery:hover .specimen-bubble-one,.specimen-glass-large .specimen-bubble-one{
+  animation:specimen-rise 2.6s ease-in-out infinite;
+}
+.specimen-discovery:hover .specimen-bubble-two,.specimen-glass-large .specimen-bubble-two{
+  animation:specimen-rise 3.1s ease-in-out infinite .6s;
+}
+@keyframes specimen-rise {0%,100%{translate:0 0;opacity:.4;}55%{translate:0 -9px;opacity:1;}}
+/* The change of environment is an opt-in color/lighting treatment. */
+.exhibition-site.specimen-awakened .exhibition-hero {
+  background-image:radial-gradient(ellipse at 61% 52%,#4f3c78 0%,#262253 32%,#171b3c 67%,#0e1327 100%);
+}
+.exhibition-site.specimen-awakened .hero-name-bottom {color:#d1efa4;text-shadow:0 0 35px #9ef0b955;}
+.exhibition-site.specimen-awakened .hero-name-top {color:#f5f0ec;-webkit-text-stroke:1px #f5f0ec;}
+.exhibition-site.specimen-awakened .hero-rotator-caption {color:#dac9f1;}
+.exhibition-site.specimen-awakened .exhibition-nav {background:#181c3d;}
+.exhibition-site.specimen-awakened .scroll-progress {background:#d5a9fb;}
+.exhibition-site.specimen-awakened .identity-ribbon {background:#d6eeaa;color:#1d2234;}
+.exhibition-site.specimen-awakened .projects-section {background-image:radial-gradient(ellipse at 90% 4%,#e7dcee45,transparent 48%);}
+.exhibition-site.specimen-awakened .work-heading h2 em {color:#6247c2;}
+.exhibition-site.specimen-awakened .incident-workbench {box-shadow:inset 0 6px 0 #c2b0ec;}
+.exhibition-site.specimen-awakened .after-hours {box-shadow:inset 0 5px 0 #b3dfbb;}
+.exhibition-site.specimen-awakened .specimen-discovery {transform:rotate(4deg);}
+
+/* Inspectable artifact: ample negative space and fine physical detail. */
+.specimen-shade {
+  position:fixed;inset:0;z-index:1300;display:grid;place-items:center;
+  padding:clamp(9px,2vw,22px);background:#060c1dd9;backdrop-filter:blur(12px);
+  animation:specimen-shade-in .22s ease-out both;
+}
+@keyframes specimen-shade-in {from{opacity:0;}to{opacity:1;}}
+.specimen-inspection {
+  position:relative;display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);
+  width:min(860px,100%);min-height:395px;max-height:calc(100dvh - 26px);
+  overflow-y:auto;background:#f5f0e7;color:#171d29;
+  border:1px solid #e9e9e6;box-shadow:15px 15px 0 #a99bc63d,0 24px 90px #000b;
+  font-family:"Manrope",sans-serif;
+}
+.specimen-inspection * {box-sizing:border-box;}
+.specimen-inspection-visual {
+  min-height:365px;position:relative;display:grid;place-items:center;
+  overflow:hidden;background:radial-gradient(ellipse at 50% 50%,#645484 0,#292940 52%,#121a30 100%);
+}
+.specimen-inspection-visual::before {
+  content:"";position:absolute;inset:20px;
+  border:1px solid #d9e4f83b;pointer-events:none;
+}
+.specimen-inspection-orbit {
+  position:absolute;width:290px;aspect-ratio:1;border:1px solid #9c8ab06e;border-radius:50%;
+  box-shadow:0 0 0 29px #a99ede17,0 0 0 60px #a6b89b0b;
+}
+.specimen-glass-large {height:260px;width:auto;filter:drop-shadow(0 19px 15px #080a20c7);}
+.specimen-inspection-visual>span {position:absolute;bottom:28px;left:30px;color:#d0d2e6;
+  font:650 12px "JetBrains Mono",monospace;letter-spacing:.07em;}
+.specimen-close {
+  position:absolute;top:15px;right:15px;z-index:3;display:grid;place-items:center;
+  width:43px;height:43px;background:#f6f2e9;border:1px solid #767e84;color:#17212d;
+  cursor:pointer;
+}
+.specimen-close:hover {background:#e1e8db;}
+.specimen-inspection-copy {
+  display:flex;flex-direction:column;justify-content:center;align-items:flex-start;
+  gap:0;padding:55px clamp(24px,4vw,58px) 38px;
+}
+.specimen-index {font:750 12px "JetBrains Mono",monospace;letter-spacing:.12em;color:#735899;}
+.specimen-inspection-copy h2 {
+  margin:25px 0 17px;font:800 clamp(42px,5vw,69px)/.96 "Bricolage Grotesque",sans-serif;
+  letter-spacing:-.075em;max-width:100%;
+}
+.specimen-inspection-copy p {
+  max-width:370px;margin:0;color:#54616a;font:500 15px/1.8 "Manrope",sans-serif;
+}
+.specimen-inspection-actions {display:flex;gap:11px;flex-wrap:wrap;margin-top:32px;}
+.specimen-primary,.specimen-secondary {
+  display:inline-flex;align-items:center;justify-content:space-between;gap:17px;
+  min-height:49px;padding:12px 18px;font:800 12px "JetBrains Mono",monospace;
+  letter-spacing:.045em;cursor:pointer;
+}
+.specimen-primary {background:#231d39;color:#e8ffbb;border:1px solid #231d39;}
+.specimen-primary:hover {background:#3e3458;}
+.specimen-secondary {background:transparent;color:#283344;border:1px solid #99a4a7;}
+.specimen-secondary:hover {background:#d9ded6;}
+.specimen-voice-option {
+  display:inline-flex;align-items:center;gap:9px;margin-top:29px;padding:9px 0;
+  color:#505e70;border:0;background:none;text-align:left;
+  font:700 12px "JetBrains Mono",monospace;cursor:pointer;
+}
+.specimen-voice-option:hover {color:#241749;}
+.specimen-voice-option span {font-weight:500;color:#7a8690;}
+.specimen-inspection button:focus-visible,.specimen-dock button:focus-visible,.specimen-dock a:focus-visible {
+  outline:3px solid #9a63ed;outline-offset:3px;
+}
+/* A brief, purely decorative reveal. No content gets delayed or locked. */
+.specimen-apparition {
+  position:fixed;inset:0;z-index:1200;pointer-events:none;
+  display:grid;place-items:center;overflow:hidden;
+  background:radial-gradient(circle at 50% 52%,#4e386bdf 0%,#19172bec 40%,#070c1def 78%);
+  animation:specimen-apparition-out 1.65s cubic-bezier(.12,.79,.23,.99) both;
+}
+.specimen-apparition-glow {
+  position:absolute;width:min(92vw,700px);aspect-ratio:1;border-radius:50%;
+  background:radial-gradient(circle,#b0de8c67 0%,#967bd743 22%,transparent 70%);
+  filter:blur(28px);
+}
+.specimen-creature {
+  width:min(83vw,610px);height:min(82svh,560px);
+  filter:drop-shadow(0 0 43px #b8a1ff77);
+  animation:specimen-creature-arrive 1.65s ease-out both;
+}
+.specimen-creature-eyes {filter:drop-shadow(0 0 10px #e5ffb4);}
+@keyframes specimen-apparition-out {
+  0%{opacity:0;}15%{opacity:1;}62%{opacity:1;}100%{opacity:0;}
+}
+@keyframes specimen-creature-arrive {
+  0%{opacity:0;scale:.68;translate:0 18px;}40%{opacity:1;scale:1;translate:0 0;}100%{opacity:.7;scale:1.08;translate:0 -12px;}
+}
+/* Compact, collapsible companion; never displaces contact/actions. */
+.specimen-dock {
+  position:fixed;z-index:90;bottom:clamp(12px,2vw,26px);right:clamp(12px,2.5vw,33px);
+  display:flex;flex-direction:column;align-items:flex-end;gap:9px;
+  width:min(350px,calc(100vw - 24px));color:#d9efda;font-family:"JetBrains Mono",monospace;
+}
+.specimen-dock-toggle {
+  display:inline-flex;align-items:center;gap:12px;min-height:44px;
+  background:#162334;color:#d9ffab;border:1px solid #749b94;
+  padding:12px 15px;box-shadow:4px 5px 0 #10112555;
+  font:700 12px "JetBrains Mono",monospace;letter-spacing:.045em;cursor:pointer;
+}
+.specimen-dock-toggle>span:last-child {margin-left:7px;font-size:18px;line-height:.8;}
+.specimen-dock-led {
+  width:8px;height:8px;border-radius:50%;background:#d7ff9f;box-shadow:0 0 11px #c8ff9ba6;
+}
+.specimen-dock-panel {
+  width:100%;background:#131e2c;color:#d5e6de;border:1px solid #759893;
+  padding:16px 19px 17px;box-shadow:9px 11px 0 #0d172459;
+  animation:specimen-shade-in .18s ease-out both;
+}
+.specimen-dock-heading {
+  display:flex;align-items:center;gap:9px;color:#ddf7c7;font:750 12px "JetBrains Mono",monospace;
+}
+.specimen-dock-heading span {margin-left:auto;color:#b8e4ac;font:650 11px "JetBrains Mono",monospace;}
+.specimen-dock-panel p {
+  margin:15px 0 17px;color:#e3dfe6;font:550 14px/1.65 "Manrope",sans-serif;
+}
+.specimen-dock-links {display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding-top:11px;border-top:1px solid #3d5b62;}
+.specimen-dock-links a,.specimen-dock-links button {
+  display:inline-flex;align-items:center;gap:5px;min-height:34px;
+  padding:7px 9px;border:1px solid #51717a;background:#1c303e;color:#d9f2df;
+  font:650 11px "JetBrains Mono",monospace;cursor:pointer;
+}
+.specimen-dock-links a:hover,.specimen-dock-links button:hover {background:#325045;}
+@media(max-width:640px){
+  .specimen-discovery {left:14px;top:32%;width:68px;padding:0 2px 6px;}
+  .specimen-glass {width:57px;}
+  .specimen-discovery-caption {font-size:10px;}
+  .specimen-inspection {grid-template-columns:1fr;max-height:calc(100dvh - 18px);}
+  .specimen-inspection-visual {min-height:180px;height:31svh;max-height:255px;}
+  .specimen-inspection-orbit {width:180px;box-shadow:0 0 0 17px #a99ede17,0 0 0 30px #a6b89b0b;}
+  .specimen-glass-large {height:182px;width:auto;}
+  .specimen-inspection-visual>span {bottom:14px;left:16px;}
+  .specimen-inspection-copy {padding:27px 22px 24px;}
+  .specimen-inspection-copy h2 {font-size:clamp(39px,10vw,55px);margin:14px 0 13px;}
+  .specimen-inspection-copy p {font-size:14px;line-height:1.6;}
+  .specimen-inspection-actions {margin-top:22px;gap:8px;}
+  .specimen-primary,.specimen-secondary {min-height:44px;padding:10px 13px;}
+  .specimen-voice-option {margin-top:16px;}
+  .specimen-dock {right:12px;bottom:12px;}
+}
+@media(max-width:360px){
+  .specimen-inspection-visual {height:26svh;min-height:157px;}
+  .specimen-glass-large {height:157px;}
+  .specimen-inspection-copy {padding:18px 17px 22px;}
+}
+@media(prefers-reduced-motion:reduce){
+  .specimen-discovery,.specimen-primary,.specimen-secondary {transition:none;}
+  .specimen-discovery:hover {transform:rotate(-7deg);}
+  .specimen-bubble,.specimen-discovery:hover .specimen-bubble-one,
+  .specimen-discovery:hover .specimen-bubble-two {animation:none!important;}
+  .specimen-shade,.specimen-dock-panel,.specimen-apparition,.specimen-creature {animation:none!important;}
+  .specimen-apparition {display:none;}
+}
