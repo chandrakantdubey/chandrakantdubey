@@ -2,12 +2,12 @@ import { Suspense, useCallback, useEffect, useRef, useState, type ReactNode } fr
 import "./deferred-experience.css";
 
 type ExperienceKind="lab"|"arcade"|"packet"|"experiment";
-type Props={kind:ExperienceKind;label:string;children:ReactNode};
+type Props={id?:string;kind:ExperienceKind;label:string;children:ReactNode};
 
 /** Mount complex experiences shortly before they enter the viewport.
  * The reserved placeholder keeps deep links and page geometry stable.
  */
-export default function DeferredExperience({kind,label,children}:Props) {
+export default function DeferredExperience({id,kind,label,children}:Props) {
   const node=useRef<HTMLDivElement>(null);
   const [near,setNear]=useState(false);
   const [mounted,setMounted]=useState(false);
@@ -28,7 +28,7 @@ export default function DeferredExperience({kind,label,children}:Props) {
     observer.observe(element);
     return()=>observer.disconnect();
   },[]);
-  return <div ref={node}
+  return <div id={id} ref={node}
     className="deferred-experience"
     data-experience={kind}
     data-loaded={mounted?"true":"false"}
