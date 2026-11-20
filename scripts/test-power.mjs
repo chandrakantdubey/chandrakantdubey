@@ -7,7 +7,7 @@ for(const cmd of ROOT_COMMANDS){
   const result=runRootCommand(cmd);
   assert.ok(Array.isArray(result.lines),"every command returns display-only text");
   assert.ok(result.lines.every(x=>typeof x==="string"),"terminal never emits executable payloads");
-  assert.ok(["chaos","gravity","restore","exit","clear",null].includes(result.effect));
+  assert.ok(["chaos","gravity","restore","exit","clear","reset-signals",null].includes(result.effect));
 }
 assert.equal(runRootCommand("  THEME   --CHAOS ").effect,"chaos");
 assert.equal(runRootCommand("gravity --off").effect,"gravity");
