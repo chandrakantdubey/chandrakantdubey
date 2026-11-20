@@ -466,3 +466,11 @@ a {color:inherit;text-decoration:none;}
 }
 
 /* Work is the headline; navigational numbering belongs in the URL, not the art direction. */
+
+/* GPU-free fallback for reduced-motion and context-loss conditions. */
+.code-monument.code-static .code-monument-canvas {display:none;}
+.code-monument.code-static .code-monument-fallback {opacity:1;}
+@media(prefers-reduced-motion:reduce){
+  .code-monument .code-monument-fallback span {animation:none!important;transition:none!important;}
+  .code-monument .code-monument-canvas {animation:none!important;transition:none!important;}
+}
