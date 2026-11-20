@@ -10,7 +10,8 @@ import RootAccess from "./RootAccess";
 import VisitorResponse from "./VisitorResponse";
 import IncidentReplay from "./IncidentReplay";
 import SpecimenExperience from "./SpecimenExperience";
-import { PROJECT_QUESTIONS, parseSignalProgress, recordSignal, type SignalId } from "./signalTrail";
+import { PROJECT_QUESTIONS, type SignalId } from "./signalTrail";
+import { useSpecimenSession } from "./specimenSession";
 import "./signal-trail.css";
 import FluxGame from "../play/FluxGame";
 import PacketPanic from "../play/PacketPanic";
@@ -270,27 +271,9 @@ function FinalBoss({awakened,onDiscover,signals}:{awakened:boolean;onDiscover:(i
 
 export default function Exhibition() {
   useReveal();
-  const [signals,setSignals]=useState<SignalId[]>(()=>{
-    try{return [...parseSignalProgress(JSON.parse(window.sessionStorage.getItem("cd-signal-trail")||"[]") as unknown)];}
-    catch{return [];}
-  });
-  useEffect(()=>{
-    try{window.sessionStorage.setItem("cd-signal-trail",JSON.stringify(signals));}
-    catch{/* optional local reading history */}
-  },[signals]);
-  const discoverSignal=(id:SignalId)=>setSignals(previous=>
-    previous.includes(id)?previous:[...recordSignal(previous,id)]);
-  const resetSignals=()=>setSignals(previous=>previous.length?[]:previous);
-  const [awakened,setAwakened]=useState(()=>{
-    try{return window.sessionStorage.getItem("cd-specimen-state")==="awakened";}
-    catch{return false;}
-  });
-  useEffect(()=>{
-    try{window.sessionStorage.setItem("cd-specimen-state",awakened?"awakened":"sealed");}
-    catch{/* optional session preference */}
-  },[awakened]);
+  const {mode,awakened,setAwakened,signals,discoverSignal,resetSignals,unlocked}=useSpecimenSession();
   return <div className={awakened?"exhibition-site specimen-awakened":"exhibition-site"}
-    data-specimen-state={awakened?"awakened":"sealed"}>
+    data-specimen-state={mode}>
     <Navigation/>
     <main id="main">
       <Hero awakened={awakened} onChange={setAwakened} signalCount={signals.length}/>
