@@ -2,13 +2,6 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import { ArrowUpRight, Check, Copy, Mail } from "lucide-react";
 import { links } from "./content";
 
-type TurnstileApi = {
-  render: (element: HTMLElement, options: Record<string, unknown>) => string;
-  reset: (widgetId: string) => void;
-  remove: (widgetId: string) => void;
-};
-type TurnstileWindow = Window & { turnstile?: TurnstileApi };
-
 export default function ContactSection() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -18,14 +11,9 @@ export default function ContactSection() {
   const [directEnabled, setDirectEnabled] = useState(false);
   const [sending, setSending] = useState(false);
   const [website, setWebsite] = useState("");
-  const [turnstileToken, setTurnstileToken] = useState("");
-  const [verifierReady, setVerifierReady] = useState(false);
-  const widgetId = useRef<string | null>(null);
   const pendingRequest = useRef<{ fingerprint: string; id: string } | null>(null);
-  const siteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY as string | undefined;
 
   useEffect(() => {
-    if (!siteKey) return;
     const controller = new AbortController();
     void (async () => {
       try {
@@ -41,58 +29,7 @@ export default function ContactSection() {
       }
     })();
     return () => controller.abort();
-  }, [siteKey]);
-
-  useEffect(() => {
-    if (!directEnabled || !siteKey) return;
-    let disposed = false;
-    const win = window as TurnstileWindow;
-    const mount = () => {
-      if (disposed || widgetId.current || !win.turnstile) return;
-      const root = document.getElementById("contact-turnstile");
-      if (!root) return;
-      widgetId.current = win.turnstile.render(root, {
-        sitekey: siteKey,
-        callback: (token: string) => { if (!disposed) setTurnstileToken(token); },
-        "expired-callback": () => { if (!disposed) setTurnstileToken(""); },
-        "error-callback": () => {
-          if (!disposed) {
-            setTurnstileToken("");
-            setNotice("Security verification failed to load. You can use the email link instead.");
-          }
-        },
-      });
-      setVerifierReady(true);
-    };
-    if (win.turnstile) {
-      mount();
-      return () => {
-        disposed = true;
-        if (widgetId.current) win.turnstile?.remove(widgetId.current);
-        widgetId.current = null;
-      };
-    }
-    const script = document.createElement("script");
-    script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
-    script.async = true;
-    script.addEventListener("load", mount);
-    script.addEventListener("error", () => {
-      if (!disposed) setNotice("Security verification is unavailable. Please use the email link.");
-    });
-    document.head.appendChild(script);
-    return () => {
-      disposed = true;
-      if (widgetId.current) win.turnstile?.remove(widgetId.current);
-      widgetId.current = null;
-      script.remove();
-    };
-  }, [directEnabled, siteKey]);
-
-  const resetVerification = () => {
-    setTurnstileToken("");
-    const api = (window as TurnstileWindow).turnstile;
-    if (api && widgetId.current) api.reset(widgetId.current);
-  };
+  }, []);
 
   const composeMail = () => {
     const subject = encodeURIComponent("Portfolio enquiry from " + name.trim());
@@ -104,11 +41,7 @@ export default function ContactSection() {
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (sending) return;
-    if (!directEnabled || !siteKey) { composeMail(); return; }
-    if (!turnstileToken) {
-      setNotice("Complete the security check to send your message directly.");
-      return;
-    }
+    if (!directEnabled) { composeMail(); return; }
     const fingerprint = JSON.stringify([name.trim(), email.trim(), message.trim()]);
     if (pendingRequest.current?.fingerprint !== fingerprint) {
       pendingRequest.current = { fingerprint, id: crypto.randomUUID() };
@@ -124,7 +57,6 @@ export default function ContactSection() {
           email: email.trim(),
           message: message.trim(),
           website,
-          token: turnstileToken,
           requestId: pendingRequest.current.id,
         }),
         signal: AbortSignal.timeout(20000),
@@ -143,7 +75,6 @@ export default function ContactSection() {
     } catch {
       setNotice("Unable to confirm delivery. Please retry or use the email link.");
     } finally {
-      resetVerification(); // Tokens are single-use, including after failed attempts.
       setSending(false);
     }
   };
@@ -172,10 +103,9 @@ export default function ContactSection() {
         <div className="form-row"><label htmlFor="contact-email">Email</label><input id="contact-email" type="email" autoComplete="email" required maxLength={254} value={email} onChange={e => setEmail(e.target.value)} placeholder="you@company.com"/></div>
         <div className="form-row"><label htmlFor="contact-message">Message</label><textarea id="contact-message" rows={4} minLength={10} maxLength={3000} required value={message} onChange={e => setMessage(e.target.value)} placeholder="What broke, what ships next, or just hello…"/></div>
         <div className="contact-honeypot" aria-hidden="true"><label htmlFor="contact-website">Website</label><input id="contact-website" type="text" autoComplete="off" tabIndex={-1} value={website} onChange={e => setWebsite(e.target.value)}/></div>
-        {directEnabled && siteKey && <div className="contact-verification"><div id="contact-turnstile" aria-label="Human verification"/></div>}
-        <button type="submit" disabled={sending || (directEnabled && !turnstileToken)} className="submit-mail">{sending ? "Sending…" : directEnabled ? (verifierReady ? "Send message" : "Loading verification…") : "Compose email"} <ArrowUpRight size={18}/></button>
+        <button type="submit" disabled={sending} className="submit-mail">{sending ? "Sending…" : directEnabled ? "Send message" : "Compose email"} <ArrowUpRight size={18}/></button>
         {directEnabled && <button type="button" className="compose-fallback" onClick={composeMail}>Or open a draft in your email app <ArrowUpRight size={15}/></button>}
-        <p className="form-disclaimer">{directEnabled ? "Your message is submitted after security verification." : "Opens your email application; nothing is uploaded from this form."}</p>
+        <p className="form-disclaimer">{directEnabled ? "Your message goes straight to my inbox. Replying is still a human activity." : "Opens your email application; nothing is uploaded from this form."}</p>
         {notice && <p role="status" aria-live="polite" className="contact-status">{notice}</p>}
       </form>
     </div>
