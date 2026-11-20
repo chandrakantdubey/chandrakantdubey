@@ -1,6 +1,6 @@
 import Exhibition from "./exhibition/Exhibition";
-import StandaloneDuel from "./play/StandaloneDuel";
+import StandalonePacket from "./play/StandalonePacket";
 
 export default function App() {
-  return window.location.pathname.startsWith("/play/duel") ? <StandaloneDuel /> : <Exhibition />;
+  return /^\/play\/(?:packet|duel)(?:\/|$)/.test(window.location.pathname) ? <StandalonePacket /> : <Exhibition />;
 }

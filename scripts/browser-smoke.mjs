@@ -107,8 +107,8 @@ try{
     "3D canvas must occupy the entire desktop hero, not an inset box: "+JSON.stringify(heroFrame));
   if(desktop.renderer==="webgl") assert.ok(heroFrame.scale>0,"WebGL monogram must have a fitted projection scale");
   await assertMinimumTextSize(cdp,"1440px desktop");
-  const pageStory=await cdp.eval("(()=>{const main=document.querySelector('main');const ribbon=document.querySelector('.marquee-track');const copies=[...ribbon.querySelectorAll('.marquee-copy')];const arcade=document.querySelector('.flux-experience').getBoundingClientRect();const hex=document.querySelector('.after-hours .duel-experience').getBoundingClientRect();return {lastSection:main.lastElementChild?.id,sectionMarkers:document.querySelectorAll('.section-topline').length,oldCopy:document.body.innerText.includes('Two fully functional games, embedded into the exhibition'),ribbonCopies:copies.map(x=>({text:x.textContent,width:x.getBoundingClientRect().width})),animation:getComputedStyle(ribbon).animationName,arcade:{left:arcade.left,right:arcade.right},hex:{left:hex.left,right:hex.right},viewport:document.documentElement.clientWidth}})()");
-  assert.equal(pageStory.lastSection,"final-boss","Hex must finish the page, after contact");
+  const pageStory=await cdp.eval("(()=>{const main=document.querySelector('main');const ribbon=document.querySelector('.marquee-track');const copies=[...ribbon.querySelectorAll('.marquee-copy')];const arcade=document.querySelector('.flux-experience').getBoundingClientRect();const hex=document.querySelector('.after-hours .packet-experience').getBoundingClientRect();return {lastSection:main.lastElementChild?.id,sectionMarkers:document.querySelectorAll('.section-topline').length,oldCopy:document.body.innerText.includes('Two fully functional games, embedded into the exhibition'),ribbonCopies:copies.map(x=>({text:x.textContent,width:x.getBoundingClientRect().width})),animation:getComputedStyle(ribbon).animationName,arcade:{left:arcade.left,right:arcade.right},hex:{left:hex.left,right:hex.right},viewport:document.documentElement.clientWidth}})()");
+  assert.equal(pageStory.lastSection,"final-boss","Packet Panic must finish the page after contact");
   assert.equal(pageStory.sectionMarkers,0,"no ordinal section divider UI");
   assert.equal(pageStory.oldCopy,false,"remove self-promotional game disclaimer");
   assert.equal(pageStory.ribbonCopies.length,2,"marquee must duplicate the exact same group");
@@ -116,7 +116,7 @@ try{
   assert.ok(Math.abs(pageStory.ribbonCopies[0].width-pageStory.ribbonCopies[1].width)<1,"identical ticker widths ensure a seamless loop");
   assert.equal(pageStory.animation,"marquee-seamless","ticker must animate continuously");
   assert.ok(pageStory.arcade.left<=2 && pageStory.arcade.right>=pageStory.viewport-2,"arcade must be full bleed "+JSON.stringify(pageStory));
-  assert.ok(pageStory.hex.left<=2 && pageStory.hex.right>=pageStory.viewport-2,"Hex game must be full bleed "+JSON.stringify(pageStory));
+  assert.ok(pageStory.hex.left<=2 && pageStory.hex.right>=pageStory.viewport-2,"Packet Panic game must be full bleed "+JSON.stringify(pageStory));
   const tickerBefore=await cdp.eval("getComputedStyle(document.querySelector('.marquee-track')).transform");
   await delay(230);
   const tickerAfter=await cdp.eval("getComputedStyle(document.querySelector('.marquee-track')).transform");
@@ -199,12 +199,13 @@ try{
   await cdp.screenshot("orbit-desktop.png");
   await cdp.eval("document.querySelector('#play').scrollIntoView({behavior:'instant'})");
   await delay(350);
-  assert.ok(await cdp.eval("!!document.querySelector('.flux-canvas') && !!document.querySelector('.duel-board')"),"both real embedded games present");
-  assert.equal(await cdp.eval("document.querySelectorAll('.duel-hex').length"),49);
+  assert.ok(await cdp.eval("!!document.querySelector('.flux-canvas') && !!document.querySelector('.packet-board')"),"both embedded arcade games present");
+  assert.equal(await cdp.eval("document.querySelectorAll('.packet-node').length"),35);
+  assert.equal(await cdp.eval("document.querySelectorAll('.duel-hex').length"),0,"retire Hex from page");
   const desktopFlux=await cdp.eval("(()=>{const stage=document.querySelector('.flux-stage').getBoundingClientRect();const content=document.querySelector('.flux-overlay-content').getBoundingClientRect();const title=document.querySelector('.flux-overlay h3');return {offset:Math.abs((stage.left+stage.width/2)-(content.left+content.width/2)),titleFont:parseFloat(getComputedStyle(title).fontSize),fit:getComputedStyle(document.querySelector('.flux-canvas')).objectFit}})()");
   assert.ok(desktopFlux.offset<4,"Signal Shift center aligned "+JSON.stringify(desktopFlux));
   assert.ok(desktopFlux.titleFont>=45,"hero title must be prominent "+JSON.stringify(desktopFlux));
-  assert.ok(await cdp.eval("getComputedStyle(document.querySelector('.duel-stage')).backgroundImage.includes('gradient')"),"Hex must use its redesigned immersive arena");
+  assert.ok(await cdp.eval("getComputedStyle(document.querySelector('.packet-arena')).backgroundImage.includes('gradient')"),"Packet Panic arena is fully art-directed");
   assert.equal(desktopFlux.fit,"contain","entire playable arena must remain in view");
   await cdp.eval("document.querySelector('.flux-stage').scrollIntoView({behavior:'instant',block:'center'})");
   await delay(180);
@@ -216,19 +217,24 @@ try{
   await cdp.eval("document.querySelector('.flux-actions button:first-child').click()");
   assert.ok(await cdp.eval("document.querySelector('.flux-overlay').textContent.includes('PAUSED')"),"arcade pauses");
   await cdp.eval("document.querySelector('.flux-actions button:last-child').click()");
-  await cdp.eval("document.querySelector('.duel-stage').scrollIntoView({behavior:'instant'})");
-  await delay(300);
-  await cdp.eval("document.querySelector('.duel-hex').click()");
-  await poll(()=>cdp.eval("document.querySelectorAll('.duel-hex.owned-one').length===1"),"Hex practice move");
-  await delay(850);
-  assert.ok(await cdp.eval("document.querySelectorAll('.duel-hex.owned-two').length>=1"),"local CPU responds");
-  await cdp.screenshot("hex-game-desktop.png");
-  assert.ok(await cdp.eval("!!document.querySelector('a[href^=\\\"/play/duel\\\"]')"),"dedicated game link present");
-  await cdp.send("Page.navigate",{url:"http://127.0.0.1:4173/play/duel"});
-  await poll(()=>cdp.eval("!!document.querySelector('.duel-fullpage')"),"dedicated route");
-  assert.equal(await cdp.eval("document.querySelectorAll('.duel-hex').length"),49);
-  await cdp.screenshot("hex-dedicated-desktop.png");
-  await assertMinimumTextSize(cdp,"standalone duel desktop");
+  await cdp.eval("document.querySelector('.packet-arena').scrollIntoView({behavior:'instant'})");
+  await delay(270);
+  await cdp.screenshot("packet-intro-desktop.png");
+  assert.equal(await cdp.eval("document.querySelector('.packet-experience').dataset.phase"),"ready");
+  await cdp.eval("document.querySelector('.packet-experience .packet-start').click()");
+  await poll(()=>cdp.eval("document.querySelector('.packet-experience').dataset.phase==='playing'"),"Packet Panic solo game starts");
+  const beforeRouter=await cdp.eval("document.querySelector('.packet-node[data-node=\"8\"] .packet-wires').style.transform");
+  await cdp.eval("document.querySelector('.packet-node[data-node=\"8\"]').click()");
+  const afterRouter=await cdp.eval("document.querySelector('.packet-node[data-node=\"8\"] .packet-wires').style.transform");
+  assert.notEqual(beforeRouter,afterRouter,"players rotate routers with one click");
+  await delay(750);
+  await poll(()=>cdp.eval("Number(document.querySelector('.packet-experience .packet-time')?.textContent.split(':').join('')) < 130"),"Packet Panic 90s timer must visibly count down",5000);
+  await cdp.screenshot("packet-running-desktop.png");
+  await cdp.send("Page.navigate",{url:"http://127.0.0.1:4173/play/packet"});
+  await poll(()=>cdp.eval("!!document.querySelector('.packet-fullpage')"),"Packet Panic standalone route");
+  assert.equal(await cdp.eval("document.querySelectorAll('.packet-node').length"),35);
+  await cdp.screenshot("packet-standalone-desktop.png");
+  await assertMinimumTextSize(cdp,"standalone packet desktop");
   await cdp.send("Page.navigate",{url:"http://127.0.0.1:4173/"});
   await poll(()=>cdp.eval("!!document.querySelector('#top')"),"exhibition after route");
 
@@ -246,9 +252,9 @@ try{
   assert.ok(Math.abs(mobileHeroFrame.canvasLeft-mobileHeroFrame.heroLeft)<=1 && Math.abs(mobileHeroFrame.canvasRight-mobileHeroFrame.heroRight)<=1,
     "3D monogram must occupy the full mobile hero width: "+JSON.stringify(mobileHeroFrame));
   if(desktop.renderer==="webgl") assert.ok(mobileHeroFrame.scale>0 && mobileHeroFrame.scale<=1.38,"Mobile scale must fit viewport");
-  const mobileGames=await cdp.eval("(()=>{const a=document.querySelector('.flux-experience').getBoundingClientRect(),b=document.querySelector('.after-hours .duel-experience').getBoundingClientRect();return {aLeft:a.left,aRight:a.right,bLeft:b.left,bRight:b.right,width:document.documentElement.clientWidth}})()");
+  const mobileGames=await cdp.eval("(()=>{const a=document.querySelector('.flux-experience').getBoundingClientRect(),b=document.querySelector('.after-hours .packet-experience').getBoundingClientRect();return {aLeft:a.left,aRight:a.right,bLeft:b.left,bRight:b.right,width:document.documentElement.clientWidth}})()");
   assert.ok(mobileGames.aLeft<=2 && mobileGames.aRight>=mobileGames.width-2,"arcade fills mobile width");
-  assert.ok(mobileGames.bLeft<=2 && mobileGames.bRight>=mobileGames.width-2,"Hex finale fills mobile width");
+  assert.ok(mobileGames.bLeft<=2 && mobileGames.bRight>=mobileGames.width-2,"Packet Panic fills mobile width");
   await assertMinimumTextSize(cdp,"390px mobile");
   await cdp.screenshot("hero-mobile.png");
   await cdp.eval("document.querySelector('.mobile-nav-toggle').click()");
@@ -281,17 +287,16 @@ try{
   await cdp.eval("document.querySelector('.flux-play')?.click()");
   await delay(460);
   await cdp.screenshot("arcade-running-mobile.png");
-  await cdp.eval("document.querySelector('.duel-stage').scrollIntoView({behavior:'instant'})");
-  await delay(370);
-  await cdp.screenshot("hex-mobile.png");
-  const gameMobile=await cdp.eval("({body:document.documentElement.scrollWidth,width:innerWidth,board:document.querySelector('.duel-board').getBoundingClientRect().width})");
+  await cdp.eval("document.querySelector('.packet-arena').scrollIntoView({behavior:'instant'})");
+  await delay(350);
+  await cdp.screenshot("packet-mobile.png");
+  const gameMobile=await cdp.eval("({body:document.documentElement.scrollWidth,width:innerWidth,board:document.querySelector('.packet-board').getBoundingClientRect().width})");
   assert.ok(gameMobile.body<=gameMobile.width+3,"games must fit mobile "+JSON.stringify(gameMobile));
-  assert.ok(gameMobile.board<=gameMobile.width,"Hex board fits mobile "+JSON.stringify(gameMobile));
-  const nodesVisible=await cdp.eval("(()=>{const arena=document.querySelector('.duel-stage').getBoundingClientRect();const rects=[...document.querySelectorAll('.duel-hex')].map(x=>x.getBoundingClientRect());return {min:Math.min(...rects.map(r=>r.left)),max:Math.max(...rects.map(r=>r.right)),arenaLeft:arena.left,arenaRight:arena.right,visible:rects.length}})()");
-  assert.equal(nodesVisible.visible,49);
+  assert.ok(gameMobile.board<=gameMobile.width,"Packet grid fits mobile "+JSON.stringify(gameMobile));
+  const nodesVisible=await cdp.eval("(()=>{const arena=document.querySelector('.packet-arena').getBoundingClientRect();const rects=[...document.querySelectorAll('.packet-node')].map(x=>x.getBoundingClientRect());return {min:Math.min(...rects.map(r=>r.left)),max:Math.max(...rects.map(r=>r.right)),arenaLeft:arena.left,arenaRight:arena.right,visible:rects.length}})()");
+  assert.equal(nodesVisible.visible,35);
   assert.ok(nodesVisible.min>=nodesVisible.arenaLeft-3 && nodesVisible.max<=nodesVisible.arenaRight+3,
-    "All 49 Hex tiles must remain visibly framed, not clipped "+JSON.stringify(nodesVisible));
-
+    "All 35 Packet routers must stay inside the mobile arena "+JSON.stringify(nodesVisible));
   await cdp.send("Emulation.setDeviceMetricsOverride",{width:320,height:700,deviceScaleFactor:1,mobile:true,screenWidth:320,screenHeight:700});
   await delay(330);
   const narrow=await cdp.eval("({width:innerWidth,body:document.documentElement.scrollWidth})");
@@ -300,13 +305,13 @@ try{
   assert.ok(Math.abs(narrowHero.left-narrowHero.canvasLeft)<=1 && Math.abs(narrowHero.right-narrowHero.canvasRight)<=1,
     "320px viewport must keep the sculpture full-bleed: "+JSON.stringify(narrowHero));
   await assertMinimumTextSize(cdp,"320px mobile");
-  const narrowNodes=await cdp.eval("(()=>{const arena=document.querySelector('.duel-stage').getBoundingClientRect();const rs=[...document.querySelectorAll('.duel-hex')].map(x=>x.getBoundingClientRect());return {min:Math.min(...rs.map(r=>r.left)),max:Math.max(...rs.map(r=>r.right)),left:arena.left,right:arena.right}})()");
+  const narrowNodes=await cdp.eval("(()=>{const arena=document.querySelector('.packet-arena').getBoundingClientRect();const rs=[...document.querySelectorAll('.packet-node')].map(x=>x.getBoundingClientRect());return {min:Math.min(...rs.map(r=>r.left)),max:Math.max(...rs.map(r=>r.right)),left:arena.left,right:arena.right}})()");
   assert.ok(narrowNodes.min>=narrowNodes.left-3 && narrowNodes.max<=narrowNodes.right+3,
-    "All Hex cells must also fit 320px width "+JSON.stringify(narrowNodes));
+    "All Packet routers must fit a 320px screen "+JSON.stringify(narrowNodes));
   await cdp.send("Emulation.setEmulatedMedia",{features:[{name:"prefers-reduced-motion",value:"reduce"}]});
   await delay(380);
   assert.ok(await cdp.eval("matchMedia('(prefers-reduced-motion: reduce)').matches"),"Reduced-motion preference supported");
-  console.log("Typography edition QA PASS: typography, reactor interactions, centered uncropped Signal Shift, spatial gallery, both games and 320/390px.");
+  console.log("Typography edition QA PASS: typography, reactor interactions, centered uncropped Signal Shift, spatial gallery, Packet Panic, Signal Shift and 320/390px.");
   console.log("Visual QA saved to "+out);
 }finally{
   if(socket?.readyState===WebSocket.OPEN)socket.close();
