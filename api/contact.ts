@@ -1,17 +1,43 @@
-/**
- * Public contact function. Disabled unless a verified sender and Turnstile
- * secret are configured. The secret key is never exposed in the Vite bundle.
- */
+/** Public contact endpoint. Only RESEND_API_KEY is required at runtime. */
 export type ContactPayload = {
   name: string;
   email: string;
   message: string;
   website?: string;
-  token: string;
   requestId: string;
 };
 
-const CONTACT_EMAIL = "919chandrakant@gmail.com"; // Fixed recipient, never taken from a submitted form.
+const CONTACT_EMAIL = "919chandrakant@gmail.com"; // Never controlled by the request.
+const CONTACT_FROM = "Chandrakant Dubey <onboarding@resend.dev>"; // Resend's test sender: recipient must be your Resend account email.
+
+// Best-effort per-instance abuse protection (not a substitute for distributed rate limiting/WAF).
+const WINDOW_MS = 15 * 60_000;
+const MAX_SUBMISSIONS = 4;
+const MAX_BUCKETS = 1024;
+const submissionBuckets = new Map<string, { expires: number; ids: Set<string> }>();
+
+function allowSubmission(request: Request, requestId: string): boolean {
+  // Vercel provides x-vercel-forwarded-for at its trusted edge; do not use user-supplied x-forwarded-for.
+  const ip = request.headers.get("x-vercel-forwarded-for")?.split(",")[0]?.trim().slice(0, 64) || "unattributed";
+  const now = Date.now();
+  let bucket = submissionBuckets.get(ip);
+  if (!bucket || bucket.expires <= now) {
+    for (const [key, value] of submissionBuckets) {
+      if (value.expires <= now) submissionBuckets.delete(key);
+    }
+    if (submissionBuckets.size >= MAX_BUCKETS) {
+      const oldest = submissionBuckets.keys().next().value;
+      if (oldest) submissionBuckets.delete(oldest);
+    }
+    bucket = { expires: now + WINDOW_MS, ids: new Set() };
+    submissionBuckets.set(ip, bucket);
+  }
+  // Retrying the same Resend idempotency key does not consume another slot.
+  if (bucket.ids.has(requestId)) return true;
+  if (bucket.ids.size >= MAX_SUBMISSIONS) return false;
+  bucket.ids.add(requestId);
+  return true;
+}
 const RESPONSE_HEADERS = {
   "Content-Type": "application/json; charset=utf-8",
   "Cache-Control": "no-store",
@@ -23,31 +49,26 @@ function json(body: Record<string, unknown>, status = 200): Response {
 }
 
 export function contactConfigured(env = process.env): boolean {
-  // All four settings are required: a server credential, a verified sender,
-  // and the matching Turnstile secret/public site key used by the client build.
-  return [env.RESEND_API_KEY, env.RESEND_FROM_EMAIL, env.CONTACT_TURNSTILE_SECRET, env.VITE_TURNSTILE_SITE_KEY]
-    .every(value => typeof value === "string" && value.trim().length > 0);
+  return typeof env.RESEND_API_KEY === "string" && env.RESEND_API_KEY.trim().length > 0;
 }
 
 export function validateContactPayload(value: unknown): { ok: true; value: ContactPayload } | { ok: false; error: string } {
   if (!value || typeof value !== "object" || Array.isArray(value)) return { ok: false, error: "Invalid request." };
   const data = value as Record<string, unknown>;
-  for (const key of ["name", "email", "message", "token", "requestId"]) {
+  for (const key of ["name", "email", "message", "requestId"]) {
     if (typeof data[key] !== "string") return { ok: false, error: "Please complete all fields." };
   }
   const name = (data.name as string).trim();
   const email = (data.email as string).trim();
   const message = (data.message as string).trim();
   const website = typeof data.website === "string" ? data.website.trim() : "";
-  const token = data.token as string;
   const requestId = data.requestId as string;
   if (name.length < 2 || name.length > 100 || /[\r\n]/.test(name)) return { ok: false, error: "Please enter a valid name." };
   if (email.length > 254 || !/^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/.test(email) || /[\r\n]/.test(email)) return { ok: false, error: "Please enter a valid email." };
   if (message.length < 10 || message.length > 3000) return { ok: false, error: "The message must contain 10–3000 characters." };
   if (website.length > 500) return { ok: false, error: "Invalid request." };
-  if (token.length < 10 || token.length > 2048) return { ok: false, error: "Complete the security check." };
   if (!/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(requestId)) return { ok: false, error: "Invalid request identifier." };
-  return { ok: true, value: { name, email, message, website, token, requestId } };
+  return { ok: true, value: { name, email, message, website, requestId } };
 }
 
 export async function GET(): Promise<Response> {
@@ -70,32 +91,13 @@ export async function POST(request: Request): Promise<Response> {
   try { data = JSON.parse(raw); } catch { return json({ error: "Invalid JSON." }, 400); }
   const parsed = validateContactPayload(data);
   if ("error" in parsed) return json({ error: parsed.error }, 400);
-  const { name, email, message, website, token, requestId } = parsed.value;
+  const { name, email, message, website, requestId } = parsed.value;
 
   // Honeypot is a friction layer, not the security boundary.
   if (website) return json({ sent: true });
 
-  const timeout = AbortSignal.timeout(7500);
-  try {
-    const challengeResponse = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        secret: process.env.CONTACT_TURNSTILE_SECRET,
-        response: token,
-        // Turnstile tokens are single-use. Only the Resend send uses the
-        // stable request id for de-duplication across client retries.
-      }),
-      signal: timeout,
-    });
-    if (!challengeResponse.ok) return json({ error: "Security verification unavailable." }, 502);
-    const challenge = await challengeResponse.json() as { success?: boolean; hostname?: string };
-    if (challenge.success !== true || challenge.hostname !== new URL(request.url).hostname) {
-      return json({ error: "Security verification failed. Please try again." }, 403);
-    }
-  } catch {
-    return json({ error: "Security verification unavailable." }, 502);
-  }
+  // A real multi-region rate limit needs edge/WAF or a shared datastore; this bounds bursts per instance.
+  if (!allowSubmission(request, requestId)) return json({ error: "Too many messages. Please use the email link or try later." }, 429);
 
   try {
     const outgoing = await fetch("https://api.resend.com/emails", {
@@ -106,7 +108,7 @@ export async function POST(request: Request): Promise<Response> {
         "Idempotency-Key": requestId,
       },
       body: JSON.stringify({
-        from: process.env.RESEND_FROM_EMAIL,
+        from: CONTACT_FROM,
         to: [CONTACT_EMAIL],
         reply_to: email,
         subject: "Portfolio enquiry from " + name,
