@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { parseSignalProgress, recordSignal, type SignalId } from "./signalTrail";
+import { parseSignalProgress, recordSignal, type SignalId } from "./signalTrail.ts";
 
 export type SpecimenMode="sealed"|"awakened";
 export const SPECIMEN_SESSION_KEY="cd-specimen-state";
