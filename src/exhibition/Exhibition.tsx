@@ -278,8 +278,9 @@ export default function Exhibition() {
     try{window.sessionStorage.setItem("cd-signal-trail",JSON.stringify(signals));}
     catch{/* optional local reading history */}
   },[signals]);
-  const discoverSignal=(id:SignalId)=>setSignals(previous=>[...recordSignal(previous,id)]);
-  const resetSignals=()=>setSignals([]);
+  const discoverSignal=(id:SignalId)=>setSignals(previous=>
+    previous.includes(id)?previous:[...recordSignal(previous,id)]);
+  const resetSignals=()=>setSignals(previous=>previous.length?[]:previous);
   const [awakened,setAwakened]=useState(()=>{
     try{return window.sessionStorage.getItem("cd-specimen-state")==="awakened";}
     catch{return false;}
