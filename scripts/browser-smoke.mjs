@@ -354,6 +354,10 @@ try{
   assert.ok(await cdp.eval("document.querySelector('.root-terminal-unlock')?.getAttribute('href')==='#consistency'"),
     "recovered terminal index links to the working experiment");
   await cdp.screenshot("signal-index-desktop.png");
+  await cdp.send("Input.insertText",{text:"theme --chaos"});
+  await cdp.eval("document.querySelector('.root-terminal-prompt').requestSubmit()");
+  assert.ok(await cdp.eval("document.querySelector('.exhibition-site').classList.contains('root-chaos') && document.querySelector('.exhibition-site').classList.contains('specimen-awakened')"),
+    "ROOT effects and specimen state coexist without DOM mutation conflicts");
   await cdp.send("Input.insertText",{text:"signals --reset"});
   await cdp.eval("document.querySelector('.root-terminal-prompt').requestSubmit()");
   await poll(()=>cdp.eval("JSON.parse(sessionStorage.getItem('cd-signal-trail')).length===0"),
@@ -365,6 +369,15 @@ try{
   await cdp.eval("document.querySelector('.specimen-dock-links button[aria-label=\\\"Restore original experience\\\"]').click()");
   assert.equal(await cdp.eval("document.querySelector('.exhibition-site').dataset.specimenState"),"sealed",
     "restoration works after the complete discovery circuit");
+  assert.ok(await cdp.eval("document.querySelector('.exhibition-site').classList.contains('root-chaos')"),
+    "restoring specimen must not silently erase an independent ROOT ACCESS effect");
+  await cdp.eval("document.querySelector('.root-discovery').click()");
+  await cdp.eval("document.querySelector('#root-command').focus()");
+  await cdp.send("Input.insertText",{text:"restore"});
+  await cdp.eval("document.querySelector('.root-terminal-prompt').requestSubmit()");
+  assert.ok(await cdp.eval("!document.querySelector('.exhibition-site').classList.contains('root-chaos')"),
+    "ROOT ACCESS restore reverses only the remaining fictional terminal visual mode");
+  await cdp.eval("document.querySelector('.root-terminal-close').click()");
 
   await cdp.eval("document.querySelector('#play').scrollIntoView({behavior:'instant'})");
   await poll(()=>cdp.eval("!!document.querySelector('.flux-canvas')"),"Signal Shift loaded near viewport");
