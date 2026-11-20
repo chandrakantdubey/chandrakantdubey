@@ -228,7 +228,7 @@ try{
   const afterRouter=await cdp.eval("document.querySelector('.packet-node[data-node=\"8\"] .packet-wires').style.transform");
   assert.notEqual(beforeRouter,afterRouter,"players rotate routers with one click");
   await delay(750);
-  assert.ok(await cdp.eval("Number(document.querySelector('.packet-experience .packet-time')?.textContent.split(':').join('')) < 130"),"game timer is running");
+  await poll(()=>cdp.eval("Number(document.querySelector('.packet-experience .packet-time')?.textContent.split(':').join('')) < 130"),"Packet Panic 90s timer must visibly count down",5000);
   await cdp.screenshot("packet-running-desktop.png");
   await cdp.send("Page.navigate",{url:"http://127.0.0.1:4173/play/packet"});
   await poll(()=>cdp.eval("!!document.querySelector('.packet-fullpage')"),"Packet Panic standalone route");
