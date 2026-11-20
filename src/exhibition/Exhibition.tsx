@@ -6,7 +6,7 @@ import ContactSection from "../atelier/ContactSection";
 import CodeMonument from "./CodeMonument";
 import ProjectPoster from "./ProjectPoster";
 import SkillOrbit from "./SkillOrbit";
-import RootAccess from "./RootAccess";
+import RootAccess, { type RootVisualMode } from "./RootAccess";
 import VisitorResponse from "./VisitorResponse";
 import DeferredExperience from "./DeferredExperience";
 import SpecimenExperience from "./SpecimenExperience";
@@ -278,7 +278,12 @@ function FinalBoss({awakened,onDiscover,signals,unlocked}:{awakened:boolean;onDi
 export default function Exhibition() {
   useReveal();
   const {mode,awakened,setAwakened,signals,discoverSignal,resetSignals,unlocked}=useSpecimenSession();
-  return <div className={awakened?"exhibition-site specimen-awakened":"exhibition-site"}
+  const [rootVisualMode,setRootVisualMode]=useState<RootVisualMode>("normal");
+  const siteClassName=["exhibition-site",
+    awakened?"specimen-awakened":"",
+    rootVisualMode==="chaos"?"root-chaos":rootVisualMode==="gravity"?"root-gravity":"",
+  ].filter(Boolean).join(" ");
+  return <div className={siteClassName}
     data-specimen-state={mode}>
     <Navigation/>
     <main id="main">
@@ -297,7 +302,7 @@ export default function Exhibition() {
     <footer className="exhibition-footer" id="site-footer">
       <a href="#top" className="footer-identity">CD<span>®</span></a>
       <span>© {new Date().getFullYear()} CD. DEPLOYED WITH QUESTIONABLE CONFIDENCE.</span>
-      <div><a href={links.github} target="_blank" rel="noopener noreferrer">GITHUB ↗</a><a href={links.linkedin} target="_blank" rel="noopener noreferrer">LINKEDIN ↗</a><a href="#top">BACK TO TOP ↑</a><RootAccess awakened={awakened} signals={signals} onResetSignals={resetSignals}/></div>
+      <div><a href={links.github} target="_blank" rel="noopener noreferrer">GITHUB ↗</a><a href={links.linkedin} target="_blank" rel="noopener noreferrer">LINKEDIN ↗</a><a href="#top">BACK TO TOP ↑</a><RootAccess awakened={awakened} signals={signals} onResetSignals={resetSignals} onVisualModeChange={setRootVisualMode}/></div>
       <VisitorResponse/>
     </footer>
   </div>;
