@@ -6,7 +6,7 @@
 import {
   SIGNAL_IDS,signalReport,signalFile,combinedSignalReport,isSignalId,
   type SignalProgress,
-} from "./signalTrail";
+} from "./signalTrail.ts";
 
 export type RootEffect="chaos"|"gravity"|"restore"|"exit"|"clear"|"reset-signals"|null;
 export interface RootContext {awakened:boolean;signals:SignalProgress;}
