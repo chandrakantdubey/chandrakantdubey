@@ -6,6 +6,7 @@ import ContactSection from "../atelier/ContactSection";
 import CodeMonument from "./CodeMonument";
 import ProjectPoster from "./ProjectPoster";
 import SkillOrbit from "./SkillOrbit";
+import RootAccess from "./RootAccess";
 import FluxGame from "../play/FluxGame";
 import PacketPanic from "../play/PacketPanic";
 import "../play/play.css";
@@ -234,7 +235,7 @@ export default function Exhibition() {
     <footer className="exhibition-footer">
       <a href="#top" className="footer-identity">CD<span>®</span></a>
       <span>© {new Date().getFullYear()} CD. DEPLOYED WITH QUESTIONABLE CONFIDENCE.</span>
-      <div><a href={links.github} target="_blank" rel="noopener noreferrer">GITHUB ↗</a><a href={links.linkedin} target="_blank" rel="noopener noreferrer">LINKEDIN ↗</a><a href="#top">BACK TO TOP ↑</a></div>
+      <div><a href={links.github} target="_blank" rel="noopener noreferrer">GITHUB ↗</a><a href={links.linkedin} target="_blank" rel="noopener noreferrer">LINKEDIN ↗</a><a href="#top">BACK TO TOP ↑</a><RootAccess/></div>
     </footer>
   </div>;
 }
