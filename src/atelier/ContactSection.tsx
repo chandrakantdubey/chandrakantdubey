@@ -105,7 +105,7 @@ export default function ContactSection() {
         <div className="contact-honeypot" aria-hidden="true"><label htmlFor="contact-website">Website</label><input id="contact-website" type="text" autoComplete="off" tabIndex={-1} value={website} onChange={e => setWebsite(e.target.value)}/></div>
         <button type="submit" disabled={sending} className="submit-mail">{sending ? "Sending…" : directEnabled ? "Send message" : "Compose email"} <ArrowUpRight size={18}/></button>
         {directEnabled && <button type="button" className="compose-fallback" onClick={composeMail}>Or open a draft in your email app <ArrowUpRight size={15}/></button>}
-        <p className="form-disclaimer">{directEnabled ? "Your message goes straight to my inbox. Replying is still a human activity." : "Opens your email application; nothing is uploaded from this form."}</p>
+        <p className="form-disclaimer">{directEnabled ? "Sent via Resend. Inbox delivery remains the email gods’ department." : "Opens your email application; nothing is uploaded from this form."}</p>
         {notice && <p role="status" aria-live="polite" className="contact-status">{notice}</p>}
       </form>
     </div>
