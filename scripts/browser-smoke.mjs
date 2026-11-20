@@ -107,7 +107,7 @@ try{
     "3D canvas must occupy the entire desktop hero, not an inset box: "+JSON.stringify(heroFrame));
   if(desktop.renderer==="webgl") assert.ok(heroFrame.scale>0,"WebGL monogram must have a fitted projection scale");
   await assertMinimumTextSize(cdp,"1440px desktop");
-  const pageStory=await cdp.eval("(()=>{const main=document.querySelector('main');const ribbon=document.querySelector('.marquee-track');const copies=[...ribbon.querySelectorAll('.marquee-copy')];const arcade=document.querySelector('.flux-experience').getBoundingClientRect();const hex=document.querySelector('.after-hours .packet-experience').getBoundingClientRect();return {lastSection:main.lastElementChild?.id,sectionMarkers:document.querySelectorAll('.section-topline').length,oldCopy:document.body.innerText.includes('Two fully functional games, embedded into the exhibition'),ribbonCopies:copies.map(x=>({text:x.textContent,width:x.getBoundingClientRect().width})),animation:getComputedStyle(ribbon).animationName,arcade:{left:arcade.left,right:arcade.right},hex:{left:hex.left,right:hex.right},viewport:document.documentElement.clientWidth}})()");
+  const pageStory=await cdp.eval("(()=>{const main=document.querySelector('main');const ribbon=document.querySelector('.marquee-track');const copies=[...ribbon.querySelectorAll('.marquee-copy')];const arcade=document.querySelector('[data-experience=arcade]').getBoundingClientRect();const hex=document.querySelector('[data-experience=packet]').getBoundingClientRect();return {lastSection:main.lastElementChild?.id,sectionMarkers:document.querySelectorAll('.section-topline').length,oldCopy:document.body.innerText.includes('Two fully functional games, embedded into the exhibition'),ribbonCopies:copies.map(x=>({text:x.textContent,width:x.getBoundingClientRect().width})),animation:getComputedStyle(ribbon).animationName,arcade:{left:arcade.left,right:arcade.right},hex:{left:hex.left,right:hex.right},viewport:document.documentElement.clientWidth}})()");
   assert.equal(pageStory.lastSection,"final-boss","Packet Panic must finish the page after contact");
   assert.equal(pageStory.sectionMarkers,0,"no ordinal section divider UI");
   assert.equal(pageStory.oldCopy,false,"remove self-promotional game disclaimer");
@@ -234,6 +234,8 @@ try{
   await cdp.eval("document.querySelector('#incident').scrollIntoView({behavior:'instant'})");
   await delay(350);
   await cdp.screenshot("incident-detect-desktop.png");
+  await poll(()=>cdp.eval("!!document.querySelector('.incident-phase-tabs [data-step=investigate]')"),
+    "deferred incident module mounts near the viewport");
   await cdp.eval("document.querySelector('.incident-phase-tabs [data-step=investigate]').click()");
   assert.ok(await cdp.eval("!!document.querySelector('.incident-log')"),"investigation reveals telemetry");
   await cdp.eval("document.querySelectorAll('.incident-evidence-tabs button')[2].click()");
@@ -320,8 +322,12 @@ try{
     "restoration works after the complete discovery circuit");
 
   await cdp.eval("document.querySelector('#play').scrollIntoView({behavior:'instant'})");
+  await poll(()=>cdp.eval("!!document.querySelector('.flux-canvas')"),"Signal Shift loaded near viewport");
+  await cdp.eval("document.querySelector('#final-boss').scrollIntoView({behavior:'instant'})");
+  await poll(()=>cdp.eval("!!document.querySelector('.packet-board')"),"Packet Panic loaded near viewport");
+  await cdp.eval("document.querySelector('#play').scrollIntoView({behavior:'instant'})");
   await delay(350);
-  assert.ok(await cdp.eval("!!document.querySelector('.flux-canvas') && !!document.querySelector('.packet-board')"),"both embedded arcade games present");
+  assert.ok(await cdp.eval("!!document.querySelector('.flux-canvas') && !!document.querySelector('.packet-board')"),"both lazy-loaded arcade games present");
   assert.equal(await cdp.eval("document.querySelectorAll('.packet-node').length"),35);
   assert.ok(await cdp.eval("!!document.querySelector('.packet-daily-button')"),"daily challenge is discoverable without an account");
   assert.equal(await cdp.eval("document.querySelectorAll('.duel-hex').length"),0,"retire Hex from page");
@@ -375,7 +381,7 @@ try{
   assert.ok(Math.abs(mobileHeroFrame.canvasLeft-mobileHeroFrame.heroLeft)<=1 && Math.abs(mobileHeroFrame.canvasRight-mobileHeroFrame.heroRight)<=1,
     "3D monogram must occupy the full mobile hero width: "+JSON.stringify(mobileHeroFrame));
   if(desktop.renderer==="webgl") assert.ok(mobileHeroFrame.scale>0 && mobileHeroFrame.scale<=1.38,"Mobile scale must fit viewport");
-  const mobileGames=await cdp.eval("(()=>{const a=document.querySelector('.flux-experience').getBoundingClientRect(),b=document.querySelector('.after-hours .packet-experience').getBoundingClientRect();return {aLeft:a.left,aRight:a.right,bLeft:b.left,bRight:b.right,width:document.documentElement.clientWidth}})()");
+  const mobileGames=await cdp.eval("(()=>{const a=document.querySelector('[data-experience=arcade]').getBoundingClientRect(),b=document.querySelector('[data-experience=packet]').getBoundingClientRect();return {aLeft:a.left,aRight:a.right,bLeft:b.left,bRight:b.right,width:document.documentElement.clientWidth}})()");
   assert.ok(mobileGames.aLeft<=2 && mobileGames.aRight>=mobileGames.width-2,"arcade fills mobile width");
   assert.ok(mobileGames.bLeft<=2 && mobileGames.bRight>=mobileGames.width-2,"Packet Panic fills mobile width");
   await assertMinimumTextSize(cdp,"390px mobile");
