@@ -219,8 +219,9 @@ export default function CodeMonument() {
         if(!reduced)schedule();
       };
       const resize=()=>{
-        const rect=canvas.getBoundingClientRect();
-        width=Math.max(1,Math.round(rect.width));height=Math.max(1,Math.round(rect.height));
+        // Client dimensions exclude the CSS entrance transform/rotation, so the
+        // WebGL projection remains aligned with the final full-bleed viewport.
+        width=Math.max(1,Math.round(canvas.clientWidth));height=Math.max(1,Math.round(canvas.clientHeight));
         const dpr=Math.min(window.devicePixelRatio||1,window.innerWidth<650?1.3:1.7);
         canvas.width=Math.round(width*dpr);canvas.height=Math.round(height*dpr);
         stop();schedule();
