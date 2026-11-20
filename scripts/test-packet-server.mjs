@@ -74,6 +74,7 @@ assert.notEqual(guest.token,host.token);
 const g={room:guest.room,token:guest.token};
 assert.equal((await post("join",{room:h.room})).status,409);
 assert.equal((await post("snapshot",{room:h.room,token:"x".repeat(32)})).status,403);
+assert.equal((await post("snapshot",g)).player,2,"a returning guest keeps the egress role");
 assert.equal((await post("start",{...g,commandId:uuid(2)})).status,409,"guest can't start");
 const start=await post("start",{...h,commandId:uuid(3)});
 assert.equal(start.status,200);
