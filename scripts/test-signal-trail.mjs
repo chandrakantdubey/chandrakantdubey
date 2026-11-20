@@ -4,6 +4,8 @@ import {
   signalReport,signalFile,combinedSignalReport,
 } from "../src/exhibition/signalTrail.ts";
 import {runRootCommand} from "../src/exhibition/rootCommands.ts";
+import {simulateCasRace,CAS_START_VERSION} from "../src/exhibition/consistencyRace.ts";
+import {readSpecimenMode} from "../src/exhibition/specimenSession.ts";
 
 assert.deepEqual(SIGNAL_IDS,["archive","lab","arcade"]);
 assert.deepEqual(parseSignalProgress(null),[]);
@@ -39,4 +41,18 @@ assert.ok(runRootCommand("cat /signals/report",{awakened:true,signals:progress})
 assert.ok(runRootCommand("cat /signals/report",{awakened:false,signals:progress})
   .lines.join(" ").includes("dormant"));
 assert.equal(runRootCommand("rm -rf /",context).effect,null,"terminal never executes arbitrary commands");
+assert.equal(readSpecimenMode("awakened"),"awakened");
+assert.equal(readSpecimenMode("sealed"),"sealed");
+assert.equal(readSpecimenMode("javascript:evil"),"sealed","unknown persisted states fall back to safe defaults");
+for(const winner of ["ingress","egress"]) {
+  const race=simulateCasRace(winner);
+  assert.equal(race.startVersion,CAS_START_VERSION);
+  assert.equal(race.winnerVersion,race.startVersion+1);
+  assert.equal(race.finalVersion,race.startVersion+2);
+  assert.notEqual(race.winner,race.loser);
+  assert.equal(race.losingExpected,CAS_START_VERSION,"the losing action must remain stale");
+  assert.equal(race.conflictActual,CAS_START_VERSION+1,"stale CAS is rejected, not overwritten");
+  assert.ok(race.orderedEvents[2].includes("rejected"));
+  assert.ok(race.orderedEvents.at(-1).includes("Both valid actions survive"));
+}
 console.log("Signal trail: fixed IDs, private session progress, honest source-backed notes and fictional terminal commands — PASS");
