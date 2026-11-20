@@ -424,8 +424,8 @@ try{
   await assertMinimumTextSize(cdp,"standalone packet desktop");
   await cdp.send("Page.navigate",{url:"http://127.0.0.1:4173/#incident"});
   await poll(()=>cdp.eval("!!document.querySelector('#incident')"),"deferred lab deep-link anchor exists before chunk");
-  await poll(()=>cdp.eval("document.querySelector('#incident').getBoundingClientRect().top<=40 && !!document.querySelector('.incident-replay')"),
-    "initial hash navigation opens the lazy-loaded Lab");
+  await poll(()=>cdp.eval("(()=>{const root=document.querySelector('#incident');if(!root||!document.querySelector('.incident-replay'))return false;const target=parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop)||0;return Math.abs(root.getBoundingClientRect().top-target)<=16;})()"),
+    "initial hash navigation opens the lazy-loaded Lab at the intended sticky-header offset");
   await cdp.send("Page.navigate",{url:"http://127.0.0.1:4173/"});
   await poll(()=>cdp.eval("!!document.querySelector('#top')"),"exhibition after deep-link route");
 
