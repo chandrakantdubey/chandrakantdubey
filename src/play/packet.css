@@ -274,3 +274,63 @@
     transition-duration:.01ms!important;animation-duration:.01ms!important;
   }
 }
+
+
+/* Season two: readable failures, distinct co-op zones, daily score challenges. */
+.packet-node.packet-partner-node {
+  border-color:#5473847a;
+  background:radial-gradient(circle at center,#173343,#0b2534);
+}
+.packet-node.packet-partner-node .packet-wire-core {stroke:#7d9da2;opacity:.72;}
+.packet-node.packet-partner-node .packet-router-pin {fill:#84a5a5;}
+.packet-incident-alert {
+  position:absolute;top:59px;left:50%;z-index:6;transform:translateX(-50%);
+  pointer-events:none;max-width:calc(100% - 30px);
+  display:flex;align-items:center;gap:11px;white-space:nowrap;
+  padding:9px 14px;background:#622b34eb;border:1px solid #f99081;
+  color:#ffe6d3;font:800 12px "JetBrains Mono",monospace;
+  box-shadow:0 8px 26px #08040ab3;
+}
+.packet-incident-alert span {color:#ffc5a5;}
+.packet-delivery-burst {
+  position:absolute;bottom:25px;left:50%;transform:translateX(-50%);
+  z-index:6;pointer-events:none;white-space:nowrap;
+  font:800 clamp(20px,3.3vw,44px) "Bricolage Grotesque",sans-serif;
+  letter-spacing:-.06em;color:#e6ff99;
+  text-shadow:0 0 28px #e1f58e99;
+  animation:packet-delivered .96s cubic-bezier(.18,.77,.24,1) both;
+}
+@keyframes packet-delivered {
+  from{opacity:0;translate:0 16px;scale:.86;}
+  30%{opacity:1;translate:0 -4px;scale:1.03;}
+  to{opacity:0;translate:0 -28px;scale:1.05;}
+}
+.packet-daily-button {
+  display:inline-flex;align-items:center;gap:10px;
+  min-height:50px;padding:13px 17px;border:1px solid #d4ffac;
+  background:#253d30;color:#e3ffb9;
+  font:800 12px "JetBrains Mono",monospace;
+}
+.packet-daily-button span {padding-left:9px;border-left:1px solid #55775f;color:#bcd5c0;font-weight:550;}
+.packet-daily-button:hover {background:#3b5844;}
+.packet-daily-record {color:#bff9e9;font:700 12px "JetBrains Mono",monospace;}
+.packet-share-score {
+  display:inline-flex;align-items:center;justify-content:center;gap:9px;
+  padding:10px 17px;min-height:42px;
+  background:transparent;color:#d7f7e4;border:1px solid #648b8b;
+  font:700 12px "JetBrains Mono",monospace;
+}
+.packet-share-score:hover {background:#1d5053;}
+@media(max-width:700px) {
+  .packet-incident-alert {
+    top:68px;padding:7px 9px;font-size:12px;gap:6px;
+    white-space:normal;text-align:center;
+  }
+  .packet-daily-button {width:100%;justify-content:center;margin-bottom:8px;}
+  .packet-daily-button span {margin-left:auto;}
+  .packet-share-score {width:100%;}
+  .packet-delivery-burst {bottom:38px;font-size:26px;}
+}
+@media(prefers-reduced-motion:reduce){
+  .packet-delivery-burst {animation:none;opacity:1;translate:none;}
+}
