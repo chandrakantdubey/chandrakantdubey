@@ -7,8 +7,9 @@ import CodeMonument from "./CodeMonument";
 import ProjectPoster from "./ProjectPoster";
 import SkillOrbit from "./SkillOrbit";
 import FluxGame from "../play/FluxGame";
-import DuelGame from "../play/DuelGame";
+import PacketPanic from "../play/PacketPanic";
 import "../play/play.css";
+import "../play/packet.css";
 import "./spatial.css";
 import "./exhibition.css";
 import "./reactor.css";
@@ -209,10 +210,10 @@ function PlaySection() {
 function FinalBoss() {
   return <section className="after-hours" id="final-boss" aria-labelledby="final-boss-heading">
     <div className="after-hours-heading" data-reveal>
-      <h2 id="final-boss-heading">ONE <em>MORE</em><br/>THING.</h2>
-      <p>Forty-nine hexes. Two egos. Zero peace treaties. Your move.</p>
+      <h2 id="final-boss-heading">SAVE THE<br/><em>INTERNET.</em></h2>
+      <p>All those years learning to deploy, just to find out the internet still needs saving. You have 90 seconds.</p>
     </div>
-    <DuelGame/>
+    <PacketPanic/>
   </section>;
 }
 
