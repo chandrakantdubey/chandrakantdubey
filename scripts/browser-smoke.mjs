@@ -317,6 +317,8 @@ try{
   await poll(()=>cdp.eval("!!document.querySelector('.root-terminal')"),"mobile ROOT ACCESS opens");
   const rootMobile=await cdp.eval("(()=>{const r=document.querySelector('.root-terminal').getBoundingClientRect();return {left:r.left,right:r.right,width:innerWidth}})()");
   assert.ok(rootMobile.left>=-1 && rootMobile.right<=rootMobile.width+1,"mobile terminal fits viewport "+JSON.stringify(rootMobile));
+  await delay(260);
+  assert.equal(await cdp.eval("getComputedStyle(document.querySelector('.root-terminal')).backgroundColor"),"rgb(8, 20, 30)","terminal must be opaque on mobile");
   await cdp.screenshot("root-access-mobile.png");
   await cdp.eval("document.querySelector('.root-terminal-close').click()");
 
