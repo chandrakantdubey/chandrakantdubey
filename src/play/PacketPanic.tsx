@@ -250,7 +250,7 @@ export default function PacketPanic({standalone=false}:{standalone?:boolean}) {
     catch{setNotice("Copy the room link from your address bar.");}
   };
   const shareScore=async()=>{
-    const message=resultShareText(challengeDay,game.score,game.delivered,game.integrity,game.phase==="won");
+    const message=resultShareText(daily?challengeDay:null,game.score,game.delivered,game.integrity,game.phase==="won",mode==="online");
     try{await navigator.clipboard.writeText(message);setNotice("Result copied. Go humble somebody.");}
     catch{setNotice("Clipboard unavailable. The score is still visible above.");}
   };
