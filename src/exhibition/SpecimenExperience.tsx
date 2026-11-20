@@ -150,9 +150,14 @@ export default function SpecimenExperience({awakened,onChange}:Props) {
     // Commentary should never become a permanent screen obstruction.
     const timer=window.setTimeout(()=>setExpanded(false),7200);
     const onScroll=()=>setExpanded(false);
-    window.addEventListener("scroll",onScroll,{passive:true});
+    // Unlocking body scroll after modal dismissal can produce a synthetic
+    // scroll event. Give the UI a moment before treating scroll as intent.
+    const register=window.setTimeout(()=>{
+      window.addEventListener("scroll",onScroll,{passive:true});
+    },650);
     return()=>{
       window.clearTimeout(timer);
+      window.clearTimeout(register);
       window.removeEventListener("scroll",onScroll);
     };
   },[awakened,expanded,open]);
