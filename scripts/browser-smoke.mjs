@@ -414,6 +414,11 @@ try{
   assert.equal(await cdp.eval("document.querySelector('.exhibition-site').dataset.specimenState"),"awakened");
   assert.equal(await cdp.eval("!!document.querySelector('.specimen-apparition')"),false,
     "reduced motion must not render the apparition at all");
+  await poll(()=>cdp.eval("!!document.querySelector('.specimen-dock')"),
+    "compact companion remains available for reset on a narrow phone");
+  await cdp.eval("if(!document.querySelector('.specimen-dock-panel'))document.querySelector('.specimen-dock-toggle').click()");
+  await poll(()=>cdp.eval("!!document.querySelector('.specimen-dock-panel')"),
+    "the companion can always be reopened after dismissal");
   await cdp.eval("document.querySelector('.specimen-dock-links button[aria-label=\"Restore original experience\"]').click()");
   assert.equal(await cdp.eval("document.querySelector('.exhibition-site').dataset.specimenState"),"sealed");
   assert.ok(await cdp.eval("document.documentElement.scrollWidth<=innerWidth+3"),
