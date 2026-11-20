@@ -10,16 +10,18 @@ const START:Entry[]=[
   {id:2,kind:"output",text:"Everything runs in this browser. There is no real shell."},
   {id:3,kind:"output",text:"Type help to find out how much trouble you can cause."},
 ];
+export type RootVisualMode="normal"|"chaos"|"gravity";
 interface RootAccessProps {
   awakened:boolean;
   signals:SignalProgress;
   onResetSignals:()=>void;
+  onVisualModeChange:(next:RootVisualMode)=>void;
 }
-export default function RootAccess({awakened,signals,onResetSignals}:RootAccessProps) {
+export default function RootAccess({awakened,signals,onResetSignals,onVisualModeChange}:RootAccessProps) {
   const [open,setOpen]=useState(false);
   const [command,setCommand]=useState("");
   const [entries,setEntries]=useState<Entry[]>(START);
-  const [effect,setEffect]=useState<"normal"|"chaos"|"gravity">("normal");
+
   const terminal=useRef<HTMLDivElement>(null);
   const entry=useRef<HTMLInputElement>(null);
   const history=useRef<HTMLDivElement>(null);
@@ -37,12 +39,6 @@ export default function RootAccess({awakened,signals,onResetSignals}:RootAccessP
     window.addEventListener("keydown",shortcut);
     return()=>window.removeEventListener("keydown",shortcut);
   },[]);
-  useEffect(()=>{
-    const site=document.querySelector(".exhibition-site");
-    site?.classList.toggle("root-chaos",effect==="chaos");
-    site?.classList.toggle("root-gravity",effect==="gravity");
-    return()=>{site?.classList.remove("root-chaos","root-gravity");};
-  },[effect]);
   useEffect(()=>{
     if(!open)return;
     lastFocus.current=document.activeElement instanceof HTMLElement?document.activeElement:null;
@@ -70,9 +66,9 @@ export default function RootAccess({awakened,signals,onResetSignals}:RootAccessP
       ];
       setEntries(old=>[...old,...next].slice(-100));
     }
-    if(result.effect==="chaos")setEffect("chaos");
-    if(result.effect==="gravity")setEffect("gravity");
-    if(result.effect==="restore")setEffect("normal");
+    if(result.effect==="chaos")onVisualModeChange("chaos");
+    if(result.effect==="gravity")onVisualModeChange("gravity");
+    if(result.effect==="restore")onVisualModeChange("normal");
     if(result.effect==="exit")setOpen(false);
     setCommand("");
   };
