@@ -146,6 +146,18 @@ export default function SpecimenExperience({awakened,onChange}:Props) {
   },[open]);
 
   useEffect(()=>{
+    if(!awakened||!expanded||open)return;
+    // Commentary should never become a permanent screen obstruction.
+    const timer=window.setTimeout(()=>setExpanded(false),7200);
+    const onScroll=()=>setExpanded(false);
+    window.addEventListener("scroll",onScroll,{passive:true});
+    return()=>{
+      window.clearTimeout(timer);
+      window.removeEventListener("scroll",onScroll);
+    };
+  },[awakened,expanded,open]);
+
+  useEffect(()=>{
     if(!awakened)return;
     const onResult=(event:Event)=>{
       const detail=(event as CustomEvent<{won?:boolean}>).detail;
