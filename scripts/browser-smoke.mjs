@@ -422,8 +422,12 @@ try{
   assert.equal(await cdp.eval("document.querySelectorAll('.packet-node').length"),35);
   await cdp.screenshot("packet-standalone-desktop.png");
   await assertMinimumTextSize(cdp,"standalone packet desktop");
+  await cdp.send("Page.navigate",{url:"http://127.0.0.1:4173/#incident"});
+  await poll(()=>cdp.eval("!!document.querySelector('#incident')"),"deferred lab deep-link anchor exists before chunk");
+  await poll(()=>cdp.eval("document.querySelector('#incident').getBoundingClientRect().top<=40 && !!document.querySelector('.incident-replay')"),
+    "initial hash navigation opens the lazy-loaded Lab");
   await cdp.send("Page.navigate",{url:"http://127.0.0.1:4173/"});
-  await poll(()=>cdp.eval("!!document.querySelector('#top')"),"exhibition after route");
+  await poll(()=>cdp.eval("!!document.querySelector('#top')"),"exhibition after deep-link route");
 
   await cdp.send("Emulation.setDeviceMetricsOverride",{width:390,height:844,deviceScaleFactor:1,mobile:true,screenWidth:390,screenHeight:844});
   await delay(450);
