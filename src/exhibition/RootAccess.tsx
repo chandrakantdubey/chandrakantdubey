@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
 import { ArrowUpRight, LockKeyhole, Terminal, X } from "lucide-react";
 import { runRootCommand } from "./rootCommands";
+import type { SignalProgress } from "./signalTrail";
 import "./root-access.css";
 
 type Entry={id:number;kind:"input"|"output";text:string};
@@ -9,7 +10,12 @@ const START:Entry[]=[
   {id:2,kind:"output",text:"Everything runs in this browser. There is no real shell."},
   {id:3,kind:"output",text:"Type help to find out how much trouble you can cause."},
 ];
-export default function RootAccess() {
+interface RootAccessProps {
+  awakened:boolean;
+  signals:SignalProgress;
+  onResetSignals:()=>void;
+}
+export default function RootAccess({awakened,signals,onResetSignals}:RootAccessProps) {
   const [open,setOpen]=useState(false);
   const [command,setCommand]=useState("");
   const [entries,setEntries]=useState<Entry[]>(START);
@@ -54,7 +60,8 @@ export default function RootAccess() {
   const execute=(event:FormEvent<HTMLFormElement>)=>{
     event.preventDefault();
     if(!command.trim())return;
-    const result=runRootCommand(command);
+    const result=runRootCommand(command,{awakened,signals});
+    if(result.effect==="reset-signals")onResetSignals();
     if(result.effect==="clear")setEntries(START);
     else {
       const next:Entry[]=[
@@ -102,7 +109,7 @@ export default function RootAccess() {
         </div>
         <div className="root-terminal-banner">
           <span><LockKeyhole size={15}/> SANDBOX MODE · BROWSER ONLY</span>
-          <span>ROOT ACCESS IS A JOKE. SECURITY IS NOT.</span>
+          <span>{awakened?`SIGNALS ${signals.length}/3 · TYPE SIGNALS`:"ROOT ACCESS IS A JOKE. SECURITY IS NOT."}</span>
         </div>
         <div className="root-terminal-history" ref={history} role="log" aria-live="polite" aria-label="Terminal command history">
           {entries.map(item=><div key={item.id}
