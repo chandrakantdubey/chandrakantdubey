@@ -9,16 +9,17 @@ type Props={id?:string;kind:ExperienceKind;label:string;children:ReactNode};
  */
 export default function DeferredExperience({id,kind,label,children}:Props) {
   const node=useRef<HTMLDivElement>(null);
-  const [near,setNear]=useState(false);
+  const [near,setNear]=useState(()=>Boolean(id&&window.location.hash==="#"+id));
   const [mounted,setMounted]=useState(false);
   const onReady=useCallback(()=>setMounted(true),[]);
   useEffect(()=>{
-    // Client-rendered routes may create the target after the browser's
-    // native initial-hash scroll. Honor the deep link when the anchor mounts.
-    if(!id||window.location.hash!=="#"+id)return;
+    // Native hash scrolling races with React's async route and lazy chunk.
+    // Scroll only once the target experience is mounted, not to an empty
+    // placeholder whose height can change when the chunk resolves.
+    if(!id||!mounted||window.location.hash!=="#"+id)return;
     const frame=requestAnimationFrame(()=>node.current?.scrollIntoView({behavior:"instant",block:"start"}));
     return()=>cancelAnimationFrame(frame);
-  },[id]);
+  },[id,mounted]);
   useEffect(()=>{
     const element=node.current;
     if(!element)return;
