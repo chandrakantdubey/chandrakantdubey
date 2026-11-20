@@ -1,4 +1,4 @@
-import { Suspense, useEffect, useRef, useState, type ReactNode } from "react";
+import { Suspense, useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import "./deferred-experience.css";
 
 type ExperienceKind="lab"|"arcade"|"packet"|"experiment";
@@ -11,6 +11,7 @@ export default function DeferredExperience({kind,label,children}:Props) {
   const node=useRef<HTMLDivElement>(null);
   const [near,setNear]=useState(false);
   const [mounted,setMounted]=useState(false);
+  const onReady=useCallback(()=>setMounted(true),[]);
   useEffect(()=>{
     const element=node.current;
     if(!element)return;
@@ -33,7 +34,7 @@ export default function DeferredExperience({kind,label,children}:Props) {
     data-loaded={mounted?"true":"false"}
     aria-busy={!mounted}>
     <Suspense fallback={<DeferredFallback label={label}/>}>
-      {near?<>{children}<Loaded onReady={()=>setMounted(true)}/></>:<DeferredFallback label={label}/>}
+      {near?<>{children}<Loaded onReady={onReady}/></>:<DeferredFallback label={label}/>}
     </Suspense>
   </div>;
 }
