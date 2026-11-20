@@ -515,6 +515,11 @@ try{
   assert.equal(nodesVisible.visible,35);
   assert.ok(nodesVisible.min>=nodesVisible.arenaLeft-3 && nodesVisible.max<=nodesVisible.arenaRight+3,
     "All 35 Packet routers must stay inside the mobile arena "+JSON.stringify(nodesVisible));
+  await cdp.send("Emulation.setDeviceMetricsOverride",{width:768,height:1024,deviceScaleFactor:1,mobile:true,screenWidth:768,screenHeight:1024});
+  await delay(380);
+  const tablet=await cdp.eval("({width:innerWidth,scroll:document.documentElement.scrollWidth})");
+  assert.ok(tablet.scroll<=tablet.width+3,"768px tablet must avoid overflow "+JSON.stringify(tablet));
+  await cdp.screenshot("tablet-layout.png");
   await cdp.send("Emulation.setDeviceMetricsOverride",{width:320,height:700,deviceScaleFactor:1,mobile:true,screenWidth:320,screenHeight:700});
   await delay(330);
   const narrow=await cdp.eval("({width:innerWidth,body:document.documentElement.scrollWidth})");
@@ -544,7 +549,42 @@ try{
   assert.ok(await cdp.eval("document.documentElement.scrollWidth<=innerWidth+3"),
     "no 320px overflow after complete specimen cycle");
 
-  console.log("Typography edition QA PASS: typography, reactor interactions, centered uncropped Signal Shift, spatial gallery, Packet Panic, Signal Shift and 320/390px.");
+  // Synthetic mobile p75 is a regression signal, not a substitute for RUM field p75.
+  await cdp.send("Emulation.setDeviceMetricsOverride",{width:390,height:844,deviceScaleFactor:1,mobile:true,screenWidth:390,screenHeight:844});
+  const mobileLcp=[];
+  const mobileCls=[];
+  for(let i=0;i<3;i++){
+    await cdp.send("Page.navigate",{url:"http://127.0.0.1:4173/"});
+    await poll(()=>cdp.eval("!!document.querySelector('.specimen-discovery')"),"synthetic mobile sample loaded");
+    await delay(950);
+    const metrics=await cdp.eval("window.__cdVitals");
+    if(typeof metrics?.lcp==="number")mobileLcp.push(metrics.lcp);
+    if(typeof metrics?.cls==="number")mobileCls.push(metrics.cls);
+  }
+  const percentile75=values=>values.length?[...values].sort((a,b)=>a-b)[Math.ceil(values.length*.75)-1]:null;
+  const p75Lcp=percentile75(mobileLcp);
+  const p75Cls=percentile75(mobileCls);
+  console.log("Synthetic mobile sample (3 reloads; not real-user field metrics):",
+    JSON.stringify({p75LcpMs:p75Lcp,p75Cls,longTasks:initialPerf.longTasks.length}));
+  if(p75Lcp!==null)assert.ok(p75Lcp<4200,"Synthetic mobile p75 LCP should avoid critical regression "+p75Lcp);
+  if(p75Cls!==null)assert.ok(p75Cls<.20,"Synthetic mobile p75 CLS should avoid critical regression "+p75Cls);
+  // In an environment without speech synthesis, the entire experience remains usable.
+  await cdp.send("Page.addScriptToEvaluateOnNewDocument",{source:`
+    try{Object.defineProperty(window,'speechSynthesis',{value:undefined,configurable:true});}
+    catch{/* speech API cannot be overridden in this browser */}
+  `});
+  await cdp.send("Page.navigate",{url:"http://127.0.0.1:4173/"});
+  await poll(()=>cdp.eval("!!document.querySelector('.specimen-discovery')"),"fresh reduced-motion, speech-free visit");
+  await poll(()=>cdp.eval("document.querySelector('.code-monument-canvas')?.dataset.renderer==='fallback'"),
+    "reduced-motion loads a static hero without starting WebGL");
+  await cdp.eval("document.querySelector('.specimen-discovery').click()");
+  await poll(()=>cdp.eval("!!document.querySelector('.specimen-inspection')"),"voice-disabled modal opens normally");
+  if(await cdp.eval("!window.speechSynthesis"))assert.ok(await cdp.eval("!document.querySelector('.specimen-voice-option')"),
+    "unsupported speech synthesis must not expose a broken voice control");
+  await cdp.eval("document.querySelector('.specimen-primary').click()");
+  assert.equal(await cdp.eval("document.querySelector('.exhibition-site').dataset.specimenState"),"awakened");
+  assert.ok(await cdp.eval("!document.querySelector('.specimen-apparition')"),"reduced motion still suppresses the effect");
+  console.log("Experience, typed discovery, keyboard focus, static hero, lazy modules, tablet and 320/390px QA PASS.");
   console.log("Visual QA saved to "+out);
 }finally{
   if(socket?.readyState===WebSocket.OPEN)socket.close();
