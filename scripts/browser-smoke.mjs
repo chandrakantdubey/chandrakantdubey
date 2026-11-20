@@ -319,6 +319,25 @@ try{
     "game documentation accurately identifies synchronization model");
   assert.equal(await cdp.eval("JSON.parse(sessionStorage.getItem('cd-signal-trail')).length"),3,
     "all three distinct discoveries persist locally");
+  assert.ok(await cdp.eval("!!document.querySelector('#consistency')"),
+    "recovering all three notes unlocks the optional concurrency experiment");
+  await cdp.eval("document.querySelector('#consistency').scrollIntoView({behavior:'instant'})");
+  await poll(()=>cdp.eval("!!document.querySelector('.consistency-experiment')"),
+    "consistency experiment lazily loads when opened");
+  assert.ok(await cdp.eval("document.querySelector('.consistency-trace').textContent.includes('v12')"),
+    "the fixture begins on a shared version");
+  await cdp.eval("document.querySelector('.consistency-run').click()");
+  assert.ok(await cdp.eval("document.querySelector('.consistency-verdict.negative')?.textContent.includes('409')"),
+    "the stale write fails instead of overwriting the winning action");
+  await cdp.eval("document.querySelector('.consistency-run').click()");
+  assert.ok(await cdp.eval("document.querySelector('.consistency-verdict.positive')?.textContent.includes('v14')"),
+    "a refreshed retry preserves both independent actions");
+  await cdp.eval("document.querySelectorAll('.consistency-choice button')[1].click()");
+  await cdp.eval("document.querySelector('.consistency-run').click()");
+  assert.ok(await cdp.eval("document.querySelector('.consistency-event-stream').textContent.includes('EGRESS writes')"),
+    "the visitor can reverse the order of concurrent writers");
+  await cdp.screenshot("consistency-experiment-desktop.png");
+
   await cdp.eval("document.querySelector('.signal-arcade-manual').scrollIntoView({behavior:'instant',block:'center'})");
   await delay(220);
   await cdp.screenshot("signal-arcade-desktop.png");
@@ -332,11 +351,15 @@ try{
   await cdp.eval("document.querySelector('.root-terminal-prompt').requestSubmit()");
   assert.ok(await cdp.eval("document.querySelector('.root-terminal-history').textContent.includes('Explicit state ownership')"),
     "terminal provides a coherent technical conclusion, not a joke-only unlock");
+  assert.ok(await cdp.eval("document.querySelector('.root-terminal-unlock')?.getAttribute('href')==='#consistency'"),
+    "recovered terminal index links to the working experiment");
   await cdp.screenshot("signal-index-desktop.png");
   await cdp.send("Input.insertText",{text:"signals --reset"});
   await cdp.eval("document.querySelector('.root-terminal-prompt').requestSubmit()");
   await poll(()=>cdp.eval("JSON.parse(sessionStorage.getItem('cd-signal-trail')).length===0"),
     "notes are explicitly reset without affecting the portfolio");
+  assert.ok(await cdp.eval("!document.querySelector('#consistency')"),
+    "reset removes only the optional experiment, not the rest of the portfolio");
   await cdp.eval("document.querySelector('.root-terminal-close').click()");
   await cdp.eval("if(!document.querySelector('.specimen-dock-panel'))document.querySelector('.specimen-dock-toggle').click()");
   await cdp.eval("document.querySelector('.specimen-dock-links button[aria-label=\\\"Restore original experience\\\"]').click()");
