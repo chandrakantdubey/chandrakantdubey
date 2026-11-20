@@ -7,6 +7,7 @@ import CodeMonument from "./CodeMonument";
 import ProjectPoster from "./ProjectPoster";
 import SkillOrbit from "./SkillOrbit";
 import RootAccess from "./RootAccess";
+import IncidentReplay from "./IncidentReplay";
 import FluxGame from "../play/FluxGame";
 import PacketPanic from "../play/PacketPanic";
 import "../play/play.css";
@@ -164,6 +165,7 @@ function Projects() {
       </div>
     </div>
     <a className="projects-footer-link" href={links.github+"?tab=repositories"} target="_blank" rel="noopener noreferrer">YES, THE SOURCE IS PUBLIC <ArrowUpRight size={18}/></a>
+    <a className="projects-incident-link" href="#incident">ONE MORE THING: INVESTIGATE A PROD FAILURE <ArrowDown size={17}/></a>
   </section>;
 }
 
@@ -226,6 +228,7 @@ export default function Exhibition() {
       <Hero/>
       <div className="identity-ribbon" aria-hidden="true"><div className="marquee-track"><span className="marquee-copy">PIXELS WERE HARMED IN THE MAKING OF THIS WEBSITE ✳ IT WORKED LOCALLY ✳ THEN WE DEPLOYED IT ✳ </span><span className="marquee-copy">PIXELS WERE HARMED IN THE MAKING OF THIS WEBSITE ✳ IT WORKED LOCALLY ✳ THEN WE DEPLOYED IT ✳ </span></div></div>
       <Projects/>
+      <IncidentReplay/>
       <Experience/>
       <Skills/>
       <PlaySection/>
