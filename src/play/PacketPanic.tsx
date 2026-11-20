@@ -137,12 +137,16 @@ export default function PacketPanic({standalone=false}:{standalone?:boolean}) {
   },[connected,sync]);
 
   useEffect(()=>{
+    // The board does not need idle polling or 8 React renders a second.
+    // Only an active round drives the client clock; the deterministic engine
+    // still advances on fixed 520ms ticks and catches up after tab suspension.
+    if(game.phase!=="playing")return;
     const timer=window.setInterval(()=>{
       const time=Date.now();setNow(time);
       if(mode==="solo")setGame(previous=>advancePacketGame(previous,time));
-    },120);
+    },200);
     return()=>window.clearInterval(timer);
-  },[mode]);
+  },[mode,game.phase]);
 
   useEffect(()=>{
     if(!soundOn||game.eventId===lastEventId.current)return;
