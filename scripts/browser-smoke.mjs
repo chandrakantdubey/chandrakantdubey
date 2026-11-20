@@ -102,6 +102,10 @@ try{
   assert.ok(desktop.modules>=60,"procedurally assembled letter geometry is present");
   assert.ok(["webgl","fallback"].includes(desktop.renderer),"Canvas must run WebGL or a designed fallback: "+JSON.stringify(desktop));
   assert.equal(desktop.overflow,false,"Desktop must not overflow horizontally");
+  const heroFrame=await cdp.eval("(()=>{const hero=document.querySelector('.exhibition-hero').getBoundingClientRect(),canvas=document.querySelector('.code-monument-canvas').getBoundingClientRect();return {heroLeft:hero.left,heroRight:hero.right,canvasLeft:canvas.left,canvasRight:canvas.right,width:document.documentElement.clientWidth,scale:Number(document.querySelector('.code-monument-canvas').dataset.fitScale)}})()");
+  assert.ok(Math.abs(heroFrame.canvasLeft-heroFrame.heroLeft)<=1 && Math.abs(heroFrame.canvasRight-heroFrame.heroRight)<=1,
+    "3D canvas must occupy the entire desktop hero, not an inset box: "+JSON.stringify(heroFrame));
+  if(desktop.renderer==="webgl") assert.ok(heroFrame.scale>0,"WebGL monogram must have a fitted projection scale");
   await assertMinimumTextSize(cdp,"1440px desktop");
   const pageStory=await cdp.eval("(()=>{const main=document.querySelector('main');const ribbon=document.querySelector('.marquee-track');const copies=[...ribbon.querySelectorAll('.marquee-copy')];const arcade=document.querySelector('.flux-experience').getBoundingClientRect();const hex=document.querySelector('.after-hours .duel-experience').getBoundingClientRect();return {lastSection:main.lastElementChild?.id,sectionMarkers:document.querySelectorAll('.section-topline').length,oldCopy:document.body.innerText.includes('Two fully functional games, embedded into the exhibition'),ribbonCopies:copies.map(x=>({text:x.textContent,width:x.getBoundingClientRect().width})),animation:getComputedStyle(ribbon).animationName,arcade:{left:arcade.left,right:arcade.right},hex:{left:hex.left,right:hex.right},viewport:document.documentElement.clientWidth}})()");
   assert.equal(pageStory.lastSection,"final-boss","Hex must finish the page, after contact");
@@ -238,6 +242,10 @@ try{
   assert.notEqual(mobile.menu,"none");
   assert.equal(mobile.gallery,6);
   assert.ok(mobile.sculptureWidth>240);
+  const mobileHeroFrame=await cdp.eval("(()=>{const hero=document.querySelector('.exhibition-hero').getBoundingClientRect(),canvas=document.querySelector('.code-monument-canvas').getBoundingClientRect();return {heroLeft:hero.left,heroRight:hero.right,canvasLeft:canvas.left,canvasRight:canvas.right,width:document.documentElement.clientWidth,scale:Number(document.querySelector('.code-monument-canvas').dataset.fitScale)}})()");
+  assert.ok(Math.abs(mobileHeroFrame.canvasLeft-mobileHeroFrame.heroLeft)<=1 && Math.abs(mobileHeroFrame.canvasRight-mobileHeroFrame.heroRight)<=1,
+    "3D monogram must occupy the full mobile hero width: "+JSON.stringify(mobileHeroFrame));
+  if(desktop.renderer==="webgl") assert.ok(mobileHeroFrame.scale>0 && mobileHeroFrame.scale<=1.38,"Mobile scale must fit viewport");
   const mobileGames=await cdp.eval("(()=>{const a=document.querySelector('.flux-experience').getBoundingClientRect(),b=document.querySelector('.after-hours .duel-experience').getBoundingClientRect();return {aLeft:a.left,aRight:a.right,bLeft:b.left,bRight:b.right,width:document.documentElement.clientWidth}})()");
   assert.ok(mobileGames.aLeft<=2 && mobileGames.aRight>=mobileGames.width-2,"arcade fills mobile width");
   assert.ok(mobileGames.bLeft<=2 && mobileGames.bRight>=mobileGames.width-2,"Hex finale fills mobile width");
@@ -288,6 +296,9 @@ try{
   await delay(330);
   const narrow=await cdp.eval("({width:innerWidth,body:document.documentElement.scrollWidth})");
   assert.ok(narrow.body<=narrow.width+3,"Narrow 320px viewport must not horizontally overflow "+JSON.stringify(narrow));
+  const narrowHero=await cdp.eval("(()=>{const h=document.querySelector('.exhibition-hero').getBoundingClientRect(),c=document.querySelector('.code-monument-canvas').getBoundingClientRect();return {left:h.left,right:h.right,canvasLeft:c.left,canvasRight:c.right}})()");
+  assert.ok(Math.abs(narrowHero.left-narrowHero.canvasLeft)<=1 && Math.abs(narrowHero.right-narrowHero.canvasRight)<=1,
+    "320px viewport must keep the sculpture full-bleed: "+JSON.stringify(narrowHero));
   await assertMinimumTextSize(cdp,"320px mobile");
   const narrowNodes=await cdp.eval("(()=>{const arena=document.querySelector('.duel-stage').getBoundingClientRect();const rs=[...document.querySelectorAll('.duel-hex')].map(x=>x.getBoundingClientRect());return {min:Math.min(...rs.map(r=>r.left)),max:Math.max(...rs.map(r=>r.right)),left:arena.left,right:arena.right}})()");
   assert.ok(narrowNodes.min>=narrowNodes.left-3 && narrowNodes.max<=narrowNodes.right+3,
