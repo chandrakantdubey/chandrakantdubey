@@ -7,6 +7,7 @@ import CodeMonument from "./CodeMonument";
 import ProjectPoster from "./ProjectPoster";
 import SkillOrbit from "./SkillOrbit";
 import RootAccess from "./RootAccess";
+import VisitorResponse from "./VisitorResponse";
 import IncidentReplay from "./IncidentReplay";
 import FluxGame from "../play/FluxGame";
 import PacketPanic from "../play/PacketPanic";
@@ -239,6 +240,7 @@ export default function Exhibition() {
       <a href="#top" className="footer-identity">CD<span>®</span></a>
       <span>© {new Date().getFullYear()} CD. DEPLOYED WITH QUESTIONABLE CONFIDENCE.</span>
       <div><a href={links.github} target="_blank" rel="noopener noreferrer">GITHUB ↗</a><a href={links.linkedin} target="_blank" rel="noopener noreferrer">LINKEDIN ↗</a><a href="#top">BACK TO TOP ↑</a><RootAccess/></div>
+      <VisitorResponse/>
     </footer>
   </div>;
 }
