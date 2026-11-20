@@ -99,3 +99,54 @@ export function createCodeMonument(seed=2026):CodeGeometry {
   if(modules*24>65535)throw Error("Too many modules for WebGL1 uint16 indices");
   return {vertices:new Float32Array(vertices),indices:new Uint16Array(indices),modules};
 }
+
+
+/** Eight corners of the monogram's assembled (not scattering) 3D bounds. */
+export function codeMonumentCorners(geometry: CodeGeometry): readonly (readonly [number, number, number])[] {
+  const min = [Infinity, Infinity, Infinity];
+  const max = [-Infinity, -Infinity, -Infinity];
+  for (let i = 0; i < geometry.vertices.length; i += CODE_VERTEX_STRIDE) {
+    for (let axis = 0; axis < 3; axis++) {
+      const coordinate = geometry.vertices[i + axis] + geometry.vertices[i + 6 + axis];
+      min[axis] = Math.min(min[axis], coordinate);
+      max[axis] = Math.max(max[axis], coordinate);
+    }
+  }
+  const corners: [number, number, number][] = [];
+  for (const x of [min[0], max[0]]) {
+    for (const y of [min[1], max[1]]) {
+      for (const z of [min[2], max[2]]) corners.push([x, y, z]);
+    }
+  }
+  return corners;
+}
+
+/**
+ * Match the monument shader's 43° FOV / 10-unit camera, keeping every corner
+ * inside the frame even when the user tilts the object to its extremes.
+ * This sizes the assembled object, not its intentionally scattered particles.
+ */
+export function fitCodeMonument(
+  aspect: number,
+  yaw: number,
+  pitch: number,
+  corners: readonly (readonly [number, number, number])[],
+): number {
+  const focal = 1 / Math.tan(43 * Math.PI / 360);
+  const safeMargin = 0.86; // Leave breathing room at the viewport edges.
+  const camera = 10;
+  const cy = Math.cos(yaw), sy = Math.sin(yaw);
+  const cx = Math.cos(pitch), sx = Math.sin(pitch);
+  let scale = 1.38;
+  for (const [x, y, z] of corners) {
+    // Same column-major rotation as CodeMonument.tsx and its WebGL shader.
+    const px = cy * x + sy * z;
+    const py = sy * sx * x + cx * y - cy * sx * z;
+    const pz = -sy * cx * x + sx * y + cy * cx * z;
+    const horizontal = Math.abs(px) * focal / Math.max(0.05, aspect) + safeMargin * pz;
+    const vertical = Math.abs(py) * focal + safeMargin * pz;
+    if (horizontal > 0) scale = Math.min(scale, camera * safeMargin / horizontal);
+    if (vertical > 0) scale = Math.min(scale, camera * safeMargin / vertical);
+  }
+  return Math.max(0.05, scale);
+}
