@@ -126,6 +126,8 @@ export default function RootAccess({awakened,signals,onResetSignals}:RootAccessP
             placeholder="help" aria-description="Press Enter to submit a local pretend command"/>
           <button type="submit" disabled={!command.trim()}>RUN ↵</button>
         </form>
+        {awakened&&signals.length===3&&<a className="root-terminal-unlock" href="#consistency"
+          onClick={()=>setOpen(false)}>RECOVERED: EXPERIMENT 001 / OPEN CONCURRENCY LAB <ArrowUpRight size={16}/></a>}
         <div className="root-terminal-footnote">
           <span>ESC TO CLOSE</span><span>TYPE RESTORE TO RESET VISUAL EFFECTS</span>
           <span>NO REAL COMMANDS EXECUTED</span>
