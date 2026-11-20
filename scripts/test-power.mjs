@@ -27,6 +27,10 @@ assert.throws(()=>challengeSeed("../../secrets"));
 const share=resultShareText("2026-11-20",1320,8,37,false);
 assert.ok(share.includes("1,320 PTS")&&share.includes("37% integrity"));
 assert.ok(share.includes("chandrakantdubey.vercel.app/play/packet"));
+assert.ok(resultShareText(null,321,2,71,true).includes("FREE PLAY"));
+assert.ok(resultShareText(null,321,2,71,true,true).includes("CO-OP"));
+assert.throws(()=>challengeSeed("2026-02-30"));
+
 
 assert.equal(INCIDENT_METRICS.length,8);
 assert.ok(INCIDENT_METRICS[0].latency<INCIDENT_METRICS.at(-1).latency);
