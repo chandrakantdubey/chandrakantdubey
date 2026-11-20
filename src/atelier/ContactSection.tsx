@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { ArrowUpRight, Check, Copy, Mail } from "lucide-react";
 import { links } from "./content";
+import { contactMailto } from "./contactMailto";
 
 export default function ContactSection() {
   const [name, setName] = useState("");
@@ -32,10 +33,8 @@ export default function ContactSection() {
   }, []);
 
   const composeMail = () => {
-    const subject = encodeURIComponent("Portfolio enquiry from " + name.trim());
-    const body = encodeURIComponent(message.trim() + "\n\nFrom: " + name.trim() + "\nReply to: " + email.trim());
     setNotice("Your email application should open. Send the draft there to complete contact.");
-    window.location.assign("mailto:" + links.email + "?subject=" + subject + "&body=" + body);
+    window.location.assign(contactMailto(links.email, { name, email, message }));
   };
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
