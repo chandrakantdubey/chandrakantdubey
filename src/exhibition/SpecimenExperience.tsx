@@ -52,11 +52,17 @@ function GlassVial({large=false}:{large?:boolean}) {
   </svg>;
 }
 
+function speechAvailable():boolean {
+  return typeof window!=="undefined" &&
+    typeof window.speechSynthesis?.speak==="function" &&
+    typeof window.SpeechSynthesisUtterance==="function";
+}
 function speak(text:string) {
-  if(typeof window==="undefined"||!("speechSynthesis" in window))return;
+  if(!speechAvailable())return;
+  try{
   const engine=window.speechSynthesis;
   engine.cancel();
-  const line=new SpeechSynthesisUtterance(text);
+  const line=new window.SpeechSynthesisUtterance(text);
   line.lang="en-GB";
   line.pitch=1.27;
   line.rate=1.06;
@@ -68,6 +74,7 @@ function speak(text:string) {
     ??voices[0];
   if(preferred)line.voice=preferred;
   engine.speak(line);
+  }catch{/* Unsupported or suspended platform voices never interrupt the site. */}
 }
 
 function Apparition() {
@@ -120,10 +127,11 @@ export default function SpecimenExperience({awakened,onChange,signalCount}:Props
   const surgeTimer=useRef<number|null>(null);
 
   useEffect(()=>{
-    setVoiceAvailable(typeof window!=="undefined"&&"speechSynthesis" in window);
-    try{setVoice(window.sessionStorage.getItem(KEY)==="on");}catch{/* optional */}
+    const supported=speechAvailable();
+    setVoiceAvailable(supported);
+    try{setVoice(supported&&window.sessionStorage.getItem(KEY)==="on");}catch{/* optional */}
     return()=>{
-      window.speechSynthesis?.cancel();
+      if(speechAvailable())window.speechSynthesis.cancel();
       if(surgeTimer.current!==null)window.clearTimeout(surgeTimer.current);
     };
   },[]);
@@ -203,14 +211,14 @@ export default function SpecimenExperience({awakened,onChange,signalCount}:Props
     setOpen(false);
     setSurge(false);
     if(surgeTimer.current!==null)window.clearTimeout(surgeTimer.current);
-    window.speechSynthesis?.cancel();
+    if(speechAvailable())window.speechSynthesis.cancel();
   };
   const toggleVoice=()=>{
     const next=!voice;
     setVoice(next);
     try{window.sessionStorage.setItem(KEY,next?"on":"off");}catch{/* optional */}
     if(next)speak("Voice enabled. A questionable but defensible choice.");
-    else window.speechSynthesis?.cancel();
+    else if(speechAvailable())window.speechSynthesis.cancel();
   };
   const trapFocus=(event:KeyboardEvent<HTMLDivElement>)=>{
     if(event.key!=="Tab")return;
@@ -265,6 +273,7 @@ export default function SpecimenExperience({awakened,onChange,signalCount}:Props
           </div>
         </div>
       </div>}
+      <output className="specimen-announce" aria-live="polite" aria-atomic="true">{awakened?"Specimen active. Additional engineering notes are available.":"Specimen sealed. Original presentation restored."}</output>
       {awakened&&<aside className="specimen-dock" aria-label="Specimen experience controls">
         {expanded&&<div className="specimen-dock-panel">
           <div className="specimen-dock-heading"><FlaskConical size={15}/> EXPERIMENT 001 <span>NOTES {signalCount}/3</span></div>
