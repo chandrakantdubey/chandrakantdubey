@@ -29,8 +29,8 @@
     }
   ],
   "functions": {
-    "api/duel.ts": {
-      "includeFiles": "src/play/duelRules.js"
+    "api/packet.ts": {
+      "includeFiles": "src/play/packetEngine.js"
     }
   }
 }
