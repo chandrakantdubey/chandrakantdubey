@@ -50,7 +50,7 @@ const broken={...started,integrity:57};
 const repaired=patchPacketNetwork(broken);
 assert.equal(repaired.integrity,79);
 assert.equal(repaired.patches,2);
-assert.equal(patchPacketNetwork({...started,integrity:100}),started);
+assert.deepEqual(patchPacketNetwork({...started,integrity:100}),started);
 assert.equal(patchPacketNetwork({...started,integrity:30,patches:0}).patches,0);
 
 // Two dedicated horizontal lanes are always solvable, in every seed.
