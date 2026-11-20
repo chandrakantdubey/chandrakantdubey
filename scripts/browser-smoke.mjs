@@ -89,6 +89,17 @@ try{
   const cdp=new Cdp(socket);
   await cdp.send("Page.enable");
   await cdp.send("Runtime.enable");
+  await cdp.send("Page.addScriptToEvaluateOnNewDocument",{source:`
+    (()=>{const data={lcp:null,cls:0,longTasks:[]};window.__cdVitals=data;
+      const observe=(type,handle)=>{try{new PerformanceObserver(list=>{
+        for(const entry of list.getEntries())handle(entry);
+      }).observe({type,buffered:true});}catch{/* unsupported */}
+      };
+      observe('largest-contentful-paint',entry=>data.lcp=entry.startTime);
+      observe('layout-shift',entry=>{if(!entry.hadRecentInput)data.cls+=entry.value;});
+      observe('longtask',entry=>data.longTasks.push(entry.duration));
+    })();`
+  });
   await cdp.send("Page.navigate",{url:"http://127.0.0.1:4173/"});
   await poll(()=>cdp.eval("document.querySelectorAll('.gallery-row').length===6"),"Exhibition failed to render");
   await delay(1100);
@@ -107,6 +118,10 @@ try{
     "3D canvas must occupy the entire desktop hero, not an inset box: "+JSON.stringify(heroFrame));
   if(desktop.renderer==="webgl") assert.ok(heroFrame.scale>0,"WebGL monogram must have a fitted projection scale");
   await assertMinimumTextSize(cdp,"1440px desktop");
+  const initialPerf=await cdp.eval("window.__cdVitals");
+  console.log("Initial desktop Web Vitals / synthetic:",JSON.stringify(initialPerf));
+  assert.ok(initialPerf.longTasks.every(ms=>ms<850),
+    "Initial navigation has a catastrophic main-thread task over 850 ms: "+JSON.stringify(initialPerf.longTasks));
   const pageStory=await cdp.eval("(()=>{const main=document.querySelector('main');const ribbon=document.querySelector('.marquee-track');const copies=[...ribbon.querySelectorAll('.marquee-copy')];const arcade=document.querySelector('[data-experience=arcade]').getBoundingClientRect();const hex=document.querySelector('[data-experience=packet]').getBoundingClientRect();return {lastSection:main.lastElementChild?.id,sectionMarkers:document.querySelectorAll('.section-topline').length,oldCopy:document.body.innerText.includes('Two fully functional games, embedded into the exhibition'),ribbonCopies:copies.map(x=>({text:x.textContent,width:x.getBoundingClientRect().width})),animation:getComputedStyle(ribbon).animationName,arcade:{left:arcade.left,right:arcade.right},hex:{left:hex.left,right:hex.right},viewport:document.documentElement.clientWidth}})()");
   assert.equal(pageStory.lastSection,"final-boss","Packet Panic must finish the page after contact");
   assert.equal(pageStory.sectionMarkers,0,"no ordinal section divider UI");
@@ -140,6 +155,13 @@ try{
   assert.ok(await cdp.eval("document.activeElement.classList.contains('specimen-close')"),"dialog focuses its close control");
   await delay(340);
   await cdp.screenshot("specimen-inspection-desktop.png");
+  await cdp.eval("([...document.querySelectorAll('.specimen-inspection button:not(:disabled)')].at(-1)).focus()");
+  await cdp.send("Input.dispatchKeyEvent",{type:"keyDown",key:"Tab",code:"Tab",windowsVirtualKeyCode:9});
+  await cdp.send("Input.dispatchKeyEvent",{type:"keyUp",key:"Tab",code:"Tab",windowsVirtualKeyCode:9});
+  assert.ok(await cdp.eval("document.activeElement.classList.contains('specimen-close')"),
+    "Tab from last modal action wraps to first action");
+  assert.ok(await cdp.eval("!!document.querySelector('.specimen-announce[aria-live=polite]')"),
+    "visitor state announcements are available without audio");
   await cdp.send("Input.dispatchKeyEvent",{type:"keyDown",key:"Escape",code:"Escape",windowsVirtualKeyCode:27});
   await cdp.send("Input.dispatchKeyEvent",{type:"keyUp",key:"Escape",code:"Escape",windowsVirtualKeyCode:27});
   await poll(()=>cdp.eval("!document.querySelector('.specimen-inspection')"),"Escape closes inspection");
