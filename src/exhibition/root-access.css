@@ -85,3 +85,16 @@
   }
   .root-discovery {transition:none;}
 }
+
+/* Quiet consequences: a visitor's last game is remembered for this tab only. */
+.exhibition-footer .visitor-result {
+  flex-basis:100%;display:flex;align-items:center;gap:11px;flex-wrap:wrap;
+  margin-top:7px;padding:16px 0 0;border-top:1px solid #53616a;
+  color:#bbe6c6;font:600 12px/1.65 "JetBrains Mono",monospace;
+}
+.exhibition-footer .visitor-result svg {color:#e3fc96;flex-shrink:0;}
+.exhibition-footer .visitor-result b {font-weight:750;color:#f2ffbe;}
+.exhibition-footer .visitor-result a {margin-left:auto;color:#e8ffb5;text-decoration:underline;text-underline-offset:4px;}
+@media(max-width:640px) {
+  .exhibition-footer .visitor-result a {margin-left:0;}
+}
