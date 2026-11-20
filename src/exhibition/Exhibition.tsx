@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type RefObject } from "react";
+import { lazy, useEffect, useRef, useState, type RefObject } from "react";
 import { ArrowDown, ArrowLeft, ArrowRight, ArrowUpRight, Menu, X } from "lucide-react";
 import { featuredProjects, links, workExperience } from "../atelier/content";
 import { internalTeamWork, publicTeamWork } from "../atelier/clientWork";
@@ -8,13 +8,15 @@ import ProjectPoster from "./ProjectPoster";
 import SkillOrbit from "./SkillOrbit";
 import RootAccess from "./RootAccess";
 import VisitorResponse from "./VisitorResponse";
-import IncidentReplay from "./IncidentReplay";
+import DeferredExperience from "./DeferredExperience";
 import SpecimenExperience from "./SpecimenExperience";
 import { PROJECT_QUESTIONS, type SignalId } from "./signalTrail";
 import { useSpecimenSession } from "./specimenSession";
 import "./signal-trail.css";
-import FluxGame from "../play/FluxGame";
-import PacketPanic from "../play/PacketPanic";
+const FluxGame=lazy(()=>import("../play/FluxGame"));
+const PacketPanic=lazy(()=>import("../play/PacketPanic"));
+const IncidentReplay=lazy(()=>import("./IncidentReplay"));
+const ConsistencyExperiment=lazy(()=>import("./ConsistencyExperiment"));
 import "../play/play.css";
 import "../play/packet.css";
 import "./spatial.css";
@@ -237,11 +239,11 @@ function PlaySection() {
       <h2 id="play-heading">TAKE <em>FIVE.</em></h2>
       <p>You came for the code. I brought a spaceship. This seems reasonable.</p>
     </div>
-    <FluxGame/>
+    <DeferredExperience kind="arcade" label="Signal Shift"><FluxGame/></DeferredExperience>
   </section>;
 }
 
-function FinalBoss({awakened,onDiscover,signals}:{awakened:boolean;onDiscover:(id:SignalId)=>void;signals:readonly SignalId[]}) {
+function FinalBoss({awakened,onDiscover,signals,unlocked}:{awakened:boolean;onDiscover:(id:SignalId)=>void;signals:readonly SignalId[];unlocked:boolean}) {
   const [manualOpen,setManualOpen]=useState(false);
   return <section className="after-hours" id="final-boss" aria-labelledby="final-boss-heading">
     <div className="after-hours-heading" data-reveal>
@@ -265,7 +267,11 @@ function FinalBoss({awakened,onDiscover,signals}:{awakened:boolean;onDiscover:(i
           target="_blank" rel="noopener noreferrer">READ ENGINE SOURCE <ArrowUpRight size={15}/></a>
       </div>}
     </div>}
-    <PacketPanic/>
+    <DeferredExperience kind="packet" label="Packet Panic"><PacketPanic/></DeferredExperience>
+    {awakened&&unlocked&&
+      <DeferredExperience kind="experiment" id="consistency" label="Consistency Experiment">
+        <ConsistencyExperiment/>
+      </DeferredExperience>}
   </section>;
 }
 
@@ -279,12 +285,14 @@ export default function Exhibition() {
       <Hero awakened={awakened} onChange={setAwakened} signalCount={signals.length}/>
       <div className="identity-ribbon" aria-hidden="true"><div className="marquee-track"><span className="marquee-copy">PIXELS WERE HARMED IN THE MAKING OF THIS WEBSITE ✳ IT WORKED LOCALLY ✳ THEN WE DEPLOYED IT ✳ </span><span className="marquee-copy">PIXELS WERE HARMED IN THE MAKING OF THIS WEBSITE ✳ IT WORKED LOCALLY ✳ THEN WE DEPLOYED IT ✳ </span></div></div>
       <Projects awakened={awakened} onDiscover={discoverSignal} signals={signals}/>
-      <IncidentReplay awakened={awakened} onDiscover={discoverSignal} signals={signals}/>
+      <DeferredExperience id="incident" kind="lab" label="Incident Investigation">
+        <IncidentReplay awakened={awakened} onDiscover={discoverSignal} signals={signals}/>
+      </DeferredExperience>
       <Experience/>
       <Skills/>
       <PlaySection/>
       <ContactSection/>
-      <FinalBoss awakened={awakened} onDiscover={discoverSignal} signals={signals}/>
+      <FinalBoss awakened={awakened} onDiscover={discoverSignal} signals={signals} unlocked={unlocked}/>
     </main>
     <footer className="exhibition-footer" id="site-footer">
       <a href="#top" className="footer-identity">CD<span>®</span></a>
