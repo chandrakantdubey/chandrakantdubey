@@ -55,14 +55,14 @@ function GlassVial({large=false}:{large?:boolean}) {
 function speechAvailable():boolean {
   return typeof window!=="undefined" &&
     typeof window.speechSynthesis?.speak==="function" &&
-    typeof window.SpeechSynthesisUtterance==="function";
+    typeof SpeechSynthesisUtterance==="function";
 }
 function speak(text:string) {
   if(!speechAvailable())return;
   try{
   const engine=window.speechSynthesis;
   engine.cancel();
-  const line=new window.SpeechSynthesisUtterance(text);
+  const line=new SpeechSynthesisUtterance(text);
   line.lang="en-GB";
   line.pitch=1.27;
   line.rate=1.06;
