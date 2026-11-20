@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
-import { ArrowLeft, ArrowUpRight, Check, Copy, Headphones, HeadphoneOff, Play, RotateCcw, ShieldPlus, Users, Zap } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { ArrowLeft, ArrowUpRight, Check, Copy, Headphones, HeadphoneOff, Play, RotateCcw, ShieldPlus, Users } from "lucide-react";
 import {
   COLS, ROWS, ROUND_MS, KINDS, newPacketGame, beginPacketGame,
   advancePacketGame, rotatePacketTile, patchPacketNetwork, timeRemaining, waveForTick,
