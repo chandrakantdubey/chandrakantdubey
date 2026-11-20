@@ -87,6 +87,17 @@ const b=await post("rotate",{...g,index:2,commandId:uuid(6)});
 assert.equal(b.status,200);
 assert.equal(b.game.tiles[1].rotation,(before.game.tiles[1].rotation+1)&3);
 assert.equal(b.game.tiles[2].rotation,(before.game.tiles[2].rotation+1)&3);
+const concurrentBefore=JSON.parse(records.get(path).body).game;
+const concurrent=await Promise.all([
+  post("rotate",{...h,index:3,commandId:uuid(20)}),
+  post("rotate",{...g,index:4,commandId:uuid(21)}),
+]);
+assert.deepEqual(concurrent.map(x=>x.status),[200,200],"simultaneous player actions must both commit");
+const concurrentFinal=await post("snapshot",h);
+assert.equal(concurrentFinal.game.tiles[3].rotation,(concurrentBefore.tiles[3].rotation+1)&3);
+assert.equal(concurrentFinal.game.tiles[4].rotation,(concurrentBefore.tiles[4].rotation+1)&3,
+  "CAS retries must preserve both concurrent rotations");
+
 const duplicate=await post("rotate",{...h,index:1,commandId:uuid(5)});
 assert.equal(duplicate.status,200);
 assert.equal(duplicate.game.tiles[1].rotation,b.game.tiles[1].rotation,"retry is idempotent");
