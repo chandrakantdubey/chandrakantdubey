@@ -110,6 +110,9 @@ export default function PacketPanic({standalone=false}:{standalone?:boolean}) {
   },[]);
 
   const applyServer=useCallback((response:RoomResponse)=>{
+    // The side is authoritative on reconnect too; a guest refreshing the
+    // invite must never regain host control over the ingress routers.
+    if(response.player)setPlayer(response.player);
     if(response.game)setGame(previous=>
       mode==="online"&&previous.version>response.game!.version?previous:response.game!);
   },[mode]);
