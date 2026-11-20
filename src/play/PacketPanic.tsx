@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ArrowLeft, ArrowUpRight, Check, Copy, Headphones, HeadphoneOff, Play, RotateCcw, ShieldPlus, Users } from "lucide-react";
+import { ArrowLeft, ArrowUpRight, CalendarDays, Check, Copy, Headphones, HeadphoneOff, Play, RotateCcw, ShieldPlus, Share2, Users } from "lucide-react";
 import {
   COLS, ROWS, ROUND_MS, KINDS, newPacketGame, beginPacketGame,
   advancePacketGame, rotatePacketTile, patchPacketNetwork, timeRemaining, waveForTick,
   type PacketGameState,
 } from "./packetEngine.js";
+import { challengeSeed, resultShareText, utcChallengeDay } from "./dailyChallenge";
 
 type Mode="solo"|"online";
 type RoomResponse={
@@ -75,6 +76,13 @@ export default function PacketPanic({standalone=false}:{standalone?:boolean}) {
   const [notice,setNotice]=useState("");
   const [now,setNow]=useState(()=>Date.now());
   const [soundOn,setSoundOn]=useState(false);
+  const challengeDay=useRef(utcChallengeDay()).current;
+  const [daily,setDaily]=useState(false);
+  const [dailyBest,setDailyBest]=useState(()=>{
+    try{return Number(localStorage.getItem("cd-packet-daily-"+utcChallengeDay())||0)||0;}
+    catch{return 0;}
+  });
+  const reported=useRef("");
   const audio=useRef<AudioContext|null>(null);
   const lastEventId=useRef(-1);
   const pollBusy=useRef(false);
@@ -88,6 +96,8 @@ export default function PacketPanic({standalone=false}:{standalone?:boolean}) {
   const canPlay=playing&&!busy;
   const inviteLink=room?window.location.origin+"/play/packet?room="+encodeURIComponent(room):"";
   const activePlayers=connected?game.players:1;
+  const myColumns=player===1?"01–04":"05–07";
+  const challengeId=challengeDay.replaceAll("-","");
 
   useEffect(()=>{
     mounted.current=true;
@@ -100,6 +110,9 @@ export default function PacketPanic({standalone=false}:{standalone?:boolean}) {
   },[]);
 
   const applyServer=useCallback((response:RoomResponse)=>{
+    // The side is authoritative on reconnect too; a guest refreshing the
+    // invite must never regain host control over the ingress routers.
+    if(response.player)setPlayer(response.player);
     if(response.game)setGame(previous=>
       mode==="online"&&previous.version>response.game!.version?previous:response.game!);
   },[mode]);
@@ -124,12 +137,16 @@ export default function PacketPanic({standalone=false}:{standalone?:boolean}) {
   },[connected,sync]);
 
   useEffect(()=>{
+    // The board does not need idle polling or 8 React renders a second.
+    // Only an active round drives the client clock; the deterministic engine
+    // still advances on fixed 520ms ticks and catches up after tab suspension.
+    if(game.phase!=="playing")return;
     const timer=window.setInterval(()=>{
       const time=Date.now();setNow(time);
       if(mode==="solo")setGame(previous=>advancePacketGame(previous,time));
-    },120);
+    },200);
     return()=>window.clearInterval(timer);
-  },[mode]);
+  },[mode,game.phase]);
 
   useEffect(()=>{
     if(!soundOn||game.eventId===lastEventId.current)return;
@@ -142,9 +159,31 @@ export default function PacketPanic({standalone=false}:{standalone?:boolean}) {
 
   useEffect(()=>()=>{if(audio.current)void audio.current.close();},[]);
 
+  useEffect(()=>{
+    if(!finished||game.startedAt===null)return;
+    const key=[mode,room,game.seed,game.startedAt].join(":");
+    if(reported.current===key)return;
+    reported.current=key;
+    window.dispatchEvent(new CustomEvent("cd:packet-result",{
+      detail:{won:game.phase==="won",score:game.score,integrity:game.integrity,
+        delivered:game.delivered,cooperative:mode==="online"},
+    }));
+    if(mode==="solo"&&daily&&game.score>dailyBest){
+      setDailyBest(game.score);
+      try{localStorage.setItem("cd-packet-daily-"+challengeDay,String(game.score));}
+      catch{/* local personal best is optional */}
+    }
+  },[finished,game.phase,game.startedAt,game.seed,game.score,game.integrity,game.delivered,mode,room,daily,dailyBest,challengeDay]);
+
   const solo=()=>{
     setMode("solo");setGame(newPacketGame(Date.now(),1));setRoom("");setToken("");
-    setInvite("");setNotice("");setCopied(false);setLinkRoom(null);
+    setInvite("");setNotice("");setCopied(false);setLinkRoom(null);setDaily(false);
+  };
+  const startDaily=()=>{
+    setMode("solo");setDaily(true);setRoom("");setToken("");setInvite("");
+    setNotice("");setLinkRoom(null);
+    setGame(beginPacketGame(newPacketGame(challengeSeed(challengeDay),1),Date.now()));
+    if(soundOn)tone(audio,670,.14);
   };
   const playSolo=()=>{
     setMode("solo");setNotice("");setGame(previous=>beginPacketGame(previous,Date.now()));
@@ -157,7 +196,7 @@ export default function PacketPanic({standalone=false}:{standalone?:boolean}) {
       if(!response.room||!response.token||!response.game)throw Error("Incomplete room response.");
       saveToken(response.room,response.token);
       setRoom(response.room);setToken(response.token);setPlayer(1);
-      setMode("online");setGame(response.game);setInvite("");setRoomEntry(response.room);
+      setMode("online");setDaily(false);setGame(response.game);setInvite("");setRoomEntry(response.room);
       setLinkRoom(response.room);
     }catch(error){setNotice(messageFrom(error));}
     finally{setBusy(false);}
@@ -173,7 +212,7 @@ export default function PacketPanic({standalone=false}:{standalone?:boolean}) {
       if(!response.game||(!response.token&&!existing))throw Error("Incomplete room response.");
       const secret=response.token||existing;
       saveToken(value,secret);
-      setRoom(value);setToken(secret);setMode("online");
+      setRoom(value);setToken(secret);setMode("online");setDaily(false);
       setPlayer(response.player||2);setGame(response.game);
       setInvite("");setRoomEntry(value);setLinkRoom(value);
     }catch(error){setNotice(messageFrom(error));}
@@ -192,6 +231,7 @@ export default function PacketPanic({standalone=false}:{standalone?:boolean}) {
   };
   const rotate=(index:number)=>{
     if(!canPlay)return;
+    if(connected&&(player===1?index%COLS>=4:index%COLS<4))return;
     if(mode==="solo"){
       setGame(previous=>rotatePacketTile(previous,index));
       if(soundOn)tone(audio,300+index*6,.06);
@@ -205,13 +245,18 @@ export default function PacketPanic({standalone=false}:{standalone?:boolean}) {
     }else void send("patch");
   };
   const restart=()=>{
-    if(mode==="solo")solo();
+    if(mode==="solo"){if(daily)startDaily();else solo();}
     else void send("restart");
   };
   const share=async()=>{
     if(!inviteLink)return;
     try{await navigator.clipboard.writeText(inviteLink);setCopied(true);setNotice("Invite link copied. Find a competent co-pilot.");}
     catch{setNotice("Copy the room link from your address bar.");}
+  };
+  const shareScore=async()=>{
+    const message=resultShareText(daily?challengeDay:null,game.score,game.delivered,game.integrity,game.phase==="won",mode==="online");
+    try{await navigator.clipboard.writeText(message);setNotice("Result copied. Go humble somebody.");}
+    catch{setNotice("Clipboard unavailable. The score is still visible above.");}
   };
   const toggleSound=()=>{
     setSoundOn(enabled=>!enabled);
@@ -230,7 +275,7 @@ export default function PacketPanic({standalone=false}:{standalone?:boolean}) {
     <div className="packet-topline">
       <div className="packet-brand"><span className="packet-live-dot"/> PACKET PANIC <span className="packet-brand-icon">✳</span></div>
       <div className="packet-top-actions">
-        <span className="packet-connectivity">{connected?activePlayers+"/2 OPERATORS ONLINE":"SOLO / LOCAL ENGINE"}</span>
+        <span className="packet-connectivity">{connected?activePlayers+"/2 OPERATORS ONLINE":daily?"DAILY "+challengeId+" / UTC":"SOLO / LOCAL ENGINE"}</span>
         <button type="button" className="packet-icon-button" onClick={toggleSound}
           aria-label={soundOn?"Mute arcade sounds":"Enable arcade sounds"}>
           {soundOn?<Headphones size={18}/>:<HeadphoneOff size={18}/>}
@@ -261,7 +306,7 @@ export default function PacketPanic({standalone=false}:{standalone?:boolean}) {
       <div className="packet-orbit orbit-one" aria-hidden="true"/>
       <div className="packet-orbit orbit-two" aria-hidden="true"/>
       <div className="packet-arena-heading">
-        <span><i/> {playing?"LIVE NETWORK":"NETWORK STANDBY"}</span>
+        <span><i/> {playing?"LIVE NETWORK":"NETWORK STANDBY"}{daily?" · DAILY RUN":""}</span>
         <span>WAVE {wave}/3 <b>·</b> {game.packets.length} SIGNALS IN FLIGHT</span>
       </div>
       <div className="packet-board-frame">
@@ -271,12 +316,13 @@ export default function PacketPanic({standalone=false}:{standalone?:boolean}) {
             const sink=tile.col===COLS-1&&(tile.row===1||tile.row===3);
             const isFault=game.lastFault===index&&game.tick-game.faultAtTick<8;
             const mask=KINDS[tile.kind];
+            const partnerControlled=connected&&(player===1?tile.col>=4:tile.col<4);
             return <button key={index} type="button" data-node={index}
-              className={"packet-node"+(endpoint?" packet-entry":"")+(sink?" packet-exit":"")+(isFault?" packet-fault":"")}
-              disabled={!canPlay}
+              className={"packet-node"+(endpoint?" packet-entry":"")+(sink?" packet-exit":"")+(isFault?" packet-fault":"")+(partnerControlled?" packet-partner-node":"")}
+              disabled={!canPlay||partnerControlled}
               onClick={()=>rotate(index)}
               aria-label={"Router row "+(tile.row+1)+", column "+(tile.col+1)+", "+tile.kind+", rotate clockwise"}
-              title="Rotate 90° clockwise">
+              title={partnerControlled?"Your co-pilot controls this half":"Rotate 90° clockwise"}>
               <span className="packet-node-index">{String(index+1).padStart(2,"0")}</span>
               <svg className="packet-wires" viewBox="0 0 100 100" aria-hidden="true"
                 style={{transform:"rotate("+(tile.rotation*90)+"deg)"}}>
@@ -301,13 +347,16 @@ export default function PacketPanic({standalone=false}:{standalone?:boolean}) {
         <div className="packet-edge-marker packet-edge-left">DATA IN <span>◆</span></div>
         <div className="packet-edge-marker packet-edge-right">DATA OUT <span>✦</span></div>
       </div>
+      {playing&&game.lastFault!==null&&game.tick-game.faultAtTick<8&&
+        <div className="packet-incident-alert" role="status"><span>⚡ ROUTER {String(game.lastFault+1).padStart(2,"0")}</span> AUTO-ROTATED BY A NETWORK FAULT</div>}
+      {playing&&game.lastEvent==="delivered"&&<div key={"burst-"+game.eventId} className="packet-delivery-burst" aria-hidden="true">ROUTE VERIFIED +</div>}
       {game.phase==="ready"&&<div className="packet-screen">
         <div className="packet-screen-noise" aria-hidden="true"/>
         <div className="packet-screen-content">
           <span className="packet-eyebrow">{connected?"CO-OP SESSION CONNECTED":invite?"YOU'VE BEEN SUMMONED":"SYSTEM READY / NO PRESSURE"}</span>
           <strong>{connected&&activePlayers===1?"NEED ONE\nMORE HUMAN.":connected?"TWO BRAINS.\nONE NETWORK.":invite?"YOUR FRIEND\nNEEDS HELP.":"SAVE THE\nINTERNET."}</strong>
-          <p>{connected&&activePlayers===1?"Send your partner the invite. Both of you can rotate every router.":
-            connected?"Operator one starts the round. Both players share the same damage, score and repair charges.":
+          <p>{connected&&activePlayers===1?"Invite your co-pilot. Operator 1 owns the ingress routers; operator 2 owns the egress routers.":
+            connected?"Operator 1 controls columns 1–4; operator 2 controls columns 5–7. Damage, repairs and score are shared.":
             invite?"Join their room and collaboratively reroute packets before everything breaks.":
             "Rotate circuit tiles to build paths from IN to OUT. Cyan and lime packets each have their own destination. Survive three waves."}</p>
           {connected ? (activePlayers===1?
@@ -325,6 +374,8 @@ export default function PacketPanic({standalone=false}:{standalone?:boolean}) {
           <strong>{headline}</strong>
           <p>{status}</p>
           <div className="packet-result-stats"><span>{game.score.toLocaleString()} PTS</span><span>{game.delivered} DELIVERED</span><span>{game.integrity}% HEALTH</span></div>
+          {mode==="solo"&&daily&&<div className="packet-daily-record">DAILY {challengeId} · BEST {Math.max(dailyBest,game.score).toLocaleString()} PTS</div>}
+          <button type="button" className="packet-share-score" onClick={()=>void shareScore()}><Share2 size={16}/> COPY YOUR RESULT</button>
           {mode==="solo"?<button type="button" className="packet-start" onClick={restart}>RUN IT BACK <RotateCcw size={18}/></button>:
             player===1?<button type="button" className="packet-start" disabled={busy} onClick={restart}>NEW CO-OP ROUND <RotateCcw size={18}/></button>:
             <span className="packet-wait">HOST CAN START A REMATCH</span>}
@@ -335,7 +386,7 @@ export default function PacketPanic({standalone=false}:{standalone?:boolean}) {
     <div className="packet-commandbar">
       <div className="packet-command-status" role="status" aria-live="polite">
         <span className={playing?"packet-command-flash":""}>{playing?"●":"○"} {playing?"NETWORK UNDER LOAD":finished?"ROUND COMPLETE":"READY TO ROUTE"}</span>
-        <strong>{status}</strong>
+        <strong>{connected&&playing?"YOU: "+(player===1?"INGRESS":"EGRESS")+" · ROUTERS "+myColumns+" · SHARED REPAIRS. "+status:status}</strong>
       </div>
       <div className="packet-tools">
         <div className="packet-wave-stamp">SURVIVE 90 SECONDS <span>·</span> WAVE {wave} / 3</div>
@@ -346,6 +397,7 @@ export default function PacketPanic({standalone=false}:{standalone?:boolean}) {
     <div className="packet-bottom">
       <div className="packet-mode-toolbar">
         {mode==="solo"?<>
+          <button type="button" className="packet-daily-button" onClick={startDaily}><CalendarDays size={17}/> DAILY CHALLENGE <span>{challengeDay}</span></button>
           <button type="button" className="packet-toolbar-primary" disabled={busy||onlineAvailable!==true}
             onClick={()=>void create()}><Users size={17}/> PLAY WITH A FRIEND <ArrowUpRight size={16}/></button>
           <div className="packet-room-entry"><label htmlFor={standalone?"packet-join-full":"packet-join-home"}>HAVE AN INVITE?</label>
@@ -365,7 +417,7 @@ export default function PacketPanic({standalone=false}:{standalone?:boolean}) {
       </div>
       <div className="packet-bottom-note">
         <span>CLICK / TAP = ROTATE 90°</span><span>CYAN ↗ TOP ROUTE <b>✳</b> LIME ↘ BOTTOM ROUTE</span>
-        <span>{connected?"SHARED STATE · SYNC ~1S":"ZERO LOGINS · ALL YOUR MISTAKES"}</span>
+        <span>{connected?"SPLIT CONTROLS · SHARED STATE · SYNC ~1S":daily?"SAME UTC SEED FOR EVERYONE · LOCAL BEST ONLY":"ZERO LOGINS · ALL YOUR MISTAKES"}</span>
       </div>
       {notice&&<p className="packet-notice" role="alert">{notice}</p>}
     </div>

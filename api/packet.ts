@@ -175,6 +175,8 @@ export async function POST(request:Request):Promise<Response> {
         else game=beginPacketGame(game);
       }else if(action==="rotate"){
         if(game.phase!=="playing")error="Start the game first.";
+        else if(player===1&&index!%7>=4)error="Operator 1 controls the ingress side (columns 1–4).";
+        else if(player===2&&index!%7<4)error="Operator 2 controls the egress side (columns 5–7).";
         else game=rotatePacketTile(game,index!);
       }else if(action==="patch"){
         if(game.phase!=="playing"||game.patches<=0||game.integrity>=100)

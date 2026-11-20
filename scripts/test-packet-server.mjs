@@ -74,6 +74,7 @@ assert.notEqual(guest.token,host.token);
 const g={room:guest.room,token:guest.token};
 assert.equal((await post("join",{room:h.room})).status,409);
 assert.equal((await post("snapshot",{room:h.room,token:"x".repeat(32)})).status,403);
+assert.equal((await post("snapshot",g)).player,2,"a returning guest keeps the egress role");
 assert.equal((await post("start",{...g,commandId:uuid(2)})).status,409,"guest can't start");
 const start=await post("start",{...h,commandId:uuid(3)});
 assert.equal(start.status,200);
@@ -83,10 +84,14 @@ const code=h.room,path="packet/v1/"+code+".json";
 const before=JSON.parse(records.get(path).body);
 const a=await post("rotate",{...h,index:1,commandId:uuid(5)});
 assert.equal(a.status,200);
-const b=await post("rotate",{...g,index:2,commandId:uuid(6)});
+const b=await post("rotate",{...g,index:5,commandId:uuid(6)});
 assert.equal(b.status,200);
 assert.equal(b.game.tiles[1].rotation,(before.game.tiles[1].rotation+1)&3);
-assert.equal(b.game.tiles[2].rotation,(before.game.tiles[2].rotation+1)&3);
+assert.equal(b.game.tiles[5].rotation,(before.game.tiles[5].rotation+1)&3);
+assert.equal((await post("rotate",{...g,index:2,commandId:uuid(30)})).status,409,
+  "guest cannot rotate the host ingress side");
+assert.equal((await post("rotate",{...h,index:5,commandId:uuid(31)})).status,409,
+  "host cannot rotate the guest egress side");
 const concurrentBefore=JSON.parse(records.get(path).body).game;
 const concurrent=await Promise.all([
   post("rotate",{...h,index:3,commandId:uuid(20)}),
