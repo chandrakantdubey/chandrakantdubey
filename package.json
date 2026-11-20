@@ -8,7 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "eslint src/atelier/ContactSection.tsx src/atelier/content.ts src/atelier/clientWork.ts src/exhibition src/play",
     "preview": "vite preview",
-    "test": "node --experimental-strip-types scripts/test-exhibition.mjs && node --experimental-strip-types scripts/test-specimen.mjs && node --experimental-strip-types scripts/test-power.mjs && node --experimental-strip-types scripts/test-play.mjs && node --experimental-strip-types scripts/test-packet.mjs && node --experimental-strip-types scripts/test-packet-server.mjs && node --experimental-strip-types scripts/test-contact.mjs",
+    "test": "node --experimental-strip-types scripts/test-exhibition.mjs && node --experimental-strip-types scripts/test-specimen.mjs && node --experimental-strip-types scripts/test-signal-trail.mjs && node --experimental-strip-types scripts/test-power.mjs && node --experimental-strip-types scripts/test-play.mjs && node --experimental-strip-types scripts/test-packet.mjs && node --experimental-strip-types scripts/test-packet-server.mjs && node --experimental-strip-types scripts/test-contact.mjs",
     "test:browser": "node scripts/browser-smoke.mjs",
     "typecheck:api": "tsc -p tsconfig.api.json"
   },
