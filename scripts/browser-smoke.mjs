@@ -138,6 +138,7 @@ try{
   await poll(()=>cdp.eval("!!document.querySelector('[role=dialog].specimen-inspection')"),"specimen inspection opens");
   assert.ok(await cdp.eval("document.querySelector('.specimen-inspection-copy h2').textContent.includes('Still sealed')"));
   assert.ok(await cdp.eval("document.activeElement.classList.contains('specimen-close')"),"dialog focuses its close control");
+  await delay(340);
   await cdp.screenshot("specimen-inspection-desktop.png");
   await cdp.send("Input.dispatchKeyEvent",{type:"keyDown",key:"Escape",code:"Escape",windowsVirtualKeyCode:27});
   await cdp.send("Input.dispatchKeyEvent",{type:"keyUp",key:"Escape",code:"Escape",windowsVirtualKeyCode:27});
@@ -153,6 +154,10 @@ try{
   await delay(1730);
   assert.ok(await cdp.eval("!document.querySelector('.specimen-apparition')"),"cinematic overlay always completes");
   await cdp.screenshot("specimen-awakened-desktop.png");
+  await cdp.eval("window.dispatchEvent(new Event('scroll'))");
+  await poll(()=>cdp.eval("!document.querySelector('.specimen-dock-panel')"),
+    "expanded companion must retract when the visitor scrolls");
+  await cdp.eval("document.querySelector('.specimen-dock-toggle').click()");
   await cdp.eval("document.querySelector('.specimen-dock-links button[aria-label=\"Restore original experience\"]').click()");
   assert.equal(await cdp.eval("document.querySelector('.exhibition-site').dataset.specimenState"),"sealed",
     "restoration must reverse the transformation without a reload");
@@ -324,6 +329,7 @@ try{
   assert.ok(vialMobile.left>=-1&&vialMobile.right<=vialMobile.width+1,
     "vial inspection fits mobile width "+JSON.stringify(vialMobile));
   assert.ok(vialMobile.bottom<=vialMobile.height+2,"inspection fits 390px phone height "+JSON.stringify(vialMobile));
+  await delay(340);
   await cdp.screenshot("specimen-inspection-mobile.png");
   await cdp.eval("document.querySelector('.specimen-primary').click()");
   await poll(()=>cdp.eval("document.querySelector('.exhibition-site').dataset.specimenState==='awakened'"),
