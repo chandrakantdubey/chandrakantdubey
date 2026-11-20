@@ -94,7 +94,7 @@ function Navigation() {
   </>;
 }
 
-function Hero({awakened,onChange}:{awakened:boolean;onChange:(value:boolean)=>void}) {
+function Hero({awakened,onChange,signalCount}:{awakened:boolean;onChange:(value:boolean)=>void;signalCount:number}) {
   return <section className="exhibition-hero" id="top" aria-labelledby="hero-heading">
     <div className="hero-grain" aria-hidden="true"/>
     <div className="hero-top-bar"><span>NO TEMPLATE IN SIGHT.</span><span>MUMBAI · ONLINE</span></div>
@@ -103,7 +103,7 @@ function Hero({awakened,onChange}:{awakened:boolean;onChange:(value:boolean)=>vo
       <span className="hero-name-bottom" aria-hidden="true">DUBEY<span className="hero-dot">.</span></span>
     </h1>
     <div className="hero-sculpture"><CodeMonument/></div>
-    <SpecimenExperience awakened={awakened} onChange={onChange}/>
+    <SpecimenExperience awakened={awakened} onChange={onChange} signalCount={signalCount}/>
     <span className="hero-rotator-caption">GO ON, POKE IT <span> / </span> IT WON'T BITE</span>
     <div className="hero-meta">
       <p>It worked locally. Promise.</p>
@@ -292,7 +292,7 @@ export default function Exhibition() {
     data-specimen-state={awakened?"awakened":"sealed"}>
     <Navigation/>
     <main id="main">
-      <Hero awakened={awakened} onChange={setAwakened}/>
+      <Hero awakened={awakened} onChange={setAwakened} signalCount={signals.length}/>
       <div className="identity-ribbon" aria-hidden="true"><div className="marquee-track"><span className="marquee-copy">PIXELS WERE HARMED IN THE MAKING OF THIS WEBSITE ✳ IT WORKED LOCALLY ✳ THEN WE DEPLOYED IT ✳ </span><span className="marquee-copy">PIXELS WERE HARMED IN THE MAKING OF THIS WEBSITE ✳ IT WORKED LOCALLY ✳ THEN WE DEPLOYED IT ✳ </span></div></div>
       <Projects awakened={awakened} onDiscover={discoverSignal} signals={signals}/>
       <IncidentReplay awakened={awakened} onDiscover={discoverSignal} signals={signals}/>
