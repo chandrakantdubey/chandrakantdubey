@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import {
-  assessment,advanceIncident,createIncident,decodeIncidentReplay,encodeIncidentReplay,
+  assessment,advanceIncident,createIncident,decodeIncidentReplay,encodeIncidentReplay,traceSpans,
   evidencePanel,intervene,isRecovered,SCENARIOS,
   type IncidentAction,type IncidentEvidenceTab,type IncidentKind,type IncidentMetric,type IncidentState,
 } from "./incidentEngine";
@@ -107,6 +107,7 @@ export default function IncidentWorkbench() {
   const recovered=isRecovered(state);
   const result=assessment(state);
   const selectedTick=point.tick;
+  const spans=useMemo(()=>traceSpans(state,selectedTick),[state,selectedTick]);
   useEffect(()=>{if(recovered&&state.actions.length)revealDiscovery("recovery");},[recovered,state.actions.length]);
   const reset=(kind:IncidentKind=state.kind,seed=state.seed)=>{
     window.history.replaceState(null,"",window.location.pathname);
@@ -165,6 +166,20 @@ export default function IncidentWorkbench() {
             {(Object.keys(SERIES) as Series[]).map(key=><button key={key} type="button" aria-pressed={series===key} onClick={()=>setSeries(key)}>{SERIES[key].label}</button>)}
           </div>
           <TelemetryChart state={state} series={series} selectedTick={selectedTick} onSelectTick={setFocusTick}/>
+        </div>
+        <div className="iw-waterfall">
+          <div className="iw-panel-heading"><strong>SIMULATED DISTRIBUTED TRACE</strong><span>T+{selectedTick} / {point.latency}ms</span></div>
+          <p>Inspect the modeled latency contribution and focus a service. These spans are derived, not captured from a real tracing system.</p>
+          <div className="iw-span-list">
+            {spans.map(span=><button type="button" key={span.service} aria-pressed={selectedService===span.service}
+              onClick={()=>setSelectedService(span.service)}>
+              <span className="iw-span-name">{span.operation}</span>
+              <span className="iw-span-rail"><i className={span.status==="slow"?"iw-span-slow":""}
+                style={{left:(span.startMs/Math.max(1,point.latency)*100)+"%",
+                  width:Math.max(2,span.durationMs/Math.max(1,point.latency)*100)+"%"}}/></span>
+              <span className="iw-span-duration">{span.durationMs}ms</span>
+            </button>)}
+          </div>
         </div>
         <Topology state={state} selected={selectedService} onSelect={setSelectedService}/>
       </div>
