@@ -1,0 +1,36 @@
+/*
+ * Cinematic edition: preserve the editorial chapter progression while
+ * bringing the homepage into the same dark art direction as the lab.
+ */
+.exhibition-nav {
+  background:rgba(8,10,25,.95);
+  border-bottom:1px solid #e8e9fb25;
+}
+.exhibition-hero {
+  background:#090d1f;
+  background-image:
+    radial-gradient(ellipse 62% 75% at 67% 49%,#6651c08a,transparent 78%),
+    radial-gradient(ellipse 40% 50% at 25% 105%,#b85f6359,transparent 80%),
+    radial-gradient(ellipse 80% 95% at 90% 8%,#231749 0%,#080d1b 95%);
+}
+.exhibition-hero::before {
+  content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent 0 93px,#bcb5ff0c 94px 95px),
+  repeating-linear-gradient(90deg,transparent 0 93px,#bcb5ff0c 94px 95px);
+  mask-image:linear-gradient(to bottom,#0007,transparent 85%);
+}
+.exhibition-hero::after {
+  content:"";position:absolute;z-index:0;width:min(71vw,930px);aspect-ratio:1;
+  top:50%;left:54%;transform:translate(-35%,-50%);border-radius:50%;
+  background:radial-gradient(circle at center,#af95f31f,transparent 62%);
+  box-shadow:0 0 150px 12px #a175ea2b;pointer-events:none;
+}
+.hero-name-top {text-shadow:0 14px 40px #040713bd;}
+.hero-name-bottom {color:#e7f4b2;text-shadow:0 18px 70px #dac1ff44;}
+.hero-meta-side a {border-color:#efffcba6;}
+.hero-sculpture {filter:drop-shadow(0 25px 58px #bb95fa45);}
+.exhibition-hero .hero-top-bar {color:#f0eafa;}
+.exhibition-nav .nav-items>a:last-child {color:#ddf6a3;}
+@media(prefers-reduced-motion:reduce) {
+  .exhibition-hero::after {animation:none;}
+}

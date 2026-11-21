@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ArrowLeft, ArrowUpRight, CalendarDays, Check, Copy, Headphones, HeadphoneOff, Play, RotateCcw, ShieldPlus, Share2, Users } from "lucide-react";
 import {
-  COLS, ROWS, ROUND_MS, KINDS, newPacketGame, beginPacketGame,
+  COLS, ROWS, ROUND_MS, KINDS, newPacketGame, newSiegeGame, beginPacketGame,
   advancePacketGame, rotatePacketTile, patchPacketNetwork, timeRemaining, waveForTick,
   type PacketGameState,
 } from "./packetEngine.js";
@@ -91,8 +91,10 @@ export default function PacketPanic({standalone=false}:{standalone?:boolean}) {
   const playing=game.phase==="playing";
   const finished=game.phase==="won"||game.phase==="lost";
   const remaining=Math.ceil(timeRemaining(game,now)/1000);
-  const progress=game.phase==="ready"?0:(ROUND_MS-timeRemaining(game,now))/ROUND_MS;
-  const wave=waveForTick(game.tick);
+  const roundDuration=game.roundMs??ROUND_MS;
+  const siege=game.mode==="siege";
+  const progress=game.phase==="ready"?0:(roundDuration-timeRemaining(game,now))/roundDuration;
+  const wave=waveForTick(game.tick,game.mode);
   const canPlay=playing&&!busy;
   const inviteLink=room?window.location.origin+"/play/packet?room="+encodeURIComponent(room):"";
   const activePlayers=connected?game.players:1;
@@ -179,6 +181,12 @@ export default function PacketPanic({standalone=false}:{standalone?:boolean}) {
     setMode("solo");setGame(newPacketGame(Date.now(),1));setRoom("");setToken("");
     setInvite("");setNotice("");setCopied(false);setLinkRoom(null);setDaily(false);
   };
+  const startSiege=()=>{
+    setMode("solo");setDaily(false);setRoom("");setToken("");setInvite("");
+    setNotice("");setLinkRoom(null);
+    setGame(beginPacketGame(newSiegeGame(Date.now()),Date.now()));
+    if(soundOn)tone(audio,460,.19);
+  };
   const startDaily=()=>{
     setMode("solo");setDaily(true);setRoom("");setToken("");setInvite("");
     setNotice("");setLinkRoom(null);
@@ -245,7 +253,7 @@ export default function PacketPanic({standalone=false}:{standalone?:boolean}) {
     }else void send("patch");
   };
   const restart=()=>{
-    if(mode==="solo"){if(daily)startDaily();else solo();}
+    if(mode==="solo"){if(siege)startSiege();else if(daily)startDaily();else solo();}
     else void send("restart");
   };
   const share=async()=>{
@@ -264,7 +272,7 @@ export default function PacketPanic({standalone=false}:{standalone?:boolean}) {
   };
   const headline=game.phase==="won"?"SYSTEM SAVED.":game.phase==="lost"?"TOTAL OUTAGE.":playing?"KEEP IT FLOWING.":"THE NETWORK IS YOURS.";
   const status=game.phase==="won"
-    ?"90 seconds. Internet intact. Absolutely no one noticed."
+    ?siege?"Four minutes. Five waves. A network that somehow survived you.":"90 seconds. Internet intact. Absolutely no one noticed."
     :game.phase==="lost"
       ?"The packets have unionized. Try a different route."
       :playing?"Tap a router to rotate it. Match the incoming and outgoing ports."
@@ -275,7 +283,7 @@ export default function PacketPanic({standalone=false}:{standalone?:boolean}) {
     <div className="packet-topline">
       <div className="packet-brand"><span className="packet-live-dot"/> PACKET PANIC <span className="packet-brand-icon">✳</span></div>
       <div className="packet-top-actions">
-        <span className="packet-connectivity">{connected?activePlayers+"/2 OPERATORS ONLINE":daily?"DAILY "+challengeId+" / UTC":"SOLO / LOCAL ENGINE"}</span>
+        <span className="packet-connectivity">{connected?activePlayers+"/2 OPERATORS ONLINE":siege?"SIEGE / FIVE WAVES":daily?"DAILY "+challengeId+" / UTC":"SOLO / LOCAL ENGINE"}</span>
         <button type="button" className="packet-icon-button" onClick={toggleSound}
           aria-label={soundOn?"Mute arcade sounds":"Enable arcade sounds"}>
           {soundOn?<Headphones size={18}/>:<HeadphoneOff size={18}/>}
@@ -389,7 +397,7 @@ export default function PacketPanic({standalone=false}:{standalone?:boolean}) {
         <strong>{connected&&playing?"YOU: "+(player===1?"INGRESS":"EGRESS")+" · ROUTERS "+myColumns+" · SHARED REPAIRS. "+status:status}</strong>
       </div>
       <div className="packet-tools">
-        <div className="packet-wave-stamp">SURVIVE 90 SECONDS <span>·</span> WAVE {wave} / 3</div>
+        <div className="packet-wave-stamp">SURVIVE {siege?"240":"90"} SECONDS <span>·</span> WAVE {wave} / {siege?"5":"3"}</div>
         <button className="packet-repair" type="button" disabled={!canPlay||game.patches===0||game.integrity>=100}
           onClick={patch}><ShieldPlus size={18}/> PATCH NETWORK <b>{game.patches} LEFT</b></button>
       </div>
@@ -397,6 +405,7 @@ export default function PacketPanic({standalone=false}:{standalone?:boolean}) {
     <div className="packet-bottom">
       <div className="packet-mode-toolbar">
         {mode==="solo"?<>
+          <button type="button" className="packet-daily-button" onClick={startSiege}>⚡ SIEGE MODE <span>5 WAVES / 240S</span></button>
           <button type="button" className="packet-daily-button" onClick={startDaily}><CalendarDays size={17}/> DAILY CHALLENGE <span>{challengeDay}</span></button>
           <button type="button" className="packet-toolbar-primary" disabled={busy||onlineAvailable!==true}
             onClick={()=>void create()}><Users size={17}/> PLAY WITH A FRIEND <ArrowUpRight size={16}/></button>

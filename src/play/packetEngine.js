@@ -8,6 +8,7 @@ export const ROWS = 5;
 export const TILE_COUNT = COLS * ROWS;
 export const TICK_MS = 520;
 export const ROUND_MS = 90_000;
+export const SIEGE_MS = 240_000;
 export const MAX_TICKS = Math.ceil(ROUND_MS / TICK_MS);
 export const PORT = Object.freeze({ N: 1, E: 2, S: 4, W: 8 });
 export const KINDS = Object.freeze({ line: 10, corner: 3, tee: 11, cross: 15 });
@@ -50,6 +51,10 @@ export function newPacketGame(seed=2026, players=1) {
     lastEvent:"ready",eventId:0,
   };
 }
+/** Longer solo-only survival variant. Existing multiplayer protocol remains unchanged. */
+export function newSiegeGame(seed=2026) {
+  return {...newPacketGame(seed,1),mode:"siege",roundMs:SIEGE_MS,patches:5};
+}
 export function beginPacketGame(state, now=Date.now()) {
   if(state.phase!=="ready" || !Number.isFinite(now))return state;
   return {...state,phase:"playing",startedAt:Math.floor(now),tick:0,version:state.version+1,
@@ -66,15 +71,16 @@ export function patchPacketNetwork(state) {
   return {...state,integrity:Math.min(100,state.integrity+22),patches:state.patches-1,
     score:state.score+40,version:state.version+1,lastEvent:"patch",eventId:state.eventId+1};
 }
-export function waveForTick(tick) {
-  return Math.min(3,1+Math.floor(tick*TICK_MS/30_000));
+export function waveForTick(tick,mode="quick") {
+  return mode==="siege"?Math.min(5,1+Math.floor(tick*TICK_MS/48_000)):Math.min(3,1+Math.floor(tick*TICK_MS/30_000));
 }
 export function elapsedMs(state,now=Date.now()){
   if(state.startedAt===null)return 0;
-  return Math.max(0,Math.min(ROUND_MS,now-state.startedAt));
+  return Math.max(0,Math.min(state.roundMs??ROUND_MS,now-state.startedAt));
 }
 export function timeRemaining(state,now=Date.now()) {
-  return state.phase==="ready"?ROUND_MS:Math.max(0,ROUND_MS-elapsedMs(state,now));
+  const duration=state.roundMs??ROUND_MS;
+  return state.phase==="ready"?duration:Math.max(0,duration-elapsedMs(state,now));
 }
 function recordMiss(s) {
   s.missed++;
@@ -95,8 +101,8 @@ function exitPort(mask,entry,color,row) {
 }
 function nextTick(s) {
   s.tick++;
-  const wave=waveForTick(s.tick);
-  const every=wave===1?9:wave===2?7:5;
+  const wave=waveForTick(s.tick,s.mode);
+  const every=wave===1?9:wave===2?7:wave===3?5:wave===4?4:3;
   // A pulse starts at the edge; the player sees its full trip through the network.
   if(s.tick%every===1 && s.packets.length<16) {
     const color=s.spawned%2, row=color===0?1:3;
@@ -130,7 +136,7 @@ function nextTick(s) {
     s.integrity=0;s.phase="lost";s.packets=[];
     s.lastEvent="outage";s.eventId++;
   }
-  if(s.tick>=MAX_TICKS && s.phase==="playing"){
+  if(s.tick>=Math.ceil((s.roundMs??ROUND_MS)/TICK_MS) && s.phase==="playing"){
     s.phase="won";s.packets=[];
     s.score+=Math.round(s.integrity*10);
     s.lastEvent="survived";s.eventId++;
@@ -142,7 +148,7 @@ function nextTick(s) {
  */
 export function advancePacketGame(state,now=Date.now()){
   if(state.phase!=="playing"||state.startedAt===null||!Number.isFinite(now))return state;
-  const target=Math.min(MAX_TICKS,Math.floor(Math.max(0,now-state.startedAt)/TICK_MS));
+  const target=Math.min(Math.ceil((state.roundMs??ROUND_MS)/TICK_MS),Math.floor(Math.max(0,now-state.startedAt)/TICK_MS));
   if(target<=state.tick)return state;
   const next={...state,tiles:state.tiles.slice(),packets:state.packets.map(p=>({...p}))};
   while(next.tick<target&&next.phase==="playing")nextTick(next);

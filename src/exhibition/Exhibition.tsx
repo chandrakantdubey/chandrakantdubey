@@ -22,6 +22,7 @@ import "../play/packet.css";
 import "./spatial.css";
 import "./exhibition.css";
 import "./reactor.css";
+import "./exhibition-premium.css";
 
 function useScrollExperience(ref:RefObject<HTMLDivElement|null>) {
   useEffect(()=>{
@@ -89,6 +90,7 @@ function Navigation() {
       <span className="nav-annotation">I WRITE CODE. IT SOMETIMES AGREES.</span>
       <nav className={menu?"nav-items nav-items-open":"nav-items"} aria-label="Primary navigation">
         {[["Work","work"],["Experience","experience"],["Stack","skills"],["Play","play"],["Contact","contact"]].map(([name,id])=><a href={"#"+id} key={id} onClick={()=>setMenu(false)}>{name}</a>)}
+        <a href="/lab" onClick={()=>setMenu(false)}>THE LAB ↗</a>
       </nav>
       <a className="nav-availability" href="#contact">SAY HELLO <ArrowUpRight size={17}/></a>
       <button type="button" className="mobile-nav-toggle" onClick={()=>setMenu(value=>!value)} aria-expanded={menu} aria-label={menu?"Close navigation":"Open navigation"}>{menu?<X size={24}/>:<Menu size={24}/>}</button>
@@ -110,7 +112,7 @@ function Hero({awakened,onChange,signalCount}:{awakened:boolean;onChange:(value:
     <span className="hero-rotator-caption">GO ON, POKE IT <span> / </span> IT WON'T BITE</span>
     <div className="hero-meta">
       <p>It worked locally. Promise.</p>
-      <div className="hero-meta-side"><span>ZERO STOCK TEMPLATES</span><a href="#work">SHOW ME THE CODE <ArrowDown size={18}/></a></div>
+      <div className="hero-meta-side"><span>ZERO STOCK TEMPLATES</span><a href="/lab">ENTER THE LAB <ArrowDown size={18}/></a></div>
     </div>
   </section>;
 }
@@ -198,7 +200,7 @@ function Projects({awakened,onDiscover,signals}:{awakened:boolean;onDiscover:(id
       </div>
     </div>
     <a className="projects-footer-link" href={links.github+"?tab=repositories"} target="_blank" rel="noopener noreferrer">YES, THE SOURCE IS PUBLIC <ArrowUpRight size={18}/></a>
-    <a className="projects-incident-link" href="#incident">ONE MORE THING: INVESTIGATE A PROD FAILURE <ArrowDown size={17}/></a>
+    <a className="projects-incident-link" href="/lab/disaster">OPEN THE NEW INCIDENT LAB <ArrowDown size={17}/></a>
   </section>;
 }
 
@@ -236,8 +238,8 @@ function Skills() {
 function PlaySection() {
   return <section className="exhibition-play" id="play" aria-labelledby="play-heading">
     <div className="play-header" data-reveal>
-      <h2 id="play-heading">TAKE <em>FIVE.</em></h2>
-      <p>You came for the code. I brought a spaceship. This seems reasonable.</p>
+      <h2 id="play-heading">TAKE <em>FIVE.</em></h2><a href="/lab/take-five" style={{display:"inline-block",padding:"12px 18px",background:"#d7f6a5",color:"#111a12",fontWeight:800,textDecoration:"none",margin:"16px 0"}}>EXPLORE THE NEW LAB ↗</a>
+      <p>Original arcade below. The new experimental playground is now a separate cinematic experience.</p>
     </div>
     <DeferredExperience kind="arcade" label="Signal Shift"><FluxGame/></DeferredExperience>
   </section>;
@@ -246,7 +248,7 @@ function PlaySection() {
 function FinalBoss({awakened,onDiscover,signals,unlocked}:{awakened:boolean;onDiscover:(id:SignalId)=>void;signals:readonly SignalId[];unlocked:boolean}) {
   const [manualOpen,setManualOpen]=useState(false);
   return <section className="after-hours" id="final-boss" aria-labelledby="final-boss-heading">
-    <div className="after-hours-heading" data-reveal>
+    <div className="after-hours-heading" data-reveal><a href="/lab" style={{display:"inline-block",padding:"10px 15px",color:"inherit",border:"1px solid currentColor",textDecoration:"none",marginBottom:"15px"}}>DISCOVER ALL EXPERIMENTS ↗</a>
       <h2 id="final-boss-heading">SAVE THE<br/><em>INTERNET.</em></h2>
       <p>All those years learning to deploy, just to find out the internet still needs saving. You have 90 seconds.</p>
     </div>

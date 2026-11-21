@@ -6,9 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build && node scripts/check-bundle-budget.mjs",
-    "lint": "eslint src/atelier/ContactSection.tsx src/atelier/content.ts src/atelier/clientWork.ts src/exhibition src/play",
+    "lint": "eslint src/atelier/ContactSection.tsx src/atelier/content.ts src/atelier/clientWork.ts src/exhibition src/play src/experience",
     "preview": "vite preview",
-    "test": "node --experimental-strip-types scripts/test-exhibition.mjs && node --experimental-strip-types scripts/test-specimen.mjs && node --experimental-strip-types scripts/test-signal-trail.mjs && node --experimental-strip-types scripts/test-power.mjs && node --experimental-strip-types scripts/test-play.mjs && node --experimental-strip-types scripts/test-packet.mjs && node --experimental-strip-types scripts/test-packet-server.mjs && node --experimental-strip-types scripts/test-contact.mjs",
+    "test": "node --experimental-strip-types scripts/test-exhibition.mjs && node --experimental-strip-types scripts/test-specimen.mjs && node --experimental-strip-types scripts/test-signal-trail.mjs && node --experimental-strip-types scripts/test-power.mjs && node --experimental-strip-types scripts/test-play.mjs && node --experimental-strip-types scripts/test-packet.mjs && node --experimental-strip-types scripts/test-packet-server.mjs && node --experimental-strip-types scripts/test-contact.mjs && node --experimental-strip-types scripts/test-experience.mjs && node --experimental-strip-types scripts/test-incident-v2.mjs && node --experimental-strip-types scripts/test-kinetic.mjs",
     "test:browser": "node scripts/browser-smoke.mjs",
     "typecheck:api": "tsc -p tsconfig.api.json",
     "test:budget": "node scripts/check-bundle-budget.mjs"

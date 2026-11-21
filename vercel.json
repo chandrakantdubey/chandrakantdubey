@@ -26,6 +26,18 @@
     {
       "source": "/play/:path*",
       "destination": "/index.html"
+    },
+    {
+      "source": "/lab/:path*",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/engineering",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/access",
+      "destination": "/index.html"
     }
   ],
   "functions": {

@@ -601,6 +601,54 @@ try{
   await cdp.eval("document.querySelector('.specimen-primary').click()");
   assert.equal(await cdp.eval("document.querySelector('.exhibition-site').dataset.specimenState"),"awakened");
   assert.ok(await cdp.eval("!document.querySelector('.specimen-apparition')"),"reduced motion still suppresses the effect");
+  // Newly introduced standalone experience routes: check real browser load and interactions.
+  await cdp.send("Page.navigate",{url:"http://127.0.0.1:4173/lab"});
+  await poll(()=>cdp.eval("document.querySelectorAll('.universe .uni-card').length===4"),"lab landing cards render");
+  assert.ok(await cdp.eval("document.documentElement.scrollWidth<=innerWidth+3"),"lab mobile width fits viewport");
+  await cdp.send("Page.navigate",{url:"http://127.0.0.1:4173/lab/disaster"});
+  await poll(()=>cdp.eval("!!document.querySelector('.iw-action-grid button')"),"incident actions render");
+  const initialTick=await cdp.eval("document.querySelector('.iw-config')?.textContent");
+  await cdp.eval("document.querySelector('.iw-action-grid button').click()");
+  await poll(()=>cdp.eval("document.querySelector('.iw-config')?.textContent!=="+JSON.stringify(initialTick)),"incident advances after operational command");
+  assert.ok(await cdp.eval("document.querySelectorAll('.iw-node').length===6"),"incident topology exposes six selectable services");
+  assert.ok(await cdp.eval("!!document.querySelector('#incident-tick')"),"incident includes accessible metric timeline scrubber");
+  await cdp.eval("document.querySelectorAll('.iw-evidence-tabs button')[1].click()");
+  await poll(()=>cdp.eval("document.querySelector('.iw-log')?.textContent.includes('SIMULATED LOGS')"),"log exploration reflects selected evidence view");
+  await cdp.eval("document.querySelector('.iw-report-actions button').click()");
+  await poll(()=>cdp.eval("!!document.querySelector('.iw-report-body')"),"incident report expands");
+  await cdp.send("Page.navigate",{url:"http://127.0.0.1:4173/lab/take-five"});
+  await poll(()=>cdp.eval("!!document.querySelector('.kinetic-art')"),"kinetic experience mounts");
+  assert.ok(await cdp.eval("document.querySelectorAll('.kinetic-rotor').length===3"),"kinetic chamber exposes three rotors");
+  await cdp.eval("document.querySelector('.kinetic-rotor-actions button').click()");
+  await poll(()=>cdp.eval("document.querySelector('.kinetic-rotor-header strong')?.textContent.includes('270°')"),"coupled rotor motion changes orientation");
+  await cdp.eval("document.querySelectorAll('.uni-container > .uni-controls button')[1].click()");
+  await poll(()=>cdp.eval("!!document.querySelector('#entropy-art')"),"garden can be entered");
+  await cdp.send("Page.navigate",{url:"http://127.0.0.1:4173/engineering"});
+  await poll(()=>cdp.eval("document.querySelectorAll('input[type=range]').length===4"),"architecture model is interactive");
+  await cdp.send("Page.navigate",{url:"http://127.0.0.1:4173/access"});
+  await poll(()=>cdp.eval("!!document.querySelector('#archive-command')"),"fictional archive terminal loads");
+  await cdp.send("Page.navigate",{url:"http://127.0.0.1:4173/play/packet"});
+  await poll(()=>cdp.eval("!!document.querySelector('.packet-daily-button')"),"Packet Panic route loads");
+  assert.ok(await cdp.eval("document.body.textContent.includes('SIEGE MODE')"),"Siege mode appears in the game toolbar");
+  // Visual regression evidence for each newly introduced route.
+  const scenes=[
+    ["/lab","cinema-lab"],
+    ["/lab/disaster","cinema-disaster"],
+    ["/lab/take-five","cinema-take-five"],
+    ["/engineering","cinema-engineering"],
+    ["/access","cinema-archive"],
+  ];
+  for(const [width,height,mobile] of [[1440,900,false],[390,844,true],[320,720,true]]){
+    await cdp.send("Emulation.setDeviceMetricsOverride",{width,height,deviceScaleFactor:1,mobile,screenWidth:width,screenHeight:height});
+    for(const [route,name] of scenes){
+      await cdp.send("Page.navigate",{url:"http://127.0.0.1:4173"+route});
+      await poll(()=>cdp.eval("!!document.querySelector('.universe .uni-hero')"),"scene "+route+" loads at "+width);
+      await delay(160);
+      assert.ok(await cdp.eval("document.documentElement.scrollWidth<=innerWidth+3"),route+" "+width+" viewport has no horizontal overflow");
+      await cdp.screenshot(name+"-"+width+".png");
+    }
+  }
+  console.log("Cinema, incident, garden, engineering, archive and Siege smoke checks PASS.");
   console.log("Experience, typed discovery, keyboard focus, static hero, lazy modules, tablet and 320/390px QA PASS.");
   console.log("Visual QA saved to "+out);
 }finally{
