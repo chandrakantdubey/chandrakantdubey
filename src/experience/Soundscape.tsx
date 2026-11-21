@@ -2,9 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import "./experience.css";
 import { revealDiscovery } from "./discoveries";
 
-type AudioWindow = Window & { webkitAudioContext?: typeof AudioContext };
+type AudioFactoryWindow = { AudioContext?: typeof AudioContext; webkitAudioContext?: typeof AudioContext };
 function getAudioContext(): AudioContext | null {
-  const W = window as AudioWindow;
+  const W = window as unknown as AudioFactoryWindow;
   const Factory = W.AudioContext ?? W.webkitAudioContext;
   return Factory ? new Factory() : null;
 }
