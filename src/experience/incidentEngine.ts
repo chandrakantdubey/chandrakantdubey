@@ -211,6 +211,33 @@ export function evidenceFor(s:IncidentState,atTick=s.tick):string {
     "NOTE: "+SCENARIOS[s.kind].clue,
   ].join("\n");
 }
+export type IncidentService="EDGE"|"GATEWAY"|"CHECKOUT"|"CACHE"|"DEPENDENCY"|"DATABASE";
+export interface TraceSpan {
+  service:IncidentService;operation:string;startMs:number;durationMs:number;
+  status:"ok"|"slow";
+}
+/** An illustrative span waterfall derived from the selected metric sample. */
+export function traceSpans(s:IncidentState,atTick=s.tick):TraceSpan[] {
+  const point=s.history.find(p=>p.tick===atTick)??s.history.at(-1);
+  if(!point)return [];
+  const total=point.latency;
+  const failing:IncidentService=s.kind==="pool"||s.kind==="cache"?"DATABASE":
+    s.kind==="retries"||s.kind==="cascade"?"DEPENDENCY":"CHECKOUT";
+  const entries:Array<{service:IncidentService;operation:string;start:number;fraction:number}>=[
+    {service:"EDGE",operation:"http.accept",start:0,fraction:.035},
+    {service:"GATEWAY",operation:"gateway.forward",start:.025,fraction:.94},
+    {service:"CHECKOUT",operation:"checkout.process",start:.07,fraction:s.kind==="deploy"?.82:.58},
+    {service:"CACHE",operation:"cache.lookup",start:.12,fraction:.09},
+    {service:"DEPENDENCY",operation:"dependency.call",start:.18,fraction:(s.kind==="retries"||s.kind==="cascade")?.69:.23},
+    {service:"DATABASE",operation:"db.acquire_and_execute",start:.21,fraction:(s.kind==="pool"||s.kind==="cache")?.73:.11},
+  ];
+  return entries.map(row=>{
+    const start=Math.floor(total*row.start);
+    const duration=Math.max(1,Math.floor(Math.min(total-start,total*row.fraction)));
+    return {service:row.service,operation:row.operation,startMs:start,durationMs:duration,
+      status:point.queue>80&&row.service===failing?"slow":"ok"};
+  });
+}
 export type IncidentEvidenceTab="traces"|"logs"|"changes";
 export function evidencePanel(s:IncidentState,tab:IncidentEvidenceTab,tick=s.tick):string {
   const p=s.history.find(point=>point.tick===tick)??s.history.at(-1);
