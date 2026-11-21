@@ -5,7 +5,7 @@ import "../exhibition/type-motion.css";
 import Sculpture from "./Sculpture";
 import "./experience.css";
 
-const links=[["/","PORTFOLIO"],["/lab","THE LAB"],["/lab/disaster","DISASTER"],["/lab/take-five","TAKE FIVE"],["/play/packet","PACKET PANIC"],["/engineering","ENGINEERING"],["/access","ROOT ACCESS"]];
+const links=[["/","PORTFOLIO"],["/lab","THE LAB"],["/lab/disaster","DISASTER"],["/lab/take-five","TAKE FIVE"],["/play/packet","PACKET PANIC"],["/engineering","ENGINEERING"]];
 function Shell({children}:{children:React.ReactNode}) {return <main className="universe">
   <nav className="uni-nav" aria-label="Experience navigation"><a href="/" style={{fontWeight:900,fontSize:18}}>CD<span style={{color:"#dcf8a1"}}>®</span></a>
     <div className="uni-nav-links">{links.map(([url,label])=><a key={url} href={url}>{label}</a>)}</div>
