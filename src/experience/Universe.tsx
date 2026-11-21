@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { DISCOVERIES,interpretCommand,readDiscoveries,resetDiscoveries,revealDiscovery,type Discovery } from "./discoveries";
-import { advanceIncident,createIncident,evidenceFor,intervene,SCENARIOS,type IncidentAction,type IncidentKind } from "./incidentEngine";
+import IncidentWorkbench from "./IncidentWorkbench";
 import "../exhibition/type-motion.css";
 import Sculpture from "./Sculpture";
 import "./experience.css";
@@ -19,50 +19,8 @@ const exhibits=[
   {title:"SYSTEMS GALLERY",eyebrow:"04 / ENGINEERING EXHIBITS",copy:"Explore why systems fail, how capacity behaves, and what trade-offs really cost.",url:"/engineering"},
 ];
 export function Laboratory() {useEffect(()=>revealDiscovery("anomaly"),[]);return <Shell><Hero eyebrow="EXHIBITION / AFTER HOURS" title="ENTER THE LAB." copy="A portfolio should be more than a list of things built. These are systems you can actually disturb."/><section className="uni-container"><div className="uni-grid">{exhibits.map(e=><article className="uni-card" key={e.url}><div className="uni-kicker">{e.eyebrow}</div><h2>{e.title}</h2><p>{e.copy}</p><a href={e.url}>ENTER EXPERIENCE ↗</a></article>)}</div></section></Shell>}
-const actions:{id:IncidentAction;label:string;desc:string}[]=[
-  {id:"rollback",label:"ROLL BACK",desc:"Revert the last revision"},
-  {id:"limit-retries",label:"CAP RETRIES",desc:"Disable retry amplification"},
-  {id:"scale",label:"SCALE REPLICAS",desc:"Add processing capacity"},
-  {id:"throttle",label:"SHED LOAD",desc:"Reject some incoming traffic"},
-  {id:"circuit",label:"OPEN BREAKER",desc:"Contain cascading requests"},
-  {id:"warm-cache",label:"WARM CACHE",desc:"Restore hot key hit rates"},
-];
 export function Disaster() {
-  const [kind,setKind]=useState<IncidentKind>("pool");
-  const [seed,setSeed]=useState(42);
-  const [state,setState]=useState(()=>createIncident("pool",42));
-  const [tab,setTab]=useState<"evidence"|"events">("evidence");
-  const reset=(next:IncidentKind=kind,nextSeed=seed)=>{setKind(next);setSeed(nextSeed);setState(createIncident(next,nextSeed));};
-  const last=state.history.at(-1)!;
-  const recovered=last.queue<70&&last.errors<2;
-  useEffect(()=>{if(recovered&&state.actions.length)revealDiscovery("recovery");},[recovered,state.actions.length]);
-  const history=state.history.slice(-23);
-  const max=Math.max(500,...history.map(p=>p.latency));
-  const pts=history.map((p,i)=>((i/Math.max(1,history.length-1))*700).toFixed(1)+","+(200-p.latency/max*180).toFixed(1)).join(" ");
-  return <Shell>
-    <Hero eyebrow="01 / LIVE CAUSAL SIMULATION · BROWSER-LOCAL" title="DEBUG THE DISASTER." copy="No predetermined correct answer. Operate the system, inspect evidence, and make consequences visible."/>
-    <section className="uni-container" style={{paddingTop:22}}>
-      <div className="uni-controls" style={{marginBottom:20}}><label htmlFor="scenario">SCENARIO</label><select id="scenario" value={kind} onChange={e=>reset(e.target.value as IncidentKind)}>{Object.entries(SCENARIOS).map(([id,v])=><option key={id} value={id}>{v.title}</option>)}</select><button className="uni-button" onClick={()=>reset(kind,seed+1)}>NEW SEED ↺</button><button className="uni-button" onClick={()=>setState(s=>advanceIncident(s,5))}>ADVANCE +5 TICKS →</button></div>
-      <div className="uni-workbench"><div className="uni-panel">
-        <div className="uni-status">{recovered?"● RECOVERING":"● SEV-1 / DEGRADED"} · TICK {state.tick} · SEED {seed}</div>
-        <h2 style={{fontSize:"clamp(30px,4vw,58px)"}}>{SCENARIOS[kind].title}</h2>
-        <p className="uni-muted">{SCENARIOS[kind].description}</p>
-        <div className="uni-metrics"><div className="uni-metric"><strong>{last.latency.toLocaleString()}ms</strong><small>SIMULATED LATENCY</small></div><div className="uni-metric"><strong>{last.errors}%</strong><small>SIMULATED ERRORS</small></div><div className="uni-metric"><strong>{last.queue}</strong><small>QUEUE DEPTH</small></div></div>
-        <svg viewBox="0 0 700 220" role="img" aria-label="Simulated latency history over time" style={{width:"100%",background:"#090f19",border:"1px solid #334254"}}>
-          {[50,100,150,200].map(y=><line key={y} x1="0" y1={y} x2="700" y2={y} stroke="#8b99a7" strokeOpacity=".25" strokeDasharray="5 8"/>)}
-          <polyline points={pts} fill="none" stroke={recovered?"#c6ed95":"#f2a086"} strokeWidth="4" strokeLinejoin="round" strokeLinecap="round"/>
-        </svg>
-        <p className="uni-muted">Every action advances three deterministic simulation ticks. Different intervention sequences can produce different recovery paths.</p>
-      </div><aside className="uni-panel">
-        <div className="uni-kicker">OPERATOR WORKSTATION</div>
-        <h2 style={{fontSize:36}}>MAKE THE CALL.</h2>
-        <div className="uni-actions">{actions.map(a=><button className="uni-action" key={a.id} onClick={()=>setState(s=>intervene(s,a.id))} title={a.desc}>{a.label}<div style={{color:"#9baec3",fontWeight:400,marginTop:6}}>{a.desc}</div></button>)}</div>
-        <div className="uni-controls"><button className="uni-button" onClick={()=>setTab("evidence")}>EVIDENCE</button><button className="uni-button" onClick={()=>setTab("events")}>DECISIONS ({state.actions.length})</button></div>
-        <pre className="uni-log" aria-live="polite">{tab==="evidence"?evidenceFor(state):state.actions.map((a,i)=>String(i+1).padStart(2,"0")+". "+a).join("\n")||"No interventions yet."}</pre>
-        <div className="uni-note" style={{marginTop:20}}>{recovered?"Latency and queue pressure are under control. Verify over more ticks before declaring victory.":"Evidence matters. Scaling, rolling back, and throttling are not interchangeable."}</div>
-      </aside></div>
-    </section>
-  </Shell>;
+  return <Shell><Hero eyebrow="01 / CAUSAL RELIABILITY SIMULATION" title="DEBUG THE DISASTER." copy="A real investigation workbench: trace pressure through dependencies, intervene, and verify recovery."/><IncidentWorkbench/></Shell>;
 }
 const RINGS=[{name:"OUTER ROTOR",speed:1},{name:"INNER ROTOR",speed:2},{name:"CORE PHASE",speed:3}];
 export function TakeFive() {
