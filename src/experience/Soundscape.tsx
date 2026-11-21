@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import "./experience.css";
+import { revealDiscovery } from "./discoveries";
 
 type AudioWindow = Window & { webkitAudioContext?: typeof AudioContext };
 function getAudioContext(): AudioContext | null {
@@ -12,6 +13,7 @@ export default function Soundscape() {
   const [enabled, setEnabled] = useState(false);
   const audio = useRef<AudioContext | null>(null);
   useEffect(() => () => { void audio.current?.close(); }, []);
+  useEffect(()=>{const onResult=()=>revealDiscovery("network");window.addEventListener("cd:packet-result",onResult);return()=>window.removeEventListener("cd:packet-result",onResult)},[]);
   useEffect(() => {
     if (!enabled) return;
     const play = (event: Event) => {
