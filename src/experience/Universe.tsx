@@ -1,9 +1,10 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { DISCOVERIES,interpretCommand,readDiscoveries,resetDiscoveries,revealDiscovery,type Discovery } from "./discoveries";
 import { advanceIncident,createIncident,evidenceFor,intervene,SCENARIOS,type IncidentAction,type IncidentKind } from "./incidentEngine";
 import "../exhibition/type-motion.css";
 import "./experience.css";
 
-const links=[["/","PORTFOLIO"],["/lab","THE LAB"],["/lab/disaster","DISASTER"],["/lab/take-five","TAKE FIVE"],["/play/packet","PACKET PANIC"],["/engineering","ENGINEERING"]];
+const links=[["/","PORTFOLIO"],["/lab","THE LAB"],["/lab/disaster","DISASTER"],["/lab/take-five","TAKE FIVE"],["/play/packet","PACKET PANIC"],["/engineering","ENGINEERING"],["/access","ROOT ACCESS"]];
 function Shell({children}:{children:React.ReactNode}) {return <main className="universe">
   <nav className="uni-nav" aria-label="Experience navigation"><a href="/" style={{fontWeight:900,fontSize:18}}>CD<span style={{color:"#dcf8a1"}}>®</span></a>
     <div className="uni-nav-links">{links.map(([url,label])=><a key={url} href={url}>{label}</a>)}</div>
@@ -16,7 +17,7 @@ const exhibits=[
   {title:"PACKET PANIC",eyebrow:"03 / NETWORK STRATEGY",copy:"Ninety seconds of deterministic, server-authoritative network defense. Bring a friend.",url:"/play/packet"},
   {title:"SYSTEMS GALLERY",eyebrow:"04 / ENGINEERING EXHIBITS",copy:"Explore why systems fail, how capacity behaves, and what trade-offs really cost.",url:"/engineering"},
 ];
-export function Laboratory() {return <Shell><Hero eyebrow="EXHIBITION / AFTER HOURS" title="ENTER THE LAB." copy="A portfolio should be more than a list of things built. These are systems you can actually disturb."/><section className="uni-container"><div className="uni-grid">{exhibits.map(e=><article className="uni-card" key={e.url}><div className="uni-kicker">{e.eyebrow}</div><h2>{e.title}</h2><p>{e.copy}</p><a href={e.url}>ENTER EXPERIENCE ↗</a></article>)}</div></section></Shell>}
+export function Laboratory() {useEffect(()=>revealDiscovery("anomaly"),[]);return <Shell><Hero eyebrow="EXHIBITION / AFTER HOURS" title="ENTER THE LAB." copy="A portfolio should be more than a list of things built. These are systems you can actually disturb."/><section className="uni-container"><div className="uni-grid">{exhibits.map(e=><article className="uni-card" key={e.url}><div className="uni-kicker">{e.eyebrow}</div><h2>{e.title}</h2><p>{e.copy}</p><a href={e.url}>ENTER EXPERIENCE ↗</a></article>)}</div></section></Shell>}
 const actions:{id:IncidentAction;label:string;desc:string}[]=[
   {id:"rollback",label:"ROLL BACK",desc:"Revert the last revision"},
   {id:"limit-retries",label:"CAP RETRIES",desc:"Disable retry amplification"},
@@ -33,6 +34,7 @@ export function Disaster() {
   const reset=(next:IncidentKind=kind,nextSeed=seed)=>{setKind(next);setSeed(nextSeed);setState(createIncident(next,nextSeed));};
   const last=state.history.at(-1)!;
   const recovered=last.queue<70&&last.errors<2;
+  useEffect(()=>{if(recovered&&state.actions.length)revealDiscovery("recovery");},[recovered,state.actions.length]);
   const history=state.history.slice(-23);
   const max=Math.max(500,...history.map(p=>p.latency));
   const pts=history.map((p,i)=>((i/Math.max(1,history.length-1))*700).toFixed(1)+","+(200-p.latency/max*180).toFixed(1)).join(" ");
@@ -69,12 +71,14 @@ export function TakeFive() {
   const [seed,setSeed]=useState(17);
   const [chamber,setChamber]=useState<"machine"|"garden">("machine");
   const solved=angles[0]===90&&angles[1]===180&&angles[2]===270;
+  useEffect(()=>{if(solved)revealDiscovery("mechanism");},[solved]);
   const move=(i:number)=>setAngles(a=>a.map((v,k)=>(k===i||k===(i+1)%3)?(v+90)%360:v));
   const particles=useMemo(()=>Array.from({length:190},(_,i)=>{
     const turn=i*2.399963229728653, r=Math.sqrt(i/190);
     return {x:350+Math.cos(turn)*(35+r*290),y:200+Math.sin(turn)*(18+r*165),r:1+i%4,t:turn};
   }),[]);
   const exportArt=()=>{
+    revealDiscovery("entropy");
     const svg=document.querySelector("#entropy-art");
     if(!svg)return;
     const blob=new Blob([new XMLSerializer().serializeToString(svg)],{type:"image/svg+xml"});
@@ -115,6 +119,7 @@ export function Engineering() {
   const max=replicas*capacity;
   const utilization=effective/max*100;
   const queued=Math.max(0,Math.round(effective-max));
+  useEffect(()=>{if(queued>0)revealDiscovery("architecture");},[queued]);
   return <Shell><Hero eyebrow="04 / ENGINEERING, NOT THEATER" title="SYSTEMS GALLERY." copy="Change an architectural assumption. Watch the consequences. Read the model limits."/>
     <section className="uni-container"><div className="uni-workbench"><div className="uni-panel"><div className="uni-kicker">CAPACITY LAB / DETERMINISTIC ESTIMATE</div><h2 style={{fontSize:40}}>WHAT BREAKS FIRST?</h2>
       {[{id:"traffic",label:"REQUESTS / SEC",value:traffic,min:100,max:10000,set:setTraffic},{id:"replicas",label:"APP REPLICAS",value:replicas,min:1,max:50,set:setReplicas},{id:"cache",label:"CACHE HIT %",value:cache,min:0,max:99,set:setCache},{id:"capacity",label:"CAPACITY / REPLICA",value:capacity,min:50,max:500,set:setCapacity}].map(f=><div className="uni-controls" key={f.id}><label htmlFor={f.id} style={{width:140}}>{f.label}</label><input id={f.id} type="range" min={f.min} max={f.max} value={f.value} onChange={e=>f.set(+e.target.value)}/><strong style={{width:50,textAlign:"right"}}>{f.value}</strong></div>)}
@@ -126,4 +131,22 @@ export function Engineering() {
     <p className="uni-muted">Try reducing the cache hit ratio, doubling request volume, or adding replicas. The downstream database may still bottleneck: that dependency is intentionally outside this simplified model.</p>
     <a className="uni-button" href="/lab/disaster">TEST A FAILURE →</a>
     </div></div></section></Shell>;
+}
+
+export function Access() {
+ const [found,setFound]=useState<Discovery[]>(()=>readDiscoveries());
+ const [command,setCommand]=useState("");
+ const [history,setHistory]=useState<string[]>(["CD://ROOT ACCESS — FICTIONAL ARCHIVE","Browser-local only. No shell or elevated privileges.","Type help to see commands."]);
+ useEffect(()=>{const update=()=>setFound(readDiscoveries());window.addEventListener("cd:discovery",update);return()=>window.removeEventListener("cd:discovery",update)},[]);
+ const execute=(e:React.FormEvent)=>{e.preventDefault();if(!command.trim())return;setHistory(h=>[...h,"> "+command,interpretCommand(command,found)].slice(-32));setCommand("");};
+ const completion=found.includes("recovery")&&found.includes("mechanism")&&found.includes("entropy")&&found.includes("architecture");
+ return <Shell><Hero eyebrow="05 / AN UNAUTHORIZED FICTION" title="ROOT ACCESS." copy="The archive remembers what you discover. It controls absolutely nothing outside this imaginary universe."/><section className="uni-container">
+ <div className="uni-workbench"><div className="uni-panel"><div className="uni-kicker">LOCAL ARTIFACT INDEX · {found.length}/6</div><h2 style={{fontSize:42}}>{completion?"CORRELATION COMPLETE.":"RECOVER THE FRAGMENTS."}</h2>
+ {Object.entries(DISCOVERIES).map(([key,meaning])=><div key={key} style={{padding:"15px 0",borderBottom:"1px solid #ffffff25"}}><strong style={{font:"600 13px monospace"}}>{found.includes(key as Discovery)?"◉":"○"} {key.toUpperCase()}</strong><p className="uni-muted" style={{margin:"6px 0 0"}}>{found.includes(key as Discovery)?meaning:"UNDISCOVERED · Explore the corresponding experience."}</p></div>)}
+ <button className="uni-button" onClick={()=>{resetDiscoveries();setHistory(["Archive reset."]);}}>RESET ARCHIVE</button>
+ </div><div className="uni-panel"><div className="uni-kicker">FICTIONAL TERMINAL · ALLOWLISTED COMMANDS</div><h2 style={{fontSize:38}}>THE SYSTEM IS LISTENING.</h2>
+ <div className="uni-log" role="log" aria-live="polite" style={{minHeight:320}}>{history.map((line,i)=><div key={i} style={{marginBottom:8}}>{line}</div>)}</div>
+ <form onSubmit={execute} className="uni-controls"><label htmlFor="archive-command">cd@archive:~$</label><input id="archive-command" autoComplete="off" maxLength={90} value={command} onChange={e=>setCommand(e.target.value)} style={{background:"#070c13",color:"#d9f8a1",padding:13,border:"1px solid #8798a5",flex:1,minWidth:110}}/><button className="uni-button" type="submit">RUN ↵</button></form>
+ <div className="uni-note" style={{marginTop:20}}>The narrative is optional. Real project content and functional site controls never depend on these fictional commands.</div>
+ </div></div></section></Shell>;
 }
