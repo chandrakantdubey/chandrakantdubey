@@ -124,7 +124,7 @@ export default function RootAccess({awakened,signals,onResetSignals,onVisualMode
         </form>
         {awakened&&signals.length===3&&<a className="root-terminal-unlock" href="#consistency"
           onClick={()=>setOpen(false)}>RECOVERED: EXPERIMENT 001 / OPEN CONCURRENCY LAB <ArrowUpRight size={16}/></a>}
-        <div className="root-terminal-footnote">
+        <a className="root-terminal-unlock" href="/lab" onClick={()=>setOpen(false)}>ENTER THE EXPERIMENTAL LAB ↗</a><div className="root-terminal-footnote">
           <span>ESC TO CLOSE</span><span>TYPE RESTORE TO RESET VISUAL EFFECTS</span>
           <span>NO REAL COMMANDS EXECUTED</span>
         </div>
