@@ -69,7 +69,7 @@ export function TakeFive() {
   const [seed,setSeed]=useState(17);
   const [chamber,setChamber]=useState<"machine"|"garden">("machine");
   const solved=angles[0]===90&&angles[1]===180&&angles[2]===270;
-  const move=(i:number)=>setAngles(a=>a.map((v,k)=>k===i?(v+90)%360:v));
+  const move=(i:number)=>setAngles(a=>a.map((v,k)=>(k===i||k===(i+1)%3)?(v+90)%360:v));
   const particles=useMemo(()=>Array.from({length:190},(_,i)=>{
     const turn=i*2.399963229728653, r=Math.sqrt(i/190);
     return {x:350+Math.cos(turn)*(35+r*290),y:200+Math.sin(turn)*(18+r*165),r:1+i%4,t:turn};
@@ -91,10 +91,10 @@ export function TakeFive() {
           <circle cx="350" cy="220" r="35" fill={solved?"#d0f1a0":"#29334c"} stroke="#e4e2df" strokeWidth="2"/>
           <text x="350" y="226" fill={solved?"#15210e":"#fff"} fontSize="14" textAnchor="middle">{solved?"ON":"OFF"}</text>
         </svg>
-      </div><div className="uni-panel"><div className="uni-kicker">PHASE ALIGNMENT / THREE ROTORS</div><h2 style={{fontSize:38}}>{solved?"CORE STABILIZED.":"ALIGN THE CORE."}</h2><p className="uni-muted">Align the outer, inner, and core rotors to 90°, 180°, and 270°. Each click advances the selected rotor by a quarter turn. No hidden randomness.</p>
+      </div><div className="uni-panel"><div className="uni-kicker">PHASE ALIGNMENT / THREE ROTORS</div><h2 style={{fontSize:38}}>{solved?"CORE STABILIZED.":"ALIGN THE CORE."}</h2><p className="uni-muted">Align the outer, inner, and core rotors to 90°, 180°, and 270°. Each control moves its rotor and the next coupled rotor by a quarter turn. Find a combination that aligns all three. No hidden randomness.</p>
       {RINGS.map((r,i)=><div className="uni-controls" key={r.name}><span style={{width:135,font:"12px monospace"}}>{r.name}</span><strong style={{font:"15px monospace"}}>{angles[i]}°</strong><button className="uni-button" onClick={()=>move(i)}>ROTATE 90° ↻</button></div>)}
       <button className="uni-button" onClick={()=>setAngles([0,0,0])}>RESET CONFIGURATION</button>
-      <div className="uni-note" style={{marginTop:25}}>{solved?"Core energy stabilized. The mechanism is online.":"A small first machine: fully interactive and deterministic. Deeper physical coupling remains on the roadmap."}</div></div></div>:
+      <div className="uni-note" style={{marginTop:25}}>{solved?"Core energy stabilized. The mechanism is online.":"A coupled three-rotor phase puzzle. Every input affects two mechanisms; search for a stable combination."}</div></div></div>:
       <div className="uni-workbench"><div className="uni-panel"><div className="uni-kicker">CHAMBER 002 · GENERATIVE FIELD</div>
       <svg id="entropy-art" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 400" className="uni-canvas" role="img" aria-label="Generated abstract flower field shaped by energy and order">
       <rect width="700" height="400" fill="#080d1a"/>{particles.map((p,i)=>{const k=(i+seed)%11;const dx=(energy-50)/50*Math.sin(p.t*3+k)*30;const dy=(100-order)/100*Math.cos(p.t*2+k)*50;return <circle key={i} cx={p.x+dx} cy={p.y+dy} r={p.r*(.65+energy/100)} fill={i%3===0?"#c9eea0":i%3===1?"#b0a1f4":"#f2a186"} opacity={.28+(i%6)*.105}/>})}
