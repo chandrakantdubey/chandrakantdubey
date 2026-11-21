@@ -22,6 +22,7 @@ import "../play/packet.css";
 import "./spatial.css";
 import "./exhibition.css";
 import "./reactor.css";
+import "./exhibition-premium.css";
 
 function useScrollExperience(ref:RefObject<HTMLDivElement|null>) {
   useEffect(()=>{
@@ -89,6 +90,7 @@ function Navigation() {
       <span className="nav-annotation">I WRITE CODE. IT SOMETIMES AGREES.</span>
       <nav className={menu?"nav-items nav-items-open":"nav-items"} aria-label="Primary navigation">
         {[["Work","work"],["Experience","experience"],["Stack","skills"],["Play","play"],["Contact","contact"]].map(([name,id])=><a href={"#"+id} key={id} onClick={()=>setMenu(false)}>{name}</a>)}
+        <a href="/lab" onClick={()=>setMenu(false)}>THE LAB ↗</a>
       </nav>
       <a className="nav-availability" href="#contact">SAY HELLO <ArrowUpRight size={17}/></a>
       <button type="button" className="mobile-nav-toggle" onClick={()=>setMenu(value=>!value)} aria-expanded={menu} aria-label={menu?"Close navigation":"Open navigation"}>{menu?<X size={24}/>:<Menu size={24}/>}</button>
@@ -110,7 +112,7 @@ function Hero({awakened,onChange,signalCount}:{awakened:boolean;onChange:(value:
     <span className="hero-rotator-caption">GO ON, POKE IT <span> / </span> IT WON'T BITE</span>
     <div className="hero-meta">
       <p>It worked locally. Promise.</p>
-      <div className="hero-meta-side"><span>ZERO STOCK TEMPLATES</span><a href="#work">SHOW ME THE CODE <ArrowDown size={18}/></a></div>
+      <div className="hero-meta-side"><span>ZERO STOCK TEMPLATES</span><a href="/lab">ENTER THE LAB <ArrowDown size={18}/></a></div>
     </div>
   </section>;
 }
