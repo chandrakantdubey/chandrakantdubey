@@ -63,3 +63,10 @@
 .experience-audio-controls .experience-sound {position:static;right:auto;bottom:auto}
 .experience-ambient {border:1px solid #d4d2f466;border-radius:50px;background:#23233a;color:#f1f0ff;box-shadow:0 9px 28px #03051160;padding:10px 12px;font:600 12px/1.1 monospace;letter-spacing:.06em;cursor:pointer}
 .experience-ambient:focus-visible,.experience-sound:focus-visible {outline:3px solid #d9fc89;outline-offset:3px}
+
+@media(max-width:600px){
+  .universe h1{font-size:clamp(41px,10.5vw,70px);max-width:100%;overflow-wrap:break-word;letter-spacing:-.075em}
+  .universe .uni-hero{padding:60px 20px;min-height:395px}
+  .universe .uni-nav-links{gap:12px}
+  .universe .uni-nav-links a{font-size:12px}
+}
