@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import {
   INCIDENT_ENGINE_VERSION, SCENARIOS,assessment,advanceIncident,createIncident,
   decodeIncidentReplay,encodeIncidentReplay,evidenceFor,evidencePanel,intervene,
-  isRecovered,replayIncident,
+  isRecovered,replayIncident,traceSpans,
 } from "../src/experience/incidentEngine.ts";
 
 const responsePlan={
@@ -16,6 +16,10 @@ for(const kind of Object.keys(SCENARIOS)){
   const start=createIncident(kind,444);
   assert.deepEqual(start,createIncident(kind,444),"same seed must always produce identical opening state");
   assert.ok(start.history.length===8);
+  const spans=traceSpans(start);
+  assert.equal(spans.length,6,"trace waterfall must cover all six services");
+  for(const span of spans)assert.ok(span.startMs>=0&&span.durationMs>=1&&span.startMs+span.durationMs<=start.history.at(-1).latency);
+  assert.ok(spans.some(span=>span.status==="slow"),kind+" identifies a model-derived critical path");
   assert.ok(!isRecovered(start),kind+" cannot start recovered");
   let run=intervene(start,responsePlan[kind]);
   run=advanceIncident(run,50);
