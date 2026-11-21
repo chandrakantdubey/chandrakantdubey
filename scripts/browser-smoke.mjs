@@ -601,6 +601,27 @@ try{
   await cdp.eval("document.querySelector('.specimen-primary').click()");
   assert.equal(await cdp.eval("document.querySelector('.exhibition-site').dataset.specimenState"),"awakened");
   assert.ok(await cdp.eval("!document.querySelector('.specimen-apparition')"),"reduced motion still suppresses the effect");
+  // Newly introduced standalone experience routes: check real browser load and interactions.
+  await cdp.send("Page.navigate",{url:"http://127.0.0.1:4173/lab"});
+  await poll(()=>cdp.eval("document.querySelectorAll('.universe .uni-card').length===4"),"lab landing cards render");
+  assert.ok(await cdp.eval("document.documentElement.scrollWidth<=innerWidth+3"),"lab mobile width fits viewport");
+  await cdp.send("Page.navigate",{url:"http://127.0.0.1:4173/lab/disaster"});
+  await poll(()=>cdp.eval("!!document.querySelector('.uni-actions button')"),"incident actions render");
+  const initialTick=await cdp.eval("document.querySelector('.uni-status')?.textContent");
+  await cdp.eval("document.querySelector('.uni-actions button').click()");
+  await poll(()=>cdp.eval("document.querySelector('.uni-status')?.textContent!=="+JSON.stringify(initialTick)),"incident advances after operational command");
+  await cdp.send("Page.navigate",{url:"http://127.0.0.1:4173/lab/take-five"});
+  await poll(()=>cdp.eval("!!document.querySelector('.uni-panel svg')"),"kinetic experience mounts");
+  await cdp.eval("document.querySelectorAll('.uni-container > .uni-controls button')[1].click()");
+  await poll(()=>cdp.eval("!!document.querySelector('#entropy-art')"),"garden can be entered");
+  await cdp.send("Page.navigate",{url:"http://127.0.0.1:4173/engineering"});
+  await poll(()=>cdp.eval("document.querySelectorAll('input[type=range]').length===4"),"architecture model is interactive");
+  await cdp.send("Page.navigate",{url:"http://127.0.0.1:4173/access"});
+  await poll(()=>cdp.eval("!!document.querySelector('#archive-command')"),"fictional archive terminal loads");
+  await cdp.send("Page.navigate",{url:"http://127.0.0.1:4173/play/packet"});
+  await poll(()=>cdp.eval("!!document.querySelector('.packet-daily-button')"),"Packet Panic route loads");
+  assert.ok(await cdp.eval("document.body.textContent.includes('SIEGE MODE')"),"Siege mode appears in the game toolbar");
+  console.log("Cinema, incident, garden, engineering, archive and Siege smoke checks PASS.");
   console.log("Experience, typed discovery, keyboard focus, static hero, lazy modules, tablet and 320/390px QA PASS.");
   console.log("Visual QA saved to "+out);
 }finally{
