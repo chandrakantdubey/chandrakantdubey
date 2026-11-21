@@ -58,3 +58,8 @@
 @keyframes uni-floatcore {0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
 @media(max-width:800px){.uni-sculpture {width:105vw;right:-42%;opacity:.47;top:-5%}}
 @media(prefers-reduced-motion:reduce){.uni-sculpture,.uni-sculpture * {animation:none!important}}
+
+.experience-audio-controls {position:fixed;z-index:9999;right:18px;bottom:18px;display:flex;align-items:center;gap:7px;flex-wrap:wrap;justify-content:flex-end;max-width:calc(100vw - 30px)}
+.experience-audio-controls .experience-sound {position:static;right:auto;bottom:auto}
+.experience-ambient {border:1px solid #d4d2f466;border-radius:50px;background:#23233a;color:#f1f0ff;box-shadow:0 9px 28px #03051160;padding:10px 12px;font:600 10px/1.1 monospace;letter-spacing:.06em;cursor:pointer}
+.experience-ambient:focus-visible,.experience-sound:focus-visible {outline:3px solid #d9fc89;outline-offset:3px}
