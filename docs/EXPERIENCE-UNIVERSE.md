@@ -20,13 +20,35 @@ This is a staged evolution of the portfolio, not an assertion that the entire lo
 - Packet Panic retains its existing separate sound setting for game-specific events.
 - Sounds are short and synthesis-based; no remote audio streams or autoplay.
 
-## Incident model
+## Incident model — v2 workbench
 
-Five incident categories are represented by different initial conditions and constraints: pool starvation, retry amplification, cache stampede, cascading dependency load, and deployment regression.
+The incident route is no longer a fixed metric chart with six instant-fix buttons.
+A **versioned deterministic incident engine** simulates baseline demand, retries,
+application and dependency capacity, cache-hit behavior, load shedding, queue
+growth, latency, 5xx failures, availability and resource-cost trade-offs. All
+visible metrics, traces and logs are derived from the same state history.
 
-The discrete-time model advances deterministically from scenario and seed. Interventions change capacity, retry factor, cache hit ratio, load-shedding fraction, and circuit-breaker behavior. Queues, latency, and error figures derive from the model.
+The workbench now includes:
 
-**Limitations:** This is illustrative systems behavior, not real production telemetry or an accurate queueing-theory/network simulator. Rollback and scaling effects are simplified. The current UI has no fully-fledged traces search or server-verified report.
+- Selectable service topology and causal inspection notes.
+- Latency, 5xx and queue time series with a tick scrubber.
+- Trace, log and configuration-change panels derived from simulation state.
+- Eight operational interventions, including traffic restoration and circuit closure.
+- Four-tick SLO recovery verification. Rejecting 72% of customers is **not**
+  incorrectly treated as an incident recovery.
+- An operator timeline, summarized incident report, JSON export, and
+  version-checked deterministic URL replays.
+- Five incident categories, each with at least one meaningful recovery plan,
+  plus negative tests for misleading scaling and load shedding.
+
+The engine has no backend cost in solo mode; the replay URL carries only
+simulation seed and validated commands, not tokens or production data.
+
+**Limitations:** Discrete requests-per-tick are abstract units, the latency
+model is deliberately simplified, dependency simulation is approximate, and
+the report is *not* an audited operational assessment or actual customer impact.
+There is no live OpenTelemetry collector, full trace search, or Kubernetes
+control-plane integration. Global scores cannot be verified from client data.
 
 ## Packet Siege
 
