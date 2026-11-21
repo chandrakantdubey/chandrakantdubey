@@ -15,8 +15,8 @@ This is a staged evolution of the portfolio, not an assertion that the entire lo
 ## Visual and audio
 
 - Original vector chrome kinetic sculpture on the lab heroes.
-- Consistent dark cinematic panels, accessible controls, responsive typography, reduced-motion fallback.
-- Global opt-in synthesized Web Audio for interface clicks. Sound is OFF until the visitor enables it.
+- Existing homepage hero is now integrated into the darker cinematic treatment, while the editorial chapters remain distinct. Lab pages use responsive panels and reduced-motion fallbacks.
+- Global opt-in synthesized Web Audio: short tonal interaction cues, distinct discovery sounds, and a separately enabled low-volume procedural ambient drone. Sound is OFF until the visitor enables it.
 - Packet Panic retains its existing separate sound setting for game-specific events.
 - Sounds are short and synthesis-based; no remote audio streams or autoplay.
 
