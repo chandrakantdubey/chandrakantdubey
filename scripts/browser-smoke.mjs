@@ -627,6 +627,24 @@ try{
   await cdp.send("Page.navigate",{url:"http://127.0.0.1:4173/play/packet"});
   await poll(()=>cdp.eval("!!document.querySelector('.packet-daily-button')"),"Packet Panic route loads");
   assert.ok(await cdp.eval("document.body.textContent.includes('SIEGE MODE')"),"Siege mode appears in the game toolbar");
+  // Visual regression evidence for each newly introduced route.
+  const scenes=[
+    ["/lab","cinema-lab"],
+    ["/lab/disaster","cinema-disaster"],
+    ["/lab/take-five","cinema-take-five"],
+    ["/engineering","cinema-engineering"],
+    ["/access","cinema-archive"],
+  ];
+  for(const [width,height,mobile] of [[1440,900,false],[390,844,true],[320,720,true]]){
+    await cdp.send("Emulation.setDeviceMetricsOverride",{width,height,deviceScaleFactor:1,mobile,screenWidth:width,screenHeight:height});
+    for(const [route,name] of scenes){
+      await cdp.send("Page.navigate",{url:"http://127.0.0.1:4173"+route});
+      await poll(()=>cdp.eval("!!document.querySelector('.universe .uni-hero')"),"scene "+route+" loads at "+width);
+      await delay(160);
+      assert.ok(await cdp.eval("document.documentElement.scrollWidth<=innerWidth+3"),route+" "+width+" viewport has no horizontal overflow");
+      await cdp.screenshot(name+"-"+width+".png");
+    }
+  }
   console.log("Cinema, incident, garden, engineering, archive and Siege smoke checks PASS.");
   console.log("Experience, typed discovery, keyboard focus, static hero, lazy modules, tablet and 320/390px QA PASS.");
   console.log("Visual QA saved to "+out);
