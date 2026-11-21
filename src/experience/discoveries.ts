@@ -20,6 +20,7 @@ export function revealDiscovery(id:Discovery) {
   if (!current.includes(id)) {
     try {localStorage.setItem(KEY,JSON.stringify([...current,id]));}catch { /* Optional progress must never break navigation. */ }
     window.dispatchEvent(new CustomEvent("cd:discovery",{detail:{id}}));
+    window.dispatchEvent(new CustomEvent("cd:sound-cue",{detail:{type:"discovery"}}));
   }
 }
 export function resetDiscoveries() {
