@@ -1,5 +1,5 @@
 
-.experience-sound {position:fixed;z-index:9999;right:18px;bottom:18px;border:1px solid rgba(215,228,234,.48);border-radius:100px;background:#10131b;color:#f5efe4;box-shadow:0 9px 30px #05050670;padding:10px 15px;font:600 11px/1.1 monospace;letter-spacing:.09em;cursor:pointer;display:flex;gap:9px;align-items:center}
+.experience-sound {position:fixed;z-index:9999;right:18px;bottom:18px;border:1px solid rgba(215,228,234,.48);border-radius:100px;background:#10131b;color:#f5efe4;box-shadow:0 9px 30px #05050670;padding:10px 15px;font:600 12px/1.1 monospace;letter-spacing:.09em;cursor:pointer;display:flex;gap:9px;align-items:center}
 .experience-sound:focus-visible,.universe a:focus-visible,.universe button:focus-visible,.universe input:focus-visible,.universe select:focus-visible {outline:3px solid #d9fc89;outline-offset:3px}
 .universe {min-height:100vh;background:#080b13;color:#e8ebea;font-family:Manrope,system-ui,sans-serif}
 .universe *{box-sizing:border-box}
@@ -61,5 +61,5 @@
 
 .experience-audio-controls {position:fixed;z-index:9999;right:18px;bottom:18px;display:flex;align-items:center;gap:7px;flex-wrap:wrap;justify-content:flex-end;max-width:calc(100vw - 30px)}
 .experience-audio-controls .experience-sound {position:static;right:auto;bottom:auto}
-.experience-ambient {border:1px solid #d4d2f466;border-radius:50px;background:#23233a;color:#f1f0ff;box-shadow:0 9px 28px #03051160;padding:10px 12px;font:600 10px/1.1 monospace;letter-spacing:.06em;cursor:pointer}
+.experience-ambient {border:1px solid #d4d2f466;border-radius:50px;background:#23233a;color:#f1f0ff;box-shadow:0 9px 28px #03051160;padding:10px 12px;font:600 12px/1.1 monospace;letter-spacing:.06em;cursor:pointer}
 .experience-ambient:focus-visible,.experience-sound:focus-visible {outline:3px solid #d9fc89;outline-offset:3px}
