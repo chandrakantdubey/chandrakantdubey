@@ -606,10 +606,10 @@ try{
   await poll(()=>cdp.eval("document.querySelectorAll('.universe .uni-card').length===4"),"lab landing cards render");
   assert.ok(await cdp.eval("document.documentElement.scrollWidth<=innerWidth+3"),"lab mobile width fits viewport");
   await cdp.send("Page.navigate",{url:"http://127.0.0.1:4173/lab/disaster"});
-  await poll(()=>cdp.eval("!!document.querySelector('.uni-actions button')"),"incident actions render");
-  const initialTick=await cdp.eval("document.querySelector('.uni-status')?.textContent");
-  await cdp.eval("document.querySelector('.uni-actions button').click()");
-  await poll(()=>cdp.eval("document.querySelector('.uni-status')?.textContent!=="+JSON.stringify(initialTick)),"incident advances after operational command");
+  await poll(()=>cdp.eval("!!document.querySelector('.iw-action-grid button')"),"incident actions render");
+  const initialTick=await cdp.eval("document.querySelector('.iw-statusline')?.textContent");
+  await cdp.eval("document.querySelector('.iw-action-grid button').click()");
+  await poll(()=>cdp.eval("document.querySelector('.iw-statusline')?.textContent!=="+JSON.stringify(initialTick)),"incident advances after operational command");
   await cdp.send("Page.navigate",{url:"http://127.0.0.1:4173/lab/take-five"});
   await poll(()=>cdp.eval("!!document.querySelector('.uni-panel svg')"),"kinetic experience mounts");
   await cdp.eval("document.querySelectorAll('.uni-container > .uni-controls button')[1].click()");
