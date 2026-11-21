@@ -152,5 +152,5 @@ const contentRead=storageSource.indexOf('const result=await get(pathname,{access
 assert.ok(metadataRead>=0 && contentRead>metadataRead,'metadata ETag is read before uncached body');
 assert.match(storageSource,/return \{room:data,etag:revision\};/,'CAS uses metadata revision');
 assert.doesNotMatch(storageSource,/return \{room:data,etag:result\.blob\.etag\};/,'never use content-response ETag for CAS');
-assert.match(storageSource,/error instanceof BlobNotFoundError/,'missing rooms remain 404');
+assert.ok(storageSource.includes('error.message.endsWith("The requested blob does not exist")'),'missing rooms remain 404');
 console.log('Blob CAS regression: metadata ETag, consistent-read ordering, and missing-room handling PASS');

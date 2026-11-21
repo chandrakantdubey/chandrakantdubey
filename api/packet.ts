@@ -5,7 +5,7 @@
  * Snapshot polling (~900 ms) intentionally avoids a Redis dependency.
  */
 import { createHash, randomBytes, timingSafeEqual } from "node:crypto";
-import { BlobNotFoundError, BlobPreconditionFailedError, get, head, put } from "@vercel/blob";
+import { BlobPreconditionFailedError, get, head, put } from "@vercel/blob";
 import {
   newCoopGame, pairRotateCoop, shieldCoopFault,
   beginPacketGame, rotatePacketTile, patchPacketNetwork,
@@ -92,7 +92,12 @@ async function load(code:string):Promise<{room:StoredRoom;etag:string}|null> {
     if(metadata.size>16_384)throw Error("Room exceeded expected size.");
     revision=metadata.etag;
   }catch(error){
-    if(error instanceof BlobNotFoundError)return null;
+    // Some published SDK builds omit the named BlobNotFoundError export.
+    // Recognize its known error without importing a potentially absent symbol.
+    if(error instanceof Error && (
+      error.constructor.name==="BlobNotFoundError" ||
+      error.message.endsWith("The requested blob does not exist")
+    ))return null;
     throw error;
   }
   if(!revision)throw Error("Room storage revision unavailable.");
