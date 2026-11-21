@@ -1,0 +1,32 @@
+/* Editorial cohesion for the second immersive release. No scroll-hijacking. */
+.universe .uni-controls[aria-label="Choose creative chamber"]{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;
+  background:#8693b162;border:1px solid #94a2bf65;padding:1px;margin-bottom:25px;
+}
+.universe .uni-controls[aria-label="Choose creative chamber"] .uni-button{
+  margin:0;min-height:63px;width:100%;display:flex;justify-content:center;text-align:center;
+  font:700 12px/1.5 'JetBrains Mono',monospace;letter-spacing:.06em;
+  color:#b7c7dc;background:#131d30;border:0;cursor:pointer;transition:background .2s ease,color .2s ease;
+}
+.universe .uni-controls[aria-label="Choose creative chamber"] .uni-button:hover{
+  background:#25344b;color:#e7eadf;
+}
+.universe .uni-controls[aria-label="Choose creative chamber"] .uni-button[aria-pressed=true]{
+  background:#d8efae;color:#13201b;
+}
+.universe .uni-controls[aria-label="Choose creative chamber"] .uni-button:focus-visible{
+  outline:3px solid #e7fcb8;outline-offset:-3px;position:relative;z-index:1;
+}
+.universe .uni-card{transition:transform .28s ease,border-color .28s ease}
+.universe .uni-card:focus-within,.universe .uni-card:hover{
+  border-color:#d5e8bc85;transform:translateY(-3px);
+}
+.universe .uni-nav{backdrop-filter:blur(14px);background:rgba(8,11,19,.9)}
+@media(max-width:670px){
+  .universe .uni-controls[aria-label="Choose creative chamber"]{grid-template-columns:1fr}
+  .universe .uni-controls[aria-label="Choose creative chamber"] .uni-button{min-height:47px}
+}
+@media(prefers-reduced-motion:reduce){
+ .universe .uni-card,.universe .uni-controls[aria-label="Choose creative chamber"] .uni-button{transition:none}
+ .universe .uni-card:hover{transform:none}
+}

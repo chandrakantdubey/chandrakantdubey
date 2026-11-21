@@ -6,6 +6,9 @@ import {
   type PacketGameState,
 } from "./packetEngine.js";
 import { challengeSeed, resultShareText, utcChallengeDay } from "./dailyChallenge";
+import SiegePanel from "./SiegePanel";
+import { siegeOrder, type SiegeAction } from "./siegeStrategy.js";
+import "./coop-panel.css";
 
 type Mode="solo"|"online";
 type RoomResponse={
@@ -73,6 +76,7 @@ export default function PacketPanic({standalone=false}:{standalone?:boolean}) {
   const [onlineAvailable,setOnlineAvailable]=useState<boolean|null>(null);
   const [busy,setBusy]=useState(false);
   const [copied,setCopied]=useState(false);
+  const [pairArmed,setPairArmed]=useState(false);
   const [notice,setNotice]=useState("");
   const [now,setNow]=useState(()=>Date.now());
   const [soundOn,setSoundOn]=useState(false);
@@ -157,6 +161,9 @@ export default function PacketPanic({standalone=false}:{standalone?:boolean}) {
     else if(game.lastEvent==="dropped"||game.lastEvent==="outage")tone(audio,180,.18);
     else if(game.lastEvent==="incident")tone(audio,420,.15);
     else if(game.lastEvent==="survived")tone(audio,1100,.3);
+    else if(game.lastEvent==="fault-blocked")tone(audio,990,.18);
+    else if(game.lastEvent==="pair-rotate")tone(audio,680,.12);
+    else if(game.lastEvent==="fault-shielded")tone(audio,770,.13);
   },[game.eventId,game.lastEvent,soundOn]);
 
   useEffect(()=>()=>{if(audio.current)void audio.current.close();},[]);
@@ -178,6 +185,7 @@ export default function PacketPanic({standalone=false}:{standalone?:boolean}) {
   },[finished,game.phase,game.startedAt,game.seed,game.score,game.integrity,game.delivered,mode,room,daily,dailyBest,challengeDay]);
 
   const solo=()=>{
+    setPairArmed(false);
     setMode("solo");setGame(newPacketGame(Date.now(),1));setRoom("");setToken("");
     setInvite("");setNotice("");setCopied(false);setLinkRoom(null);setDaily(false);
   };
@@ -226,7 +234,7 @@ export default function PacketPanic({standalone=false}:{standalone?:boolean}) {
     }catch(error){setNotice(messageFrom(error));}
     finally{setBusy(false);}
   };
-  const send=async(action:"start"|"rotate"|"patch"|"restart",index?:number)=>{
+  const send=async(action:"start"|"rotate"|"patch"|"restart"|"pair"|"shield",index?:number)=>{
     if(!connected||busy)return;
     const commandId=crypto.randomUUID();
     setBusy(true);setNotice("");
@@ -240,10 +248,19 @@ export default function PacketPanic({standalone=false}:{standalone?:boolean}) {
   const rotate=(index:number)=>{
     if(!canPlay)return;
     if(connected&&(player===1?index%COLS>=4:index%COLS<4))return;
+    if(connected&&pairArmed&&player===1){
+      if(index%COLS>=3){setNotice("Choose an ingress router in columns 1–3 for pair rotation.");return;}
+      setPairArmed(false);void send("pair",index);return;
+    }
     if(mode==="solo"){
       setGame(previous=>rotatePacketTile(previous,index));
       if(soundOn)tone(audio,300+index*6,.06);
     }else void send("rotate",index);
+  };
+  const applySiegeTactic=(action:SiegeAction)=>{
+    if(!canPlay||connected||!siege)return;
+    setGame(previous=>siegeOrder(previous,action));
+    if(soundOn)tone(audio,action==="overclock"?850:action==="vent"?270:420,.11);
   };
   const patch=()=>{
     if(!canPlay||game.patches<=0||game.integrity>=100)return;
@@ -295,7 +312,7 @@ export default function PacketPanic({standalone=false}:{standalone?:boolean}) {
       <div><span className="packet-masthead-kicker">SOMEONE UNPLUGGED SOMETHING. AGAIN.</span>
         <h3>DON'T <em>DROP</em><br/>THE PACKET<span>.</span></h3>
       </div>
-      <div className="packet-masthead-side"><span>001 / SYSTEM IN DISTRESS</span><p>Rotate the routers. Connect the paths. Deliver the signals. Your entire network has 90 seconds to stop embarrassing you.</p></div>
+      <div className="packet-masthead-side"><span>001 / SYSTEM IN DISTRESS</span><p>Rotate the routers. Connect the paths. Deliver the signals. Your entire network has {siege?"four minutes":"90 seconds"} to stop embarrassing you.</p></div>
     </div>
 
     <div className="packet-hud" aria-label="Current network status">
@@ -315,7 +332,7 @@ export default function PacketPanic({standalone=false}:{standalone?:boolean}) {
       <div className="packet-orbit orbit-two" aria-hidden="true"/>
       <div className="packet-arena-heading">
         <span><i/> {playing?"LIVE NETWORK":"NETWORK STANDBY"}{daily?" · DAILY RUN":""}</span>
-        <span>WAVE {wave}/3 <b>·</b> {game.packets.length} SIGNALS IN FLIGHT</span>
+        <span>WAVE {wave}/{siege?5:3} <b>·</b> {game.packets.length} SIGNALS IN FLIGHT</span>
       </div>
       <div className="packet-board-frame">
         <div className="packet-board" role="group" aria-label="Seven column by five row routing network">
@@ -348,7 +365,7 @@ export default function PacketPanic({standalone=false}:{standalone?:boolean}) {
           })}
           <div className="packet-particle-layer" aria-hidden="true">
             {game.packets.map(packet=><span key={packet.id}
-              className={"packet-particle packet-particle-"+packet.color}
+              className={"packet-particle packet-particle-"+packet.color+(siege&&packet.kind?" siege-packet-"+packet.kind:"")}
               style={{left:((packet.col+.5)/COLS*100)+"%",top:((packet.row+.5)/ROWS*100)+"%"}}/>)}
           </div>
         </div>
@@ -391,6 +408,17 @@ export default function PacketPanic({standalone=false}:{standalone?:boolean}) {
       </div>}
     </div>
 
+    {connected&&game.coop&&<div className="packet-coop-strategy" aria-label="Asymmetric co-op operator actions">
+      <div><span>ASYMMETRIC ROLES / SERVER-VALIDATED</span>
+        <strong>{player===1?"ROUTE ARCHITECT — INGRESS":"SYSTEMS OPERATOR — EGRESS"}</strong>
+        <small>Actions consume shared round charges, not client credentials. A valid command is committed through the room's CAS protocol.</small></div>
+      {player===1?<button type="button" aria-pressed={pairArmed} disabled={!canPlay||game.coop.pairCharges<=0}
+          onClick={()=>setPairArmed(v=>!v)}>PAIR-ROTATE TWO ROUTERS · {game.coop.pairCharges} LEFT {pairArmed?"/ SELECT COLUMN 1–3":"↗"}</button>
+        :<button type="button" disabled={!canPlay||game.coop.shieldCharges<=0||game.coop.pendingShields>=2}
+          onClick={()=>void send("shield")}>SHIELD NEXT NETWORK FAULT · {game.coop.shieldCharges} LEFT</button>}
+      <span>{game.coop.pendingShields} FAULT SHIELDS QUEUED · {game.coop.blockedFaults} FAULTS BLOCKED</span>
+    </div>}
+    {siege&&<SiegePanel game={game} onOrder={applySiegeTactic}/>}
     <div className="packet-commandbar">
       <div className="packet-command-status" role="status" aria-live="polite">
         <span className={playing?"packet-command-flash":""}>{playing?"●":"○"} {playing?"NETWORK UNDER LOAD":finished?"ROUND COMPLETE":"READY TO ROUTE"}</span>

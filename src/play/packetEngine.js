@@ -3,6 +3,12 @@
  * Server and browser share these rules; no client-reported scores or packet states.
  * Simulation advances on fixed wall-clock ticks, not on render frames.
  */
+import {
+  newSiegeStrategy, siegeClass, siegeOrder, siegeBudget, packetWeight,
+  packetTTL, siegeProcessOrder, siegeAdvanceResources, siegeMissImpact,
+  siegeDeliveryBonus,
+} from './siegeStrategy.js';
+export {siegeOrder} from './siegeStrategy.js';
 export const COLS = 7;
 export const ROWS = 5;
 export const TILE_COUNT = COLS * ROWS;
@@ -53,7 +59,29 @@ export function newPacketGame(seed=2026, players=1) {
 }
 /** Longer solo-only survival variant. Existing multiplayer protocol remains unchanged. */
 export function newSiegeGame(seed=2026) {
-  return {...newPacketGame(seed,1),mode:"siege",roundMs:SIEGE_MS,patches:5};
+  const base=newPacketGame(seed,1);
+  return {...base,mode:"siege",roundMs:SIEGE_MS,patches:5,siege:newSiegeStrategy(base.seed)};
+}
+/** V2 rooms are opt-in; legacy newPacketGame states remain unchanged. */
+export function newCoopGame(seed=2026,players=1){
+  return {...newPacketGame(seed,players),coop:{pairCharges:2,shieldCharges:2,pendingShields:0,blockedFaults:0}};
+}
+/** Host-only, atomic two-router adjustment in the ingress domain. */
+export function pairRotateCoop(state,index){
+  if(state.phase!=="playing"||state.players!==2||!state.coop||state.coop.pairCharges<=0
+     ||!Number.isInteger(index)||index<0||index>=TILE_COUNT||index%COLS>=3)return state;
+  const tiles=state.tiles.map(tile=>({...tile}));
+  for(const target of [index,index+1])tiles[target].rotation=(tiles[target].rotation+1)&3;
+  return {...state,tiles,coop:{...state.coop,pairCharges:state.coop.pairCharges-1},
+    version:state.version+1,lastEvent:"pair-rotate",eventId:state.eventId+1};
+}
+/** Guest-only ability; protects a *future* deterministic router fault. */
+export function shieldCoopFault(state){
+  if(state.phase!=="playing"||state.players!==2||!state.coop||state.coop.shieldCharges<=0
+     ||state.coop.pendingShields>=2)return state;
+  return {...state,coop:{...state.coop,shieldCharges:state.coop.shieldCharges-1,
+    pendingShields:state.coop.pendingShields+1},version:state.version+1,
+    lastEvent:"fault-shielded",eventId:state.eventId+1};
 }
 export function beginPacketGame(state, now=Date.now()) {
   if(state.phase!=="ready" || !Number.isFinite(now))return state;
@@ -82,14 +110,19 @@ export function timeRemaining(state,now=Date.now()) {
   const duration=state.roundMs??ROUND_MS;
   return state.phase==="ready"?duration:Math.max(0,duration-elapsedMs(state,now));
 }
-function recordMiss(s) {
+function recordMiss(s,p) {
   s.missed++;
-  s.integrity=Math.max(0,s.integrity-6);
+  s.integrity=Math.max(0,s.integrity-(s.siege?siegeMissImpact(p,s.siege):6));
   s.streak=0;s.lastEvent="dropped";s.eventId++;
 }
-function recordDelivery(s) {
+function recordDelivery(s,p) {
   s.delivered++;s.streak++;s.bestStreak=Math.max(s.bestStreak,s.streak);
   s.score+=120+Math.min(s.streak-1,8)*30;
+  if(s.siege){
+    s.score+=siegeDeliveryBonus(p);
+    if(p?.kind==="priority")s.siege.priorityDelivered++;
+    if(p?.kind==="unstable")s.siege.unstableDelivered++;
+  }
   s.integrity=Math.min(100,s.integrity+2);
   s.lastEvent="delivered";s.eventId++;
 }
@@ -102,35 +135,64 @@ function exitPort(mask,entry,color,row) {
 function nextTick(s) {
   s.tick++;
   const wave=waveForTick(s.tick,s.mode);
+  if(s.siege){
+    s.siege=siegeAdvanceResources(s.siege,s.packets,wave);
+    if(s.siege.heat>94&&s.tick%4===0)s.integrity=Math.max(0,s.integrity-3);
+  }
   const every=wave===1?9:wave===2?7:wave===3?5:wave===4?4:3;
   // A pulse starts at the edge; the player sees its full trip through the network.
   if(s.tick%every===1 && s.packets.length<16) {
     const color=s.spawned%2, row=color===0?1:3;
-    s.packets.push({id:s.spawned+1,col:0,row,enter:8,color,age:0});
+    s.packets.push({id:s.spawned+1,col:0,row,enter:8,color,age:0,...(s.siege?{kind:siegeClass(s.seed,s.spawned+1,wave)}:{})});
     s.spawned++;
+    // Siege late-wave director launches a second packet as pressure rises.
+    // Quick, daily and online co-op still spawn exactly one packet.
+    if(s.siege&&wave>=4&&s.packets.length<16){
+      const otherColor=s.spawned%2,otherRow=otherColor===0?1:3;
+      s.packets.push({id:s.spawned+1,col:0,row:otherRow,enter:8,color:otherColor,age:0,
+        kind:siegeClass(s.seed,s.spawned+1,wave)});
+      s.spawned++;
+    }
   }
   const next=[];
-  for(const p of s.packets) {
+  const packets=s.siege?siegeProcessOrder(s.packets,s.siege):s.packets;
+  let bandwidth=s.siege?siegeBudget(s.siege):Infinity;
+  for(const p of packets) {
+    if(s.siege){
+      const weight=packetWeight(p.kind);
+      if(bandwidth<weight){
+        if(p.age>=packetTTL(p.kind))recordMiss(s,p);
+        else next.push({...p,age:p.age+1});
+        continue;
+      }
+      bandwidth-=weight;
+    }
     const index=p.row*COLS+p.col;
     const mask=tilePorts(s.tiles[index]);
     const output=(mask&p.enter)?exitPort(mask,p.enter,p.color,p.row):0;
-    if(!output||p.age>=17){recordMiss(s);continue;}
+    if(!output||p.age>=(s.siege?packetTTL(p.kind):17)){recordMiss(s,p);continue;}
     const [dx,dy]=DELTA[output],col=p.col+dx,row=p.row+dy;
     if(col===COLS && output===2 && row===(p.color===0?1:3)){
-      recordDelivery(s);continue;
+      recordDelivery(s,p);continue;
     }
-    if(col<0||col>=COLS||row<0||row>=ROWS){recordMiss(s);continue;}
+    if(col<0||col>=COLS||row<0||row>=ROWS){recordMiss(s,p);continue;}
     const enter=REVERSE[output];
-    if(!(tilePorts(s.tiles[row*COLS+col])&enter)){recordMiss(s);continue;}
+    if(!(tilePorts(s.tiles[row*COLS+col])&enter)){recordMiss(s,p);continue;}
     next.push({...p,col,row,enter,age:p.age+1});
   }
   s.packets=next;
+  if(s.siege)s.siege.bufferUsed=next.length;
   if(wave>=2 && s.tick%32===0){
+    if(s.coop?.pendingShields>0){
+      s.coop={...s.coop,pendingShields:s.coop.pendingShields-1,blockedFaults:s.coop.blockedFaults+1};
+      s.lastEvent="fault-blocked";s.eventId++;
+    }else{
     const index=Math.floor(hashRandom(s.seed,s.tick*13)*TILE_COUNT);
     const tile=s.tiles[index];
     s.tiles[index]={...tile,rotation:(tile.rotation+1)&3};
     s.lastFault=index;s.faultAtTick=s.tick;s.incidents++;
     s.lastEvent="incident";s.eventId++;
+    }
   }
   if(s.integrity<=0){
     s.integrity=0;s.phase="lost";s.packets=[];

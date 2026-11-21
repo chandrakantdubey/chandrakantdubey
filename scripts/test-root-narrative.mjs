@@ -1,0 +1,54 @@
+import assert from 'node:assert/strict';
+import {
+  newArchive,executeArchive,archivePhase,archiveInventory,VALID_CORRELATIONS,
+  sanitizeArchive,ARTIFACTS,ROOT_VERSION,
+} from '../src/experience/rootNarrativeEngine.ts';
+const discovered = ['anomaly','architecture','recovery','network','mechanism','entropy'];
+let state = newArchive();
+assert.equal(state.version, ROOT_VERSION);
+assert.equal(archivePhase([],state),'DORMANT');
+assert.equal(archivePhase(['anomaly'],state),'AWAKENED');
+assert.equal(archiveInventory(discovered,state).length,6);
+assert.equal(Object.keys(ARTIFACTS).length,8);
+assert.equal(VALID_CORRELATIONS.length,6);
+function exec(cmd) { const result=executeArchive(state,cmd,discovered);state=result.state;return result; }
+assert.match(exec('help').output,/COMMANDS/);
+assert.match(exec('link anomaly architecture').output,/CORRELATION ACCEPTED/);
+assert.match(exec('link recovery network').output,/CORRELATION ACCEPTED/);
+assert.match(exec('link mechanism entropy').output,/CORRELATION ACCEPTED/);
+assert.equal(archivePhase(discovered,state),'CORRELATED');
+assert.match(exec('decode').output,/DECRYPTION COMPLETE/);
+assert.equal(archivePhase(discovered,state),'BREACHED');
+assert.ok(state.hidden.includes('cipher'));
+assert.match(exec('inspect cipher').output,/GHOST KEY/);
+assert.match(exec('link cipher network').output,/CORRELATION ACCEPTED/);
+assert.match(exec('link cipher anomaly').output,/ORIGIN UNLOCKED/);
+assert.ok(state.hidden.includes('origin'));
+assert.match(exec('resolve understand').output,/ENDING/);
+assert.equal(archivePhase(discovered,state),'RESOLVED');
+assert.equal(state.ending,'understand');
+assert.equal(archiveInventory(discovered,state).length,8);
+const saved=JSON.parse(JSON.stringify(state));
+assert.deepEqual(sanitizeArchive(saved),state);
+assert.match(exec('resolve contain').output,/UNDERSTANDING/,'ending is irreversible unless reset');
+assert.equal(exec('link anomaly architecture').type,'info','duplicate connections are idempotent');
+assert.equal(exec('not-a-shell -rf /').type,'warning','no shell execution');
+assert.equal(exec('inspect /etc/passwd').type,'warning','no filesystem access');
+assert.equal(exec('link cipher architecture').type,'warning','unsupported correlations are rejected');
+assert.equal(exec(' '.repeat(200)).type,'warning','command length bounded');
+assert.equal(exec('reset').state.correlations.length,0);
+assert.equal(archivePhase(discovered,state),'AWAKENED');
+const corrupt = {...saved,correlations:['nope',...saved.correlations],hidden:['origin'],ending:'contain'};
+const sanitized = sanitizeArchive(corrupt);
+assert.ok(!sanitized.correlations.includes('nope'));
+assert.ok(!sanitized.hidden.includes('origin'),'hidden artifacts are not unlocked by forged persistence alone');
+assert.equal(sanitized.ending,null);
+assert.deepEqual(sanitizeArchive({version:'0'}),newArchive());
+const incomplete = newArchive();
+const a=executeArchive(incomplete,'link anomaly architecture',['anomaly']);
+assert.equal(a.type,'warning');
+assert.deepEqual(a.state,incomplete);
+const badDecode=executeArchive(newArchive(),'decode',discovered);
+assert.equal(badDecode.type,'warning');
+assert.deepEqual(badDecode.state,newArchive());
+console.log('ROOT ACCESS: finite-state narrative, eight artifacts, correlations, three endings, persistence validation, no shell — PASS');

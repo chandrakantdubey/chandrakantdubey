@@ -7,12 +7,14 @@
 import { createHash, randomBytes, timingSafeEqual } from "node:crypto";
 import { BlobPreconditionFailedError, get, put } from "@vercel/blob";
 import {
-  newPacketGame, beginPacketGame, rotatePacketTile, patchPacketNetwork,
+  newCoopGame, pairRotateCoop, shieldCoopFault,
+  beginPacketGame, rotatePacketTile, patchPacketNetwork,
   advancePacketGame, TILE_COUNT,
 } from "../src/play/packetEngine.js";
 import type { PacketGameState } from "../src/play/packetEngine.js";
+import { validateCoopAction } from "../src/play/coopAuthorizer.js";
 
-type Action = "create"|"join"|"snapshot"|"start"|"rotate"|"patch"|"restart";
+type Action = "create"|"join"|"snapshot"|"start"|"rotate"|"patch"|"restart"|"pair"|"shield";
 interface Input {
   action:Action;
   room?:string;
@@ -50,15 +52,15 @@ export function packetStorageEnabled(env=process.env):boolean {
 export function parsePacketAction(value:unknown):{ok:true;data:Input}|{ok:false;error:string} {
   if(!value||typeof value!=="object"||Array.isArray(value))return {ok:false,error:"Invalid request."};
   const a=value as Record<string,unknown>,action=a.action;
-  if(!["create","join","snapshot","start","rotate","patch","restart"].includes(String(action)))
+  if(!["create","join","snapshot","start","rotate","patch","restart","pair","shield"].includes(String(action)))
     return {ok:false,error:"Unknown room action."};
   if(action!=="create"&&(typeof a.room!=="string"||!CODE.test(a.room)))
     return {ok:false,error:"Invalid room code."};
   if(!["create","join"].includes(String(action))&&(typeof a.token!=="string"||!TOKEN.test(a.token)))
     return {ok:false,error:"Invalid player token."};
-  if(action==="rotate"&&(!Number.isInteger(a.index)||Number(a.index)<0||Number(a.index)>=TILE_COUNT))
+  if(["rotate","pair"].includes(String(action))&&(!Number.isInteger(a.index)||Number(a.index)<0||Number(a.index)>=TILE_COUNT))
     return {ok:false,error:"Invalid node."};
-  if(["start","rotate","patch","restart"].includes(String(action))&&(typeof a.commandId!=="string"||!UUID.test(a.commandId)))
+  if(["start","rotate","patch","restart","pair","shield"].includes(String(action))&&(typeof a.commandId!=="string"||!UUID.test(a.commandId)))
     return {ok:false,error:"Invalid action identifier."};
   return {ok:true,data:{action:action as Action,room:a.room as string|undefined,
     token:a.token as string|undefined,index:a.index as number|undefined,
@@ -137,7 +139,7 @@ export async function POST(request:Request):Promise<Response> {
       const id=newCode(),secret=newToken(),createdAt=Date.now();
       const room:StoredRoom={
         id,hostHash:hash(secret),guestHash:null,
-        game:newPacketGame(randomBytes(4).readUInt32BE(0),1),
+        game:newCoopGame(randomBytes(4).readUInt32BE(0),1),
         createdAt,expiresAt:createdAt+SESSION_MS,commands:[],
       };
       await save(room);
@@ -178,6 +180,12 @@ export async function POST(request:Request):Promise<Response> {
         else if(player===1&&index!%7>=4)error="Operator 1 controls the ingress side (columns 1–4).";
         else if(player===2&&index!%7<4)error="Operator 2 controls the egress side (columns 5–7).";
         else game=rotatePacketTile(game,index!);
+      }else if(action==="pair"){
+        error=validateCoopAction("pair",player,game,index);
+        if(!error)game=pairRotateCoop(game,index!);
+      }else if(action==="shield"){
+        error=validateCoopAction("shield",player,game);
+        if(!error)game=shieldCoopFault(game);
       }else if(action==="patch"){
         if(game.phase!=="playing"||game.patches<=0||game.integrity>=100)
           error="No repair charge needed or available.";
@@ -185,7 +193,7 @@ export async function POST(request:Request):Promise<Response> {
       }else if(action==="restart"){
         if(player!==1)error="Only the host can restart.";
         else if(!["won","lost"].includes(game.phase))error="Finish the round before restarting.";
-        else game={...newPacketGame((game.seed+101)>>>0,2),version:game.version+1};
+        else game={...newCoopGame((game.seed+101)>>>0,2),version:game.version+1};
       }
       if(error)return json({error,game},409);
       if(game===current.game)return json(exposed(current,player));

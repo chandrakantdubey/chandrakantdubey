@@ -1,10 +1,12 @@
+import type {SiegeTactics,SiegePacketClass} from "./siegeStrategy.js";
 export type PacketKind = "line" | "corner" | "tee" | "cross";
 export type PacketPhase = "ready" | "playing" | "won" | "lost";
 export interface PacketTile {kind:PacketKind;rotation:number;col:number;row:number;}
-export interface PacketEntity {id:number;col:number;row:number;enter:number;color:number;age:number;}
+export interface PacketEntity {id:number;col:number;row:number;enter:number;color:number;age:number;kind?:SiegePacketClass;}
+export interface CoopResources {pairCharges:number;shieldCharges:number;pendingShields:number;blockedFaults:number;}
 export interface PacketGameState {
   seed:number;phase:PacketPhase;players:number;tiles:PacketTile[];packets:PacketEntity[];
-  mode?:"quick"|"siege";roundMs?:number;
+  mode?:"quick"|"siege";roundMs?:number;siege?:SiegeTactics;coop?:CoopResources;
   startedAt:number|null;tick:number;version:number;integrity:number;score:number;delivered:number;
   missed:number;streak:number;bestStreak:number;spawned:number;patches:number;
   incidents:number;lastFault:number|null;faultAtTick:number;lastEvent:string;eventId:number;
@@ -23,6 +25,9 @@ export declare function tilePorts(tile:PacketTile):number;
 export declare function makeTiles(seed:number):PacketTile[];
 export declare function newPacketGame(seed?:number,players?:number):PacketGameState;
 export declare function newSiegeGame(seed?:number):PacketGameState;
+export declare function newCoopGame(seed?:number,players?:number):PacketGameState;
+export declare function pairRotateCoop(state:PacketGameState,index:number):PacketGameState;
+export declare function shieldCoopFault(state:PacketGameState):PacketGameState;
 export declare function beginPacketGame(state:PacketGameState,now?:number):PacketGameState;
 export declare function rotatePacketTile(state:PacketGameState,index:number):PacketGameState;
 export declare function patchPacketNetwork(state:PacketGameState):PacketGameState;

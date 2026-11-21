@@ -1,0 +1,72 @@
+.entropy-garden{--e-border:#8b9fae55;--e-muted:#adbfcc;--e-lime:#daf4b0;color:#edf4ef;background:#0b1220;border:1px solid var(--e-border);overflow:hidden}
+.entropy-garden *{box-sizing:border-box}
+.entropy-garden button,.entropy-import{cursor:pointer}
+.entropy-garden button:focus-visible,.entropy-garden input:focus-visible,.entropy-import:focus-within,.entropy-canvas:focus-visible{outline:3px solid #d9f6a6;outline-offset:3px}
+.entropy-kicker{font:700 12px/1.5 'JetBrains Mono',monospace;letter-spacing:.1em;color:#c2e7ba}
+.entropy-header{display:flex;justify-content:space-between;align-items:flex-end;gap:25px;flex-wrap:wrap;padding:clamp(23px,3vw,39px);background:radial-gradient(ellipse at 68% 20%,#5962a52a,transparent 58%),#121d30;border-bottom:1px solid var(--e-border)}
+.entropy-header>div:first-child{max-width:580px}
+.entropy-header h2{font-size:clamp(31px,4vw,57px);margin:12px 0}
+.entropy-header p,.entropy-footer p{color:var(--e-muted);font-size:14px;line-height:1.7;margin:10px 0 0}
+.entropy-control-buttons{display:flex;flex-wrap:wrap;gap:8px;max-width:450px}
+.entropy-control-buttons button,.entropy-export-controls button,.entropy-import{border:1px solid #85a5af99;padding:12px 14px;background:#23374b;color:#eef5eb;font:700 12px/1.4 monospace;min-height:45px}
+.entropy-control-buttons button:first-child{background:var(--e-lime);color:#182524;border-color:#f3ffe3}
+.entropy-control-buttons button:hover,.entropy-export-controls button:hover,.entropy-import:hover{border-color:#dcf7b5}
+.entropy-layout{display:grid;grid-template-columns:minmax(0,1.52fr) minmax(340px,.79fr)}
+.entropy-visual{background:radial-gradient(ellipse at 50% 45%,#263047,#081423 75%);min-width:0;border-right:1px solid var(--e-border)}
+.entropy-panel-top{padding:15px 20px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;font:600 12px/1.5 monospace;color:#a9c2c3;border-bottom:1px solid var(--e-border)}
+.entropy-canvas{width:100%;height:auto;aspect-ratio:1040/640;display:block;touch-action:none;cursor:crosshair;background:#0c1626}
+.entropy-legend{padding:14px 20px;display:flex;flex-wrap:wrap;gap:12px 19px;align-items:center;border-top:1px solid #63778d52}
+.entropy-legend>span{display:inline-flex;align-items:center;gap:8px;font:600 12px/1.5 monospace;color:#c2d2ce}
+.entropy-legend i{display:inline-block;width:9px;height:9px;border-radius:50%;box-shadow:0 0 10px currentColor}
+.entropy-legend strong{color:#fff}
+.entropy-tick{margin-left:auto;color:#aabdd5}
+.entropy-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--e-border);border-top:1px solid var(--e-border)}
+.entropy-metrics>div{background:#0d1727;padding:19px 10px;min-width:0}
+.entropy-metrics span{display:block;font:700 12px/1.5 monospace;color:#a7c3ce}
+.entropy-metrics strong{display:block;font:750 clamp(19px,2.1vw,32px)/1.4 monospace;color:#e4f6c6;overflow-wrap:anywhere}
+.entropy-tools{padding:clamp(22px,2.6vw,37px);background:linear-gradient(135deg,#172338,#0e1625);min-width:0;align-content:start}
+.entropy-tools h3{font-size:clamp(28px,2.8vw,40px);line-height:1.08;letter-spacing:-.05em;margin:10px 0 14px}
+.entropy-muted{font-size:13px;line-height:1.7;color:#bbcad5;margin:0 0 23px}
+.entropy-brushes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.entropy-brushes button{background:#162338;color:#e2efea;border:1px solid #6d849b83;min-height:104px;padding:12px 7px;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center}
+.entropy-brushes button[aria-pressed=true]{border-color:#cdeea5;box-shadow:inset 0 0 0 1px #d9efa9;background:#294051}
+.entropy-brush-symbol{font-size:25px;line-height:1.2;color:#d7e9bc}
+.entropy-brushes strong{font-size:12px;font-weight:700}
+.entropy-brushes small{font-size:12px;color:#b5c2c8}
+.entropy-subhead{margin-top:25px;margin-bottom:11px;color:#bdd5c4;font:700 12px/1.5 monospace;letter-spacing:.08em}
+.entropy-presets{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.entropy-presets button{background:#283246;color:#e8ebf4;border:1px solid #768fa360;padding:11px 8px;font:700 12px/1.4 monospace}
+.entropy-presets button:hover{border-color:#d6eaa7}
+.entropy-slider{display:block;margin:16px 0}
+.entropy-slider span{display:flex;align-items:center;justify-content:space-between;gap:8px;font:700 12px monospace;color:#a9c0ce}
+.entropy-slider strong{color:#e3f3e0}
+.entropy-slider input{width:100%;accent-color:#d4eca4;min-height:28px}
+.entropy-apply{background:#d7f0ae;color:#132125;border:1px solid #e9f8c7;font:800 12px monospace;min-height:46px;padding:12px 17px;width:100%}
+.entropy-event{border:1px solid #cfa28f83;color:#f5d0bc;background:#49342f55;padding:12px;min-height:58px;display:flex;align-items:center;justify-content:space-between;gap:7px;flex-wrap:wrap;font:700 12px monospace;width:100%}
+.entropy-event span{font:600 12px monospace;color:#e6c2ad}
+.entropy-small-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;border-top:1px solid #677b9950;margin-top:23px;padding-top:16px}
+.entropy-small-stats>div{font:600 12px/1.5 monospace;color:#aabace;display:grid;gap:8px}
+.entropy-small-stats strong{font:700 19px monospace;color:#d8e9ab}
+.entropy-footer{padding:25px clamp(22px,3vw,40px);border-top:1px solid var(--e-border);display:flex;align-items:center;justify-content:space-between;gap:17px;flex-wrap:wrap}
+.entropy-footer>div:first-child{max-width:600px}
+.entropy-export-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.entropy-import{display:inline-flex;position:relative;align-items:center}
+.entropy-import input{position:absolute;opacity:0;width:100%;height:100%;inset:0;cursor:pointer}
+.entropy-notice{margin:0;padding:12px 26px;background:#d6f7b414;border-top:1px solid #83b69252;color:#d5f1bf;font:600 12px/1.7 monospace}
+.entropy-disclaimer{font:12px/1.6 monospace;color:#a1b0c3;padding:0 26px 19px;margin:10px 0 0}
+@media(max-width:1100px){.entropy-layout{grid-template-columns:1fr}.entropy-visual{border-right:0;border-bottom:1px solid var(--e-border)}.entropy-tools{display:grid;grid-template-columns:1fr 1fr;gap:11px 20px}.entropy-tools>.entropy-kicker,.entropy-tools>h3,.entropy-tools>.entropy-muted,.entropy-tools>.entropy-brushes,.entropy-tools>.entropy-small-stats{grid-column:1/-1}.entropy-subhead{margin-top:12px}}
+@media(max-width:690px){.entropy-header{padding:19px}.entropy-control-buttons button{flex:1}.entropy-panel-top{padding:12px}.entropy-legend{padding:12px}.entropy-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.entropy-tools{display:block;padding:20px}.entropy-small-stats{grid-template-columns:repeat(3,minmax(0,1fr))}.entropy-footer{padding:21px}.entropy-canvas{min-height:230px}.entropy-legend .entropy-tick{margin:0}}
+@media(prefers-reduced-motion:reduce){.entropy-garden *{transition:none!important;animation:none!important}}
+/* High-resolution selected-biome microscope; same pixels as the actual painter. */
+.entropy-microscope{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(235px,.75fr);gap:1px;background:#8b9fae55;border-block:1px solid #8b9fae55}
+.entropy-microscope-view,.entropy-microscope-stats{background:#0a1423;min-width:0}
+.entropy-microscope-view>span{display:block;padding:11px 14px;font:700 12px/1.5 'JetBrains Mono',monospace;letter-spacing:.045em;color:#b7d6cc}
+.entropy-microscope-view canvas{display:block;width:100%;height:auto;aspect-ratio:460/270;border-top:1px solid #6685a754}
+.entropy-microscope-stats{padding:13px 17px;display:grid;align-content:start;gap:8px}
+.entropy-microscope-stats>span{color:#acc3d5;font:700 12px/1.4 monospace}
+.entropy-microscope-stats>strong{color:#e0fac2;font:700 19px/1.3 monospace}
+.entropy-microscope-stats>div{display:flex;gap:11px;justify-content:space-between;border-bottom:1px solid #6884a945;padding-bottom:5px;font:600 12px/1.3 monospace}
+.entropy-microscope-stats>div span{color:#a6bcd0}
+.entropy-microscope-stats>div b{color:#e5f0ed}
+.entropy-microscope-stats>small{color:#a5bacb;font:12px/1.55 monospace}
+@media(max-width:720px){.entropy-microscope{grid-template-columns:1fr}.entropy-microscope-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 16px}.entropy-microscope-stats>span,.entropy-microscope-stats>strong,.entropy-microscope-stats>small{grid-column:1/-1}}

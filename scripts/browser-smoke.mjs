@@ -622,14 +622,36 @@ try{
   await cdp.eval("document.querySelector('.kinetic-rotor-actions button').click()");
   await poll(()=>cdp.eval("document.querySelector('.kinetic-rotor-header strong')?.textContent.includes('270°')"),"coupled rotor motion changes orientation");
   await cdp.eval("document.querySelectorAll('.uni-container > .uni-controls button')[1].click()");
-  await poll(()=>cdp.eval("!!document.querySelector('#entropy-art')"),"garden can be entered");
+  await poll(()=>cdp.eval("!!document.querySelector('.entropy-canvas')"),"living garden can be entered");
+  assert.ok(await cdp.eval("document.querySelectorAll('.entropy-brushes button').length===6"),"six ecological cultivation actions");
+  await cdp.eval("document.querySelectorAll('.entropy-control-buttons button')[1].click()");
+  await poll(()=>cdp.eval("document.querySelector('.entropy-tick')?.textContent.includes('CYCLE 1 / 6000')"),"ecological simulation advances on operator command");
+  await cdp.eval("document.querySelectorAll('.uni-container > .uni-controls button')[2].click()");
+  await poll(()=>cdp.eval("!!document.querySelector('.neg-portrait')"),"third Take Five negotiation chamber loads");
+  await cdp.eval("document.querySelector('.neg-choices button').click()");
+  await poll(()=>cdp.eval("document.querySelectorAll('.neg-turn').length===1"),"negotiation action generates deterministic response");
   await cdp.send("Page.navigate",{url:"http://127.0.0.1:4173/engineering"});
-  await poll(()=>cdp.eval("document.querySelectorAll('input[type=range]').length===4"),"architecture model is interactive");
+  await poll(()=>cdp.eval("document.querySelectorAll('.sg-slider input').length===5"),"architecture controls render");
+  await cdp.eval("document.querySelectorAll('.sg-menu button')[1].click()");
+  await poll(()=>cdp.eval("!!document.querySelector('#sg-policy')"),"resilience strategies render");
+  await cdp.eval("document.querySelectorAll('.sg-menu button')[3].click()");
+  await poll(()=>cdp.eval("document.querySelectorAll('.sg-case').length===4"),"real engineering source cases render");
   await cdp.send("Page.navigate",{url:"http://127.0.0.1:4173/access"});
   await poll(()=>cdp.eval("!!document.querySelector('#archive-command')"),"fictional archive terminal loads");
+  assert.ok(await cdp.eval("document.querySelectorAll('.root-story-artifact').length===8"),"eight ROOT ACCESS artifacts render");
+  if(!await cdp.eval("!!document.querySelector('.root-story-hints button')"))
+    await cdp.eval("document.querySelector('.root-story-actions button').click()");
+  await poll(()=>cdp.eval("!!document.querySelector('.root-story-hints button')"),"archive command guide is accessible");
+  await cdp.eval("document.querySelector('.root-story-hints button').click()");
+  await poll(()=>cdp.eval("document.querySelectorAll('.root-story-line').length>=2"),"archive fictional command executes");
   await cdp.send("Page.navigate",{url:"http://127.0.0.1:4173/play/packet"});
   await poll(()=>cdp.eval("!!document.querySelector('.packet-daily-button')"),"Packet Panic route loads");
   assert.ok(await cdp.eval("document.body.textContent.includes('SIEGE MODE')"),"Siege mode appears in the game toolbar");
+  await cdp.eval("document.querySelector('.packet-daily-button').click()");
+  await poll(()=>cdp.eval("!!document.querySelector('.siege-console')"),"tactical Siege console mounts");
+  assert.ok(await cdp.eval("document.querySelectorAll('.siege-abilities button').length===4"),"four tactical abilities render");
+  await cdp.eval("document.querySelectorAll('.siege-policies button')[1].click()");
+  await poll(()=>cdp.eval("document.querySelector('.siege-policies button[aria-pressed=true]')?.textContent.includes('PRIORITY FIRST')"),"operator changes routing discipline");
   // Visual regression evidence for each newly introduced route.
   const scenes=[
     ["/lab","cinema-lab"],
