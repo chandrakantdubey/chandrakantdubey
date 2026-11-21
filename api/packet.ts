@@ -101,12 +101,17 @@ async function load(code:string):Promise<{room:StoredRoom;etag:string}|null> {
     throw error;
   }
   if(!revision)throw Error("Room storage revision unavailable.");
-  const result=await get(pathname,{access:"private",useCache:false});
+  const room=await readRoom(code);
+  return room?{room,etag:revision}:null;
+}
+/** Strong content read without a metadata lookup or persistent mutation. */
+async function readRoom(code:string):Promise<StoredRoom|null> {
+  const result=await get(storagePath(code),{access:"private",useCache:false});
   if(!result||result.statusCode!==200)return null;
   if(result.blob.size>16_384)throw Error("Room exceeded expected size.");
   const data=JSON.parse(await new Response(result.stream).text()) as StoredRoom;
   if(data.id!==code||data.expiresAt<Date.now())return null;
-  return {room:data,etag:revision};
+  return data;
 }
 async function save(room:StoredRoom,etag?:string):Promise<void> {
   await put(storagePath(room.id),JSON.stringify(room),{
@@ -177,8 +182,25 @@ export async function POST(request:Request):Promise<Response> {
       await save(room,loaded.etag);
       return json({...exposed(room,2),token:secret});
     }
-    // CAS retries are necessary because advancing time competes with other
-    // snapshots and node rotations on different serverless instances.
+    if(action==="snapshot"){
+      // Polls are read-only. The deterministic clock is materialized in the
+      // response; a later mutation replays elapsed ticks before CAS commit.
+      let snapshot:StoredRoom|null=null;
+      for(let attempt=0;attempt<3;attempt++){
+        try{
+          snapshot=await readRoom(code!);
+          break;
+        }catch(error){
+          if(attempt===2)throw error;
+          await new Promise(resolve=>setTimeout(resolve,60*(attempt+1)));
+        }
+      }
+      if(!snapshot)return json({error:"Room not found or expired."},404);
+      const player=side(snapshot,token!);
+      if(!player)return json({error:"Invalid player credentials."},403);
+      return json(exposed({...snapshot,game:advancePacketGame(snapshot.game,Date.now())},player));
+    }
+    // Only mutating commands need storage revision checks and CAS retries.
     for(let attempt=0;attempt<5;attempt++){
       const loaded=await load(code!);
       if(!loaded)return json({error:"Room not found or expired."},404);
@@ -232,7 +254,15 @@ export async function POST(request:Request):Promise<Response> {
   }catch(err){
     if(err instanceof BlobPreconditionFailedError)
       return json({error:"Room changed; retry the action."},409);
-    console.error("Packet room operation failed",err instanceof Error?err.name:"UnknownError");
+    // Categorized diagnostics without room IDs, tokens, or raw request data.
+    const message=err instanceof Error?err.message:"";
+    const kind=message.startsWith("Too many requests")?"rate-limit":
+      message.startsWith("The blob service is currently not available")?"unavailable":
+      message==="Room storage revision unavailable."?"revision":
+      message==="Room exceeded expected size."?"size":
+      message==="fetch failed"?"transport":"other";
+    console.error("Packet room operation failed",{action,kind,
+      type:err instanceof Error?err.constructor.name:"UnknownError"});
     return json({error:"Multiplayer temporarily unavailable. Solo mode is ready."},503);
   }
 }

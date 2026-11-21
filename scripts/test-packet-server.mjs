@@ -5,7 +5,7 @@ import { registerHooks } from "node:module";
 // Exercise the production Vercel Function against a strict CAS-aware in-memory
 // Blob adapter, without contacting or mutating the real private store.
 const records=new Map();let nextEtag=1;
-globalThis.__packetTestStore={records,newEtag:()=>'"packet-'+nextEtag+++'"'};
+globalThis.__packetTestStore={records,failReads:0,newEtag:()=>'"packet-'+nextEtag+++'"'};
 const replacement=String.raw`
 export class BlobPreconditionFailedError extends Error {
   constructor(){super("Concurrent room write");this.name="BlobPreconditionFailedError";}
@@ -19,6 +19,10 @@ export async function head(path){
   return {etag:entry.etag,size:Buffer.byteLength(entry.body)};
 }
 export async function get(path){
+  if(globalThis.__packetTestStore.failReads>0){
+    globalThis.__packetTestStore.failReads--;
+    throw Error("Simulated transient Blob origin failure");
+  }
   const entry=globalThis.__packetTestStore.records.get(path);
   if(!entry)return null;
   // Content responses may expose a weak/representation validator; conditional
@@ -92,6 +96,15 @@ assert.equal(start.status,200);
 assert.equal(start.game.phase,"playing");
 assert.equal((await post("start",{...h,commandId:uuid(4)})).status,409);
 const code=h.room,path="packet/v1/"+code+".json";
+const revisionBeforePoll=records.get(path).etag;
+const [hostPoll,guestPoll]=await Promise.all([post("snapshot",h),post("snapshot",g)]);
+assert.equal(hostPoll.status,200);
+assert.equal(guestPoll.status,200);
+assert.equal(records.get(path).etag,revisionBeforePoll,"parallel polls cannot write");
+globalThis.__packetTestStore.failReads=2;
+assert.equal((await post("snapshot",h)).status,200,"transient private-blob GETs recover");
+assert.equal(globalThis.__packetTestStore.failReads,0);
+assert.equal(records.get(path).etag,revisionBeforePoll,"recovered poll remains read-only");
 const before=JSON.parse(records.get(path).body);
 const a=await post("rotate",{...h,index:1,commandId:uuid(5)});
 assert.equal(a.status,200);
@@ -158,9 +171,10 @@ console.log("Packet Panic API: create/join, host auth, CAS writes, both operator
  */
 const storageSource=readFileSync(new URL('../api/packet.ts',import.meta.url),'utf8');
 const metadataRead=storageSource.indexOf('const metadata=await head(pathname);');
-const contentRead=storageSource.indexOf('const result=await get(pathname,{access:"private",useCache:false});');
+const contentRead=storageSource.indexOf('const result=await get(storagePath(code),{access:"private",useCache:false});');
 assert.ok(metadataRead>=0 && contentRead>metadataRead,'metadata ETag is read before uncached body');
-assert.match(storageSource,/return \{room:data,etag:revision\};/,'CAS uses metadata revision');
+assert.match(storageSource,/return room\?\{room,etag:revision\}:null;/,'CAS uses metadata revision');
+assert.match(storageSource,/if\(action==="snapshot"\)/,'polling uses read-only branch');
 assert.doesNotMatch(storageSource,/return \{room:data,etag:result\.blob\.etag\};/,'never use content-response ETag for CAS');
 assert.ok(storageSource.includes('error.message.endsWith("The requested blob does not exist")'),'missing rooms remain 404');
 console.log('Blob CAS regression: metadata ETag, consistent-read ordering, and missing-room handling PASS');
