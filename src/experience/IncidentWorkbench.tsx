@@ -103,7 +103,6 @@ export default function IncidentWorkbench() {
   const [selectedService,setSelectedService]=useState<string>("DATABASE");
   const [reportOpen,setReportOpen]=useState(false);
   const [notice,setNotice]=useState("");
-  const [decisionMode,setDecisionMode]=useState<"evidence"|"actions">("evidence");
   const point=state.history.find(p=>p.tick===focusTick)??state.history.at(-1)!;
   const recovered=isRecovered(state);
   const result=assessment(state);
