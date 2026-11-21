@@ -639,7 +639,8 @@ try{
   await cdp.send("Page.navigate",{url:"http://127.0.0.1:4173/access"});
   await poll(()=>cdp.eval("!!document.querySelector('#archive-command')"),"fictional archive terminal loads");
   assert.ok(await cdp.eval("document.querySelectorAll('.root-story-artifact').length===8"),"eight ROOT ACCESS artifacts render");
-  await cdp.eval("document.querySelector('.root-story-actions button').click()");
+  if(!await cdp.eval("!!document.querySelector('.root-story-hints button')"))
+    await cdp.eval("document.querySelector('.root-story-actions button').click()");
   await poll(()=>cdp.eval("!!document.querySelector('.root-story-hints button')"),"archive command guide is accessible");
   await cdp.eval("document.querySelector('.root-story-hints button').click()");
   await poll(()=>cdp.eval("document.querySelectorAll('.root-story-line').length>=2"),"archive fictional command executes");
