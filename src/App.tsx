@@ -7,6 +7,7 @@ const Laboratory=lazy(()=>import("./experience/Universe").then(m=>({default:m.La
 const Disaster=lazy(()=>import("./experience/Universe").then(m=>({default:m.Disaster})));
 const TakeFive=lazy(()=>import("./experience/Universe").then(m=>({default:m.TakeFive})));
 const Engineering=lazy(()=>import("./experience/Universe").then(m=>({default:m.Engineering})));
+const Access=lazy(()=>import("./experience/Universe").then(m=>({default:m.Access})));
 
 export default function App() {
   const path=window.location.pathname.replace(/\/+$/,"")||"/";
@@ -16,6 +17,7 @@ export default function App() {
   else if(path==="/lab/take-five")page=<TakeFive/>;
   else if(path==="/lab")page=<Laboratory/>;
   else if(path==="/engineering")page=<Engineering/>;
+  else if(path==="/access")page=<Access/>;
   else page=<Exhibition/>;
   return <>
     <Suspense fallback={<main className="route-loading" role="status">LOADING EXPERIENCE</main>}>{page}</Suspense>
