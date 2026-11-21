@@ -17,4 +17,10 @@ for (const [i,count] of [[0,0],[1,2],[2,1]]) {
   for (let j=0;j<count;j++)moves=moves.map((v,k)=>(k===i||k===(i+1)%3)?(v+90)%360:v);
 }
 assert.deepEqual(moves,[90,180,270],"coupled phase puzzle is solvable");
+const { newSiegeGame,beginPacketGame,timeRemaining,waveForTick,SIEGE_MS }=await import("../src/play/packetEngine.js");
+const siege=beginPacketGame(newSiegeGame(909),1000);
+assert.equal(timeRemaining(siege,1000),SIEGE_MS);
+assert.equal(timeRemaining(siege,91000),150000);
+assert.equal(waveForTick(370,"siege"),5);
+assert.equal(waveForTick(370),3);
 console.log("Experience simulations: deterministic seeds, varied interventions, and solvable machine verified.");
