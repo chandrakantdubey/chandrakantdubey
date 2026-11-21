@@ -617,7 +617,10 @@ try{
   await cdp.eval("document.querySelector('.iw-report-actions button').click()");
   await poll(()=>cdp.eval("!!document.querySelector('.iw-report-body')"),"incident report expands");
   await cdp.send("Page.navigate",{url:"http://127.0.0.1:4173/lab/take-five"});
-  await poll(()=>cdp.eval("!!document.querySelector('.uni-panel svg')"),"kinetic experience mounts");
+  await poll(()=>cdp.eval("!!document.querySelector('.kinetic-art')"),"kinetic experience mounts");
+  assert.ok(await cdp.eval("document.querySelectorAll('.kinetic-rotor').length===3"),"kinetic chamber exposes three rotors");
+  await cdp.eval("document.querySelector('.kinetic-rotor-actions button').click()");
+  await poll(()=>cdp.eval("document.querySelector('.kinetic-rotor-header strong')?.textContent.includes('270°')"),"coupled rotor motion changes orientation");
   await cdp.eval("document.querySelectorAll('.uni-container > .uni-controls button')[1].click()");
   await poll(()=>cdp.eval("!!document.querySelector('#entropy-art')"),"garden can be entered");
   await cdp.send("Page.navigate",{url:"http://127.0.0.1:4173/engineering"});

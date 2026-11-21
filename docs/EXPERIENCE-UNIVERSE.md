@@ -50,6 +50,31 @@ the report is *not* an audited operational assessment or actual customer impact.
 There is no live OpenTelemetry collector, full trace search, or Kubernetes
 control-plane integration. Global scores cannot be verified from client data.
 
+## Take Five — Kinetic Chamber v1
+
+The first Take Five chamber now runs a fixed-step, browser-local mechanical
+simulation rather than the initial three-button phase puzzle. The new module
+includes three inertial rotors, two engageable gear couplers, alternating
+rotation, detent calibration, spring/damping integration, 60Hz simulation,
+thermal limits, energy reserves, a core capacitor, rejected pulse feedback,
+stable-phase verification, and score calculation.
+
+The visual chamber uses original SVG chrome/glass illustration, drag/touch
+gestures, full keyboard-accessible CW/CCW/coupler/pulse controls, 30fps sampled
+rendering, 8fps reduced-motion sampling, and hidden-tab pausing. All sound
+events go through the existing opt-in global sound controller. Successful
+completion unlocks the fictional ROOT ACCESS mechanism artifact locally.
+
+The pure engine is tested through
+\`node --experimental-strip-types scripts/test-kinetic.mjs\`,
+which runs in the repository's \`npm test\` pipeline. Browser smoke tests
+exercise the component and garden switching.
+
+The garden remains the existing procedural SVG generator; a more ambitious
+physical/generative ecosystem, Negotiator chamber, and full narrative arc
+are not implemented in this release. These limitations are explicit and
+must not be presented as completed functionality.
+
 ## Packet Siege
 
 The five-wave four-minute solo variant is intentionally limited to browser-local mode so it cannot change the existing multiplayer room protocol. The shared engine accepts optional round duration and a second wave schedule. Standard 90-second sessions remain unchanged.
@@ -74,7 +99,7 @@ The CI build incorporates these tests. Browser smoke includes all new routes and
 ## Remaining milestones
 
 - Deep incident trace explorer, intervention timing, verified replay/report and broader scenario model.
-- Visually sophisticated physically based machine and generative garden dynamics.
+- Further physical detail beyond the deterministic inertial-rotor simulation, richer generative garden dynamics and additional chambers.
 - Full Packet Panic Siege strategy, balancing, co-op roles, and multiplayer load testing.
 - Complete ROOT ACCESS narrative design and narrative endings.
 - More engineering demonstrations and verifiable case studies.
