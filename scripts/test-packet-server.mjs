@@ -10,10 +10,20 @@ const replacement=String.raw`
 export class BlobPreconditionFailedError extends Error {
   constructor(){super("Concurrent room write");this.name="BlobPreconditionFailedError";}
 }
+export class BlobNotFoundError extends Error {
+  constructor(){super("The requested blob does not exist");this.name="BlobNotFoundError";}
+}
+export async function head(path){
+  const entry=globalThis.__packetTestStore.records.get(path);
+  if(!entry)throw new BlobNotFoundError();
+  return {etag:entry.etag,size:Buffer.byteLength(entry.body)};
+}
 export async function get(path){
   const entry=globalThis.__packetTestStore.records.get(path);
   if(!entry)return null;
-  return {statusCode:200,blob:{etag:entry.etag,size:Buffer.byteLength(entry.body)},
+  // Content responses may expose a weak/representation validator; conditional
+  // PUT must use the strong metadata ETag instead (the production regression).
+  return {statusCode:200,blob:{etag:"W/"+entry.etag,size:Buffer.byteLength(entry.body)},
     stream:new Blob([entry.body]).stream()};
 }
 export async function put(path,body,opts){
