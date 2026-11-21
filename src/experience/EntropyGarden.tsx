@@ -140,7 +140,7 @@ export default function EntropyGarden() {
   };
   const keyOnCanvas = (event: KeyboardEvent<HTMLCanvasElement>) => {
     if (importing) return;
-    let next = { ...cursorRef.current };
+    const next = { ...cursorRef.current };
     if (event.key === 'ArrowRight') next.x = (next.x + 1) % GARDEN_WIDTH;
     else if (event.key === 'ArrowLeft') next.x = (next.x + GARDEN_WIDTH - 1) % GARDEN_WIDTH;
     else if (event.key === 'ArrowUp') next.y = Math.max(0, next.y - 1);
