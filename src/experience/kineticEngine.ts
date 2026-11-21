@@ -70,7 +70,7 @@ function connectedRotors(start: RotorIndex, couplers: readonly [boolean, boolean
     if (seen.has(index)) return;
     seen.add(index); found.push({ index, direction });
     if (index > 0 && couplers[index - 1]) explore((index - 1) as RotorIndex, -direction);
-    if (index < 2 && couplers[index]) explore((index + 1) as RotorIndex, -direction);
+    if (index < 2 && couplers[index as CouplerIndex]) explore((index + 1) as RotorIndex, -direction);
   };
   explore(start, 1);
   return found;
