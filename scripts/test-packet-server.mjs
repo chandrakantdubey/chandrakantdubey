@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import assert from "node:assert/strict";
 import { registerHooks } from "node:module";
 
@@ -138,3 +139,18 @@ const stale=JSON.parse(snapshot.body);stale.expiresAt=Date.now()-1;
 records.set(path,{...snapshot,body:JSON.stringify(stale)});
 assert.equal((await post("snapshot",h)).status,404,"expired rooms are rejected");
 console.log("Packet Panic API: create/join, host auth, CAS writes, both operators, command replay, repair, restart and expiry — PASS");
+
+/**
+ * Characterization guard for the production Blob-CAS regression:
+ * GET's representation ETag must never become put({ifMatch})'s revision.
+ * The metadata validator is obtained before the strongly consistent body read,
+ * preventing lost updates under a concurrent writer.
+ */
+const storageSource=readFileSync(new URL('../api/packet.ts',import.meta.url),'utf8');
+const metadataRead=storageSource.indexOf('const metadata=await head(pathname);');
+const contentRead=storageSource.indexOf('const result=await get(pathname,{access:"private",useCache:false});');
+assert.ok(metadataRead>=0 && contentRead>metadataRead,'metadata ETag is read before uncached body');
+assert.match(storageSource,/return \{room:data,etag:revision\};/,'CAS uses metadata revision');
+assert.doesNotMatch(storageSource,/return \{room:data,etag:result\.blob\.etag\};/,'never use content-response ETag for CAS');
+assert.match(storageSource,/error instanceof BlobNotFoundError/,'missing rooms remain 404');
+console.log('Blob CAS regression: metadata ETag, consistent-read ordering, and missing-room handling PASS');

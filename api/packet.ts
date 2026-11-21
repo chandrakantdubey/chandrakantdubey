@@ -5,7 +5,7 @@
  * Snapshot polling (~900 ms) intentionally avoids a Redis dependency.
  */
 import { createHash, randomBytes, timingSafeEqual } from "node:crypto";
-import { BlobPreconditionFailedError, get, put } from "@vercel/blob";
+import { BlobNotFoundError, BlobPreconditionFailedError, get, head, put } from "@vercel/blob";
 import {
   newCoopGame, pairRotateCoop, shieldCoopFault,
   beginPacketGame, rotatePacketTile, patchPacketNetwork,
@@ -80,12 +80,28 @@ function side(room:StoredRoom,token:string):1|2|null {
 }
 const storagePath=(code:string)=>"packet/v1/"+code+".json";
 async function load(code:string):Promise<{room:StoredRoom;etag:string}|null> {
-  const result=await get(storagePath(code),{access:"private",useCache:false});
+  const pathname=storagePath(code);
+  // Conditional writes use the *metadata* ETag returned by head(), not the
+  // content response's ETag. The two representations can have different
+  // validators, making every update fail even without a concurrent writer.
+  // Read metadata BEFORE the uncached body: any intervening update changes
+  // the validator, so put({ifMatch}) rejects the stale snapshot safely.
+  let revision:string;
+  try{
+    const metadata=await head(pathname);
+    if(metadata.size>16_384)throw Error("Room exceeded expected size.");
+    revision=metadata.etag;
+  }catch(error){
+    if(error instanceof BlobNotFoundError)return null;
+    throw error;
+  }
+  if(!revision)throw Error("Room storage revision unavailable.");
+  const result=await get(pathname,{access:"private",useCache:false});
   if(!result||result.statusCode!==200)return null;
   if(result.blob.size>16_384)throw Error("Room exceeded expected size.");
   const data=JSON.parse(await new Response(result.stream).text()) as StoredRoom;
   if(data.id!==code||data.expiresAt<Date.now())return null;
-  return {room:data,etag:result.blob.etag};
+  return {room:data,etag:revision};
 }
 async function save(room:StoredRoom,etag?:string):Promise<void> {
   await put(storagePath(room.id),JSON.stringify(room),{
