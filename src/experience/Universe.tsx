@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { DISCOVERIES,interpretCommand,readDiscoveries,resetDiscoveries,revealDiscovery,type Discovery } from "./discoveries";
 import { advanceIncident,createIncident,evidenceFor,intervene,SCENARIOS,type IncidentAction,type IncidentKind } from "./incidentEngine";
 import "../exhibition/type-motion.css";
+import Sculpture from "./Sculpture";
 import "./experience.css";
 
 const links=[["/","PORTFOLIO"],["/lab","THE LAB"],["/lab/disaster","DISASTER"],["/lab/take-five","TAKE FIVE"],["/play/packet","PACKET PANIC"],["/engineering","ENGINEERING"],["/access","ROOT ACCESS"]];
@@ -10,7 +11,7 @@ function Shell({children}:{children:React.ReactNode}) {return <main className="u
     <div className="uni-nav-links">{links.map(([url,label])=><a key={url} href={url}>{label}</a>)}</div>
   </nav>{children}<footer>CD / EXPERIMENTAL ENGINEERING · SIMULATIONS ARE FICTIONAL · <a style={{color:"inherit"}} href="/">BACK TO THE PORTFOLIO</a></footer>
 </main>}
-function Hero({eyebrow,title,copy}:{eyebrow:string;title:string;copy:string}) {return <header className="uni-hero"><div><div className="uni-kicker">{eyebrow}</div><h1>{title}</h1><p>{copy}</p></div></header>}
+function Hero({eyebrow,title,copy}:{eyebrow:string;title:string;copy:string}) {return <header className="uni-hero"><Sculpture/><div style={{position:"relative",zIndex:1}}><div className="uni-kicker">{eyebrow}</div><h1>{title}</h1><p>{copy}</p></div></header>}
 const exhibits=[
   {title:"DEBUG THE DISASTER",eyebrow:"01 / INCIDENT RESPONSE",copy:"Real causal rules. Bad interventions. Consequences you can observe.",url:"/lab/disaster"},
   {title:"TAKE FIVE",eyebrow:"02 / GENERATIVE PLAYGROUND",copy:"Kinetic experiments, procedural artwork, and a machine that refuses to cooperate.",url:"/lab/take-five"},
