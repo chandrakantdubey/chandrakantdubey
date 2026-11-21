@@ -126,6 +126,14 @@ export default function CodeMonument() {
     const host=hostRef.current;
     if(!canvas||!host)return;
     const preference=window.matchMedia("(prefers-reduced-motion: reduce)");
+    // On devices that request reduced motion, avoid WebGL setup entirely.
+    // The static sculptural fallback remains visible and accessible.
+    if(preference.matches){
+      canvas.dataset.renderer="fallback";
+      host.classList.add("code-static");
+      rebuildRef.current=()=>{};
+      return()=>{rebuildRef.current=null;host.classList.remove("code-static");};
+    }
     const gl=canvas.getContext("webgl",{
       alpha:true,antialias:true,depth:true,powerPreference:"default",premultipliedAlpha:false,
     });
@@ -136,7 +144,8 @@ export default function CodeMonument() {
     }
 
     let program:WebGLProgram|null=null,vertexBuffer:WebGLBuffer|null=null,indexBuffer:WebGLBuffer|null=null;
-    let alive=true,visible=true,lost=false,reduced=preference.matches,frame=0,previousTime=0;
+    let alive=true,visible=true,lost=false,frame=0,previousTime=0;
+    let reduced:boolean=preference.matches;
     let dragging=false,dragged=false,startX=0,startY=0,oldX=0,oldY=0;
     let yaw=-0.23,pitch=-0.19,targetYaw=-0.23,targetPitch=-0.19;
     let width=1,height=1,buildStarted=performance.now()+200,cycle=0;
@@ -262,6 +271,7 @@ export default function CodeMonument() {
       };
       const motion=(e:MediaQueryListEvent)=>{
         reduced=e.matches;
+        host.classList.toggle("code-static",reduced);
         if(reduced){yaw=targetYaw;pitch=targetPitch;}
         stop();schedule();
       };

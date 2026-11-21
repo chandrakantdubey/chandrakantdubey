@@ -3,22 +3,44 @@
  * Commands only change the local page presentation; no eval, shell,
  * network requests, private data, privileged actions or stateful backend.
  */
-export type RootEffect="chaos"|"gravity"|"restore"|"exit"|"clear"|null;
+import {
+  SIGNAL_IDS,signalReport,signalFile,combinedSignalReport,isSignalId,
+  type SignalProgress,
+} from "./signalTrail.ts";
+
+export type RootEffect="chaos"|"gravity"|"restore"|"exit"|"clear"|"reset-signals"|null;
+export interface RootContext {awakened:boolean;signals:SignalProgress;}
 export interface RootReply {lines:string[];effect:RootEffect;}
 export const ROOT_COMMANDS=[
   "help","whoami","uptime","sudo hire chandrakant",
   "deploy --friday","theme --chaos","gravity --off","restore",
-  "secrets","status","clear","exit",
+  "secrets","status","clear","exit","signals","signals --reset","cat /signals/report",
 ] as const;
-export function runRootCommand(raw:string):RootReply {
+export function runRootCommand(raw:string,context:RootContext={awakened:false,signals:[]}):RootReply {
   const text=raw.trim().replace(/\s+/g," ").toLowerCase();
+  if(text==="signals")return {lines:context.awakened
+    ?signalReport(context.signals)
+    :["The signal index is dormant. The ordinary portfolio remains available."],effect:null};
+  if(text==="signals --reset")return {lines:["Recovered signal notes cleared for this tab."],effect:"reset-signals"};
+  if(text==="ls /signals")return {lines:context.awakened
+    ?SIGNAL_IDS.map(id=>id+".note").concat("report")
+    :["No active specimen. The archive is still public."],effect:null};
+  if(text==="cat /signals/report")return {lines:context.awakened
+    ?combinedSignalReport(context.signals)
+    :["The signal index is dormant."],effect:null};
+  if(text.startsWith("cat /signals/")){
+    const id=text.slice("cat /signals/".length).replace(/\.note$/,"");
+    if(isSignalId(id))return {lines:context.awakened
+      ?signalFile(id,context.signals):["The signal index is dormant."],effect:null};
+  }
   switch(text){
     case "":return {lines:[],effect:null};
     case "help": return {lines:[
       "AVAILABLE COMMANDS",
       "whoami · uptime · status · sudo hire chandrakant",
       "deploy --friday · theme --chaos · gravity --off",
-      "secrets · restore · clear · exit",
+      "secrets · signals · ls /signals · cat /signals/report",
+      "signals --reset · restore · clear · exit",
       "No backend. No real shell. That's called restraint.",
     ],effect:null};
     case "whoami":return {lines:[
@@ -51,8 +73,8 @@ export function runRootCommand(raw:string):RootReply {
       "The buttons are still where you left them. Probably.",
     ],effect:"gravity"};
     case "secrets":return {lines:[
-      "Nice try. Real secrets belong on the server.",
-      "The secret here is that every command is hard-coded.",
+      "There are no credentials here.",
+      "Look for the three engineering notes, then type signals.",
     ],effect:null};
     case "restore":return {lines:["Visual effects reset. Production survives another day."],effect:"restore"};
     case "clear":return {lines:[],effect:"clear"};

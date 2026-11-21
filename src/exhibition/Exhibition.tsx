@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type RefObject } from "react";
+import { lazy, useEffect, useRef, useState, type RefObject } from "react";
 import { ArrowDown, ArrowLeft, ArrowRight, ArrowUpRight, Menu, X } from "lucide-react";
 import { featuredProjects, links, workExperience } from "../atelier/content";
 import { internalTeamWork, publicTeamWork } from "../atelier/clientWork";
@@ -6,12 +6,17 @@ import ContactSection from "../atelier/ContactSection";
 import CodeMonument from "./CodeMonument";
 import ProjectPoster from "./ProjectPoster";
 import SkillOrbit from "./SkillOrbit";
-import RootAccess from "./RootAccess";
+import RootAccess, { type RootVisualMode } from "./RootAccess";
 import VisitorResponse from "./VisitorResponse";
-import IncidentReplay from "./IncidentReplay";
+import DeferredExperience from "./DeferredExperience";
 import SpecimenExperience from "./SpecimenExperience";
-import FluxGame from "../play/FluxGame";
-import PacketPanic from "../play/PacketPanic";
+import { PROJECT_QUESTIONS, type SignalId } from "./signalTrail";
+import { useSpecimenSession } from "./specimenSession";
+import "./signal-trail.css";
+const FluxGame=lazy(()=>import("../play/FluxGame"));
+const PacketPanic=lazy(()=>import("../play/PacketPanic"));
+const IncidentReplay=lazy(()=>import("./IncidentReplay"));
+const ConsistencyExperiment=lazy(()=>import("./ConsistencyExperiment"));
 import "../play/play.css";
 import "../play/packet.css";
 import "./spatial.css";
@@ -92,7 +97,7 @@ function Navigation() {
   </>;
 }
 
-function Hero({awakened,onChange}:{awakened:boolean;onChange:(value:boolean)=>void}) {
+function Hero({awakened,onChange,signalCount}:{awakened:boolean;onChange:(value:boolean)=>void;signalCount:number}) {
   return <section className="exhibition-hero" id="top" aria-labelledby="hero-heading">
     <div className="hero-grain" aria-hidden="true"/>
     <div className="hero-top-bar"><span>NO TEMPLATE IN SIGHT.</span><span>MUMBAI · ONLINE</span></div>
@@ -101,7 +106,7 @@ function Hero({awakened,onChange}:{awakened:boolean;onChange:(value:boolean)=>vo
       <span className="hero-name-bottom" aria-hidden="true">DUBEY<span className="hero-dot">.</span></span>
     </h1>
     <div className="hero-sculpture"><CodeMonument/></div>
-    <SpecimenExperience awakened={awakened} onChange={onChange}/>
+    <SpecimenExperience awakened={awakened} onChange={onChange} signalCount={signalCount}/>
     <span className="hero-rotator-caption">GO ON, POKE IT <span> / </span> IT WON'T BITE</span>
     <div className="hero-meta">
       <p>It worked locally. Promise.</p>
@@ -110,10 +115,16 @@ function Hero({awakened,onChange}:{awakened:boolean;onChange:(value:boolean)=>vo
   </section>;
 }
 
-function Projects() {
+function Projects({awakened,onDiscover,signals}:{awakened:boolean;onDiscover:(id:SignalId)=>void;signals:readonly SignalId[]}) {
   const [active,setActive]=useState(0);
+  const [dossierOpen,setDossierOpen]=useState(false);
   const selected=featuredProjects[active];
-  const activate=(index:number)=>setActive((index+featuredProjects.length)%featuredProjects.length);
+  const activate=(index:number)=>{
+    const next=(index+featuredProjects.length)%featuredProjects.length;
+    if(next===active)return;
+    setActive(next);
+    setDossierOpen(false);
+  };
   return <section className="projects-section" id="work" aria-labelledby="projects-heading">
     <div className="work-heading" data-reveal>
       <h2 id="projects-heading">IT <em>SHIPS.</em></h2>
@@ -162,6 +173,25 @@ function Projects() {
           <p>{selected.description}</p>
           <div className="gallery-tags">{selected.stack.slice(0,4).map(s=><span key={s}>{s}</span>)}</div>
           {selected.status&&<span className="gallery-status">{selected.status}</span>}
+          {awakened&&<div className="signal-dossier">
+            <button type="button" className="signal-dossier-trigger" aria-expanded={dossierOpen}
+              aria-controls="signal-dossier-panel" onClick={()=>{
+                setDossierOpen(v=>!v);
+                if(!dossierOpen)onDiscover("archive");
+              }}>
+              <span>ARCHIVE / ENGINEERING NOTE</span>
+              <span>{signals.includes("archive")?"RECOVERED":"UNREAD"} {dossierOpen?"−":"+"}</span>
+            </button>
+            {dossierOpen&&<div id="signal-dossier-panel" className="signal-dossier-body">
+              <span>IMPLEMENTATION / FROM PROJECT RECORD</span>
+              <p>{selected.implementation}</p>
+              <span>DESIGN QUESTION</span>
+              <p>{PROJECT_QUESTIONS[selected.id]}</p>
+              <a href={selected.repository} target="_blank" rel="noopener noreferrer">
+                INSPECT SOURCE <ArrowUpRight size={15}/>
+              </a>
+            </div>}
+          </div>}
           {selected.secondary&&<a href={selected.secondary.url} target="_blank" rel="noopener noreferrer">ALSO: {selected.secondary.label} <ArrowUpRight size={15}/></a>}
         </div>
         <div className="gallery-prev-next"><button type="button" onClick={()=>activate(active-1)} aria-label="Previous project"><ArrowLeft size={18}/></button><span>{String(active+1).padStart(2,"0")} / 06</span><button type="button" onClick={()=>activate(active+1)} aria-label="Next project"><ArrowRight size={18}/></button></div>
@@ -209,48 +239,70 @@ function PlaySection() {
       <h2 id="play-heading">TAKE <em>FIVE.</em></h2>
       <p>You came for the code. I brought a spaceship. This seems reasonable.</p>
     </div>
-    <FluxGame/>
+    <DeferredExperience kind="arcade" label="Signal Shift"><FluxGame/></DeferredExperience>
   </section>;
 }
 
-function FinalBoss() {
+function FinalBoss({awakened,onDiscover,signals,unlocked}:{awakened:boolean;onDiscover:(id:SignalId)=>void;signals:readonly SignalId[];unlocked:boolean}) {
+  const [manualOpen,setManualOpen]=useState(false);
   return <section className="after-hours" id="final-boss" aria-labelledby="final-boss-heading">
     <div className="after-hours-heading" data-reveal>
       <h2 id="final-boss-heading">SAVE THE<br/><em>INTERNET.</em></h2>
       <p>All those years learning to deploy, just to find out the internet still needs saving. You have 90 seconds.</p>
     </div>
-    <PacketPanic/>
+    {awakened&&<div className="signal-arcade">
+      <button className="signal-arcade-trigger" type="button" aria-expanded={manualOpen}
+        aria-controls="signal-arcade-manual" onClick={()=>{
+          setManualOpen(v=>!v);
+          if(!manualOpen)onDiscover("arcade");
+        }}>
+        <span>ARCADE / SYSTEM MANUAL</span>
+        <span>{signals.includes("arcade")?"RECOVERED":"UNREAD"} {manualOpen?"−":"+"}</span>
+      </button>
+      {manualOpen&&<div id="signal-arcade-manual" className="signal-arcade-manual">
+        <div><strong>DETERMINISTIC SIMULATION</strong><p>520 ms fixed ticks. Packet direction and router changes use the shared engine, not animation frames.</p></div>
+        <div><strong>CO-OP OWNERSHIP</strong><p>Operator 1 controls ingress columns 1–4; operator 2 controls egress columns 5–7. Repairs and the score are shared.</p></div>
+        <div><strong>ROOM CONSISTENCY</strong><p>Server-authoritative games synchronize by polling and versioned Blob compare-and-swap. It is not WebSocket transport.</p></div>
+        <a href="https://github.com/chandrakantdubey/chandrakantdubey/blob/main/src/play/packetEngine.js"
+          target="_blank" rel="noopener noreferrer">READ ENGINE SOURCE <ArrowUpRight size={15}/></a>
+      </div>}
+    </div>}
+    <DeferredExperience kind="packet" label="Packet Panic"><PacketPanic/></DeferredExperience>
+    {awakened&&unlocked&&
+      <DeferredExperience kind="experiment" id="consistency" label="Consistency Experiment">
+        <ConsistencyExperiment/>
+      </DeferredExperience>}
   </section>;
 }
 
 export default function Exhibition() {
   useReveal();
-  const [awakened,setAwakened]=useState(()=>{
-    try{return window.sessionStorage.getItem("cd-specimen-state")==="awakened";}
-    catch{return false;}
-  });
-  useEffect(()=>{
-    try{window.sessionStorage.setItem("cd-specimen-state",awakened?"awakened":"sealed");}
-    catch{/* optional session preference */}
-  },[awakened]);
-  return <div className={awakened?"exhibition-site specimen-awakened":"exhibition-site"}
-    data-specimen-state={awakened?"awakened":"sealed"}>
+  const {mode,awakened,setAwakened,signals,discoverSignal,resetSignals,unlocked}=useSpecimenSession();
+  const [rootVisualMode,setRootVisualMode]=useState<RootVisualMode>("normal");
+  const siteClassName=["exhibition-site",
+    awakened?"specimen-awakened":"",
+    rootVisualMode==="chaos"?"root-chaos":rootVisualMode==="gravity"?"root-gravity":"",
+  ].filter(Boolean).join(" ");
+  return <div className={siteClassName}
+    data-specimen-state={mode}>
     <Navigation/>
     <main id="main">
-      <Hero awakened={awakened} onChange={setAwakened}/>
+      <Hero awakened={awakened} onChange={setAwakened} signalCount={signals.length}/>
       <div className="identity-ribbon" aria-hidden="true"><div className="marquee-track"><span className="marquee-copy">PIXELS WERE HARMED IN THE MAKING OF THIS WEBSITE ✳ IT WORKED LOCALLY ✳ THEN WE DEPLOYED IT ✳ </span><span className="marquee-copy">PIXELS WERE HARMED IN THE MAKING OF THIS WEBSITE ✳ IT WORKED LOCALLY ✳ THEN WE DEPLOYED IT ✳ </span></div></div>
-      <Projects/>
-      <IncidentReplay/>
+      <Projects awakened={awakened} onDiscover={discoverSignal} signals={signals}/>
+      <DeferredExperience id="incident" kind="lab" label="Incident Investigation">
+        <IncidentReplay awakened={awakened} onDiscover={discoverSignal} signals={signals}/>
+      </DeferredExperience>
       <Experience/>
       <Skills/>
       <PlaySection/>
       <ContactSection/>
-      <FinalBoss/>
+      <FinalBoss awakened={awakened} onDiscover={discoverSignal} signals={signals} unlocked={unlocked}/>
     </main>
-    <footer className="exhibition-footer">
+    <footer className="exhibition-footer" id="site-footer">
       <a href="#top" className="footer-identity">CD<span>®</span></a>
       <span>© {new Date().getFullYear()} CD. DEPLOYED WITH QUESTIONABLE CONFIDENCE.</span>
-      <div><a href={links.github} target="_blank" rel="noopener noreferrer">GITHUB ↗</a><a href={links.linkedin} target="_blank" rel="noopener noreferrer">LINKEDIN ↗</a><a href="#top">BACK TO TOP ↑</a><RootAccess/></div>
+      <div><a href={links.github} target="_blank" rel="noopener noreferrer">GITHUB ↗</a><a href={links.linkedin} target="_blank" rel="noopener noreferrer">LINKEDIN ↗</a><a href="#top">BACK TO TOP ↑</a><RootAccess awakened={awakened} signals={signals} onResetSignals={resetSignals} onVisualModeChange={setRootVisualMode}/></div>
       <VisitorResponse/>
     </footer>
   </div>;

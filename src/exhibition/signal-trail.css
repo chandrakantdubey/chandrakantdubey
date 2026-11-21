@@ -1,0 +1,95 @@
+/* A connected discovery trail: useful details, never a second navigation layer. */
+.signal-dossier,.signal-lab,.signal-arcade {min-width:0;}
+.signal-dossier-trigger,.signal-lab-trigger,.signal-arcade-trigger {
+  display:flex;align-items:center;justify-content:space-between;gap:14px;
+  width:100%;min-height:47px;border:1px solid currentColor;
+  padding:11px 14px;text-align:left;cursor:pointer;
+  font:750 12px/1.5 "JetBrains Mono",monospace;letter-spacing:.028em;
+}
+.signal-dossier-trigger>span:last-child,.signal-lab-trigger>span:last-child,
+.signal-arcade-trigger>span:last-child {white-space:nowrap;font-weight:600;}
+.signal-dossier-trigger:hover,.signal-lab-trigger:hover,.signal-arcade-trigger:hover {
+  filter:brightness(1.06);
+}
+.signal-dossier {margin-top:23px;border-top:1px solid #a9a79c;padding-top:17px;}
+.signal-dossier-trigger {color:#293a39;background:#e7e5d9;border-color:#999d93;}
+.signal-dossier-trigger>span:last-child {color:#65578c;}
+.signal-dossier-body {
+  margin-top:0;padding:20px 17px 19px;
+  background:#f2f0e6;border:1px solid #999d93;border-top:0;
+}
+.signal-dossier-body>span {
+  color:#526b66;font:700 12px/1.5 "JetBrains Mono",monospace;
+  letter-spacing:.07em;
+}
+.signal-dossier-body p {
+  font:550 14px/1.7 "Manrope",sans-serif;
+  margin:9px 0 18px;color:#263332;overflow-wrap:anywhere;
+}
+.signal-dossier-body a {
+  display:inline-flex;align-items:center;gap:8px;
+  color:#48396b;border-bottom:1px solid #766993;
+  padding-bottom:4px;font:750 12px "JetBrains Mono",monospace;
+}
+.signal-lab {margin:5px 0 22px;border-top:1px solid #54717a;padding-top:14px;}
+.signal-lab-trigger {
+  background:#223a40;color:#d4f1d8;border-color:#799d95;
+}
+.signal-lab-trigger>span:last-child {color:#d6e8ad;}
+.signal-lab-analysis {
+  padding:20px 18px;background:#10242e;color:#d8ece7;
+  border:1px solid #63847f;border-top:0;
+}
+.signal-lab-analysis>strong {color:#e0ffb4;font:800 13px/1.5 "JetBrains Mono",monospace;}
+.signal-lab-analysis p {color:#bcd1cf;font:500 13px/1.75 "Manrope",sans-serif;margin:13px 0;}
+.signal-lab-analysis p b {color:#f3e0ae;font-weight:750;}
+.signal-lab-analysis a {
+  display:inline-flex;align-items:center;gap:8px;margin-top:7px;
+  color:#d3fca8;border-bottom:1px solid #b0dd9e;
+  padding-bottom:4px;font:700 12px/1.5 "JetBrains Mono",monospace;
+}
+.signal-lab-bar {height:11px;overflow:hidden;background:#39525d;margin:16px 0;}
+.signal-lab-bar>span {display:block;height:100%;background:#c1ed9b;}
+.signal-arcade {
+  margin:2px clamp(18px,5vw,80px) 29px;
+  max-width:1000px;isolation:isolate;color:#d5fbe6;
+}
+.signal-arcade-trigger {
+  color:#b6e1d2;border-color:#6b938d;background:#17333b;
+}
+.signal-arcade-trigger>span:last-child {color:#c9f4a2;}
+.signal-arcade-manual {
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:16px;background:#102a33;border:1px solid #587e7c;border-top:0;
+  padding:20px 17px;color:#d8ece4;
+}
+.signal-arcade-manual>div {min-width:0;border-right:1px solid #385864;padding-right:15px;}
+.signal-arcade-manual>div:nth-child(3) {border:0;}
+.signal-arcade-manual strong {
+  color:#e5f6b7;font:750 12px/1.55 "JetBrains Mono",monospace;
+}
+.signal-arcade-manual p {font:500 13px/1.7 "Manrope",sans-serif;margin:10px 0 0;color:#bad2d0;}
+.signal-arcade-manual>a {
+  display:inline-flex;align-items:center;gap:8px;grid-column:1/-1;
+  justify-self:start;border-bottom:1px solid #b3daae;padding-bottom:5px;
+  color:#d5faa9;font:750 12px/1.5 "JetBrains Mono",monospace;
+}
+.signal-dossier button:focus-visible,.signal-lab button:focus-visible,
+.signal-arcade button:focus-visible {outline:3px solid #d9faaa;outline-offset:3px;}
+@media(max-width:640px){
+  .signal-dossier {margin-top:17px;}
+  .signal-dossier-trigger,.signal-lab-trigger,.signal-arcade-trigger {
+    gap:8px;padding:10px 11px;font-size:12px;
+  }
+  .signal-dossier-body {padding:16px 12px;}
+  .signal-lab-analysis {padding:16px 13px;}
+  .signal-arcade {margin-inline:13px;margin-bottom:22px;}
+  .signal-arcade-manual {grid-template-columns:1fr;gap:16px;padding:17px 13px;}
+  .signal-arcade-manual>div {border-right:0;border-bottom:1px solid #385864;padding:0 0 12px;}
+  .signal-arcade-manual>div:nth-child(3) {border-bottom:0;padding:0;}
+}
+@media(prefers-reduced-motion:reduce){
+  .signal-dossier-trigger,.signal-lab-trigger,.signal-arcade-trigger {
+    transition:none!important;
+  }
+}

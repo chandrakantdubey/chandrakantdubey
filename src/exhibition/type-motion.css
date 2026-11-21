@@ -233,3 +233,10 @@ button,input,textarea {font-family:var(--type-body);}
   .flux-reticle::before,.flux-reticle::after,
   .projects-section::before {animation:none!important;}
 }
+
+/* The route split has a small immediate fallback rather than an unstyled flash. */
+.route-loading{
+  min-height:100svh;display:grid;place-items:center;
+  background:#281bdc;color:#fffdf6;
+  font:700 12px "JetBrains Mono",monospace;letter-spacing:.11em;
+}

@@ -1,0 +1,18 @@
+.deferred-experience{position:relative;min-width:0;}
+.deferred-experience[data-loaded="false"][data-experience="lab"]{min-height:1070px;}
+.deferred-experience[data-loaded="false"][data-experience="arcade"]{min-height:740px;}
+.deferred-experience[data-loaded="false"][data-experience="packet"]{min-height:860px;}
+.deferred-experience[data-loaded="false"][data-experience="experiment"]{min-height:710px;}
+.deferred-fallback{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:19px;
+ background:#111f2b;color:#b1d7d1;font:700 12px "JetBrains Mono",monospace;letter-spacing:.08em;}
+.deferred-fallback-rule{width:min(180px,50%);height:1px;background:linear-gradient(90deg,transparent,#9ec9b3,transparent);}
+.deferred-experience[data-experience="lab"] .deferred-fallback{background:#0b1a25;}
+.deferred-experience[data-experience="experiment"] .deferred-fallback{background:#e8e5db;color:#395c57;}
+.deferred-experience[data-experience="arcade"] .deferred-fallback,
+.deferred-experience[data-experience="packet"] .deferred-fallback{background:#081923;}
+@media(max-width:760px){
+ .deferred-experience[data-loaded="false"][data-experience="lab"]{min-height:1170px;}
+ .deferred-experience[data-loaded="false"][data-experience="arcade"]{min-height:640px;}
+ .deferred-experience[data-loaded="false"][data-experience="packet"]{min-height:950px;}
+ .deferred-experience[data-loaded="false"][data-experience="experiment"]{min-height:880px;}
+}

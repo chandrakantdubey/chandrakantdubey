@@ -89,6 +89,17 @@ try{
   const cdp=new Cdp(socket);
   await cdp.send("Page.enable");
   await cdp.send("Runtime.enable");
+  await cdp.send("Page.addScriptToEvaluateOnNewDocument",{source:`
+    (()=>{const data={lcp:null,cls:0,longTasks:[]};window.__cdVitals=data;
+      const observe=(type,handle)=>{try{new PerformanceObserver(list=>{
+        for(const entry of list.getEntries())handle(entry);
+      }).observe({type,buffered:true});}catch{/* unsupported */}
+      };
+      observe('largest-contentful-paint',entry=>data.lcp=entry.startTime);
+      observe('layout-shift',entry=>{if(!entry.hadRecentInput)data.cls+=entry.value;});
+      observe('longtask',entry=>data.longTasks.push(entry.duration));
+    })();`
+  });
   await cdp.send("Page.navigate",{url:"http://127.0.0.1:4173/"});
   await poll(()=>cdp.eval("document.querySelectorAll('.gallery-row').length===6"),"Exhibition failed to render");
   await delay(1100);
@@ -107,7 +118,11 @@ try{
     "3D canvas must occupy the entire desktop hero, not an inset box: "+JSON.stringify(heroFrame));
   if(desktop.renderer==="webgl") assert.ok(heroFrame.scale>0,"WebGL monogram must have a fitted projection scale");
   await assertMinimumTextSize(cdp,"1440px desktop");
-  const pageStory=await cdp.eval("(()=>{const main=document.querySelector('main');const ribbon=document.querySelector('.marquee-track');const copies=[...ribbon.querySelectorAll('.marquee-copy')];const arcade=document.querySelector('.flux-experience').getBoundingClientRect();const hex=document.querySelector('.after-hours .packet-experience').getBoundingClientRect();return {lastSection:main.lastElementChild?.id,sectionMarkers:document.querySelectorAll('.section-topline').length,oldCopy:document.body.innerText.includes('Two fully functional games, embedded into the exhibition'),ribbonCopies:copies.map(x=>({text:x.textContent,width:x.getBoundingClientRect().width})),animation:getComputedStyle(ribbon).animationName,arcade:{left:arcade.left,right:arcade.right},hex:{left:hex.left,right:hex.right},viewport:document.documentElement.clientWidth}})()");
+  const initialPerf=await cdp.eval("window.__cdVitals");
+  console.log("Initial desktop Web Vitals / synthetic:",JSON.stringify(initialPerf));
+  assert.ok(initialPerf.longTasks.every(ms=>ms<850),
+    "Initial navigation has a catastrophic main-thread task over 850 ms: "+JSON.stringify(initialPerf.longTasks));
+  const pageStory=await cdp.eval("(()=>{const main=document.querySelector('main');const ribbon=document.querySelector('.marquee-track');const copies=[...ribbon.querySelectorAll('.marquee-copy')];const arcade=document.querySelector('[data-experience=arcade]').getBoundingClientRect();const hex=document.querySelector('[data-experience=packet]').getBoundingClientRect();return {lastSection:main.lastElementChild?.id,sectionMarkers:document.querySelectorAll('.section-topline').length,oldCopy:document.body.innerText.includes('Two fully functional games, embedded into the exhibition'),ribbonCopies:copies.map(x=>({text:x.textContent,width:x.getBoundingClientRect().width})),animation:getComputedStyle(ribbon).animationName,arcade:{left:arcade.left,right:arcade.right},hex:{left:hex.left,right:hex.right},viewport:document.documentElement.clientWidth}})()");
   assert.equal(pageStory.lastSection,"final-boss","Packet Panic must finish the page after contact");
   assert.equal(pageStory.sectionMarkers,0,"no ordinal section divider UI");
   assert.equal(pageStory.oldCopy,false,"remove self-promotional game disclaimer");
@@ -140,6 +155,13 @@ try{
   assert.ok(await cdp.eval("document.activeElement.classList.contains('specimen-close')"),"dialog focuses its close control");
   await delay(340);
   await cdp.screenshot("specimen-inspection-desktop.png");
+  await cdp.eval("([...document.querySelectorAll('.specimen-inspection button:not(:disabled)')].at(-1)).focus()");
+  await cdp.send("Input.dispatchKeyEvent",{type:"keyDown",key:"Tab",code:"Tab",windowsVirtualKeyCode:9});
+  await cdp.send("Input.dispatchKeyEvent",{type:"keyUp",key:"Tab",code:"Tab",windowsVirtualKeyCode:9});
+  assert.ok(await cdp.eval("document.activeElement.classList.contains('specimen-close')"),
+    "Tab from last modal action wraps to first action");
+  assert.ok(await cdp.eval("!!document.querySelector('.specimen-announce[aria-live=polite]')"),
+    "visitor state announcements are available without audio");
   await cdp.send("Input.dispatchKeyEvent",{type:"keyDown",key:"Escape",code:"Escape",windowsVirtualKeyCode:27});
   await cdp.send("Input.dispatchKeyEvent",{type:"keyUp",key:"Escape",code:"Escape",windowsVirtualKeyCode:27});
   await poll(()=>cdp.eval("!document.querySelector('.specimen-inspection')"),"Escape closes inspection");
@@ -234,6 +256,8 @@ try{
   await cdp.eval("document.querySelector('#incident').scrollIntoView({behavior:'instant'})");
   await delay(350);
   await cdp.screenshot("incident-detect-desktop.png");
+  await poll(()=>cdp.eval("!!document.querySelector('.incident-phase-tabs [data-step=investigate]')"),
+    "deferred incident module mounts near the viewport");
   await cdp.eval("document.querySelector('.incident-phase-tabs [data-step=investigate]').click()");
   assert.ok(await cdp.eval("!!document.querySelector('.incident-log')"),"investigation reveals telemetry");
   await cdp.eval("document.querySelectorAll('.incident-evidence-tabs button')[2].click()");
@@ -262,9 +286,106 @@ try{
   await cdp.screenshot("root-access-desktop.png");
   await cdp.eval("document.querySelector('.root-terminal-close').click()");
   assert.ok(await cdp.eval("!document.querySelector('.root-terminal')"),"terminal closes without navigating");
+  // Awakening now reveals source-backed notes rather than a purely cosmetic mode.
+  assert.equal(await cdp.eval("!!document.querySelector('.signal-dossier')"),false,
+    "normal portfolio never hides essential content behind an extra discovery widget");
+  await cdp.eval("document.querySelector('.specimen-discovery').click()");
+  await cdp.eval("document.querySelector('.specimen-primary').click()");
+  await poll(()=>cdp.eval("document.querySelector('.exhibition-site').dataset.specimenState==='awakened'"),
+    "awakened signal trail activates");
+  await delay(1740);
+  await cdp.eval("document.querySelector('#work').scrollIntoView({behavior:'instant'})");
+  await cdp.eval("document.querySelector('.signal-dossier-trigger').click()");
+  assert.ok(await cdp.eval("document.querySelector('.signal-dossier-body').textContent.includes('DESIGN QUESTION')"),
+    "archive note contains a project-specific technical question");
+  assert.ok(await cdp.eval("document.querySelector('.signal-dossier-body a').href.includes('github.com')"),
+    "archive notes link to actual repository code");
+  await cdp.eval("document.querySelector('.signal-dossier-body').scrollIntoView({behavior:'instant',block:'center'})");
+  await delay(220);
+  await cdp.screenshot("signal-archive-desktop.png");
+  await cdp.eval("document.querySelector('#incident').scrollIntoView({behavior:'instant'})");
+  await cdp.eval("document.querySelector('.incident-phase-tabs [data-step=investigate]').click()");
+  await cdp.eval("document.querySelector('.signal-lab-trigger').click()");
+  assert.ok(await cdp.eval("document.querySelector('.signal-lab-analysis').textContent.includes('93.1%')"),
+    "Lab note explains trace latency attribution");
+  await cdp.eval("document.querySelector('.signal-lab-analysis').scrollIntoView({behavior:'instant',block:'center'})");
+  await delay(220);
+  await cdp.screenshot("signal-lab-desktop.png");
+  await cdp.eval("document.querySelector('#final-boss').scrollIntoView({behavior:'instant'})");
+  await cdp.eval("document.querySelector('.signal-arcade-trigger').click()");
+  assert.ok(await cdp.eval("document.querySelector('.signal-arcade-manual').textContent.includes('520 ms')"),
+    "arcade note documents deterministic fixed ticks");
+  assert.ok(await cdp.eval("document.querySelector('.signal-arcade-manual').textContent.includes('not WebSocket')"),
+    "game documentation accurately identifies synchronization model");
+  assert.equal(await cdp.eval("JSON.parse(sessionStorage.getItem('cd-signal-trail')).length"),3,
+    "all three distinct discoveries persist locally");
+  assert.ok(await cdp.eval("!!document.querySelector('#consistency')"),
+    "recovering all three notes unlocks the optional concurrency experiment");
+  await cdp.eval("document.querySelector('#consistency').scrollIntoView({behavior:'instant'})");
+  await poll(()=>cdp.eval("!!document.querySelector('.consistency-experiment')"),
+    "consistency experiment lazily loads when opened");
+  assert.ok(await cdp.eval("document.querySelector('.consistency-trace').textContent.includes('v12')"),
+    "the fixture begins on a shared version");
+  await cdp.eval("document.querySelector('.consistency-run').click()");
+  assert.ok(await cdp.eval("document.querySelector('.consistency-verdict.negative')?.textContent.includes('409')"),
+    "the stale write fails instead of overwriting the winning action");
+  await cdp.eval("document.querySelector('.consistency-run').click()");
+  assert.ok(await cdp.eval("document.querySelector('.consistency-verdict.positive')?.textContent.includes('v14')"),
+    "a refreshed retry preserves both independent actions");
+  await cdp.eval("document.querySelectorAll('.consistency-choice button')[1].click()");
+  await cdp.eval("document.querySelector('.consistency-run').click()");
+  assert.ok(await cdp.eval("document.querySelector('.consistency-event-stream').textContent.includes('EGRESS writes')"),
+    "the visitor can reverse the order of concurrent writers");
+  await cdp.screenshot("consistency-experiment-desktop.png");
+
+  await cdp.eval("document.querySelector('.signal-arcade-manual').scrollIntoView({behavior:'instant',block:'center'})");
+  await delay(220);
+  await cdp.screenshot("signal-arcade-desktop.png");
+  await cdp.eval("document.querySelector('.root-discovery').click()");
+  await cdp.eval("document.querySelector('#root-command').focus()");
+  await cdp.send("Input.insertText",{text:"signals"});
+  await cdp.eval("document.querySelector('.root-terminal-prompt').requestSubmit()");
+  assert.ok(await cdp.eval("document.querySelector('.root-terminal-history').textContent.includes('3/3 RECOVERED')"),
+    "terminal reconstructs only collected evidence");
+  await cdp.send("Input.insertText",{text:"cat /signals/report"});
+  await cdp.eval("document.querySelector('.root-terminal-prompt').requestSubmit()");
+  assert.ok(await cdp.eval("document.querySelector('.root-terminal-history').textContent.includes('Explicit state ownership')"),
+    "terminal provides a coherent technical conclusion, not a joke-only unlock");
+  assert.ok(await cdp.eval("document.querySelector('.root-terminal-unlock')?.getAttribute('href')==='#consistency'"),
+    "recovered terminal index links to the working experiment");
+  await cdp.screenshot("signal-index-desktop.png");
+  await cdp.send("Input.insertText",{text:"theme --chaos"});
+  await cdp.eval("document.querySelector('.root-terminal-prompt').requestSubmit()");
+  assert.ok(await cdp.eval("document.querySelector('.exhibition-site').classList.contains('root-chaos') && document.querySelector('.exhibition-site').classList.contains('specimen-awakened')"),
+    "ROOT effects and specimen state coexist without DOM mutation conflicts");
+  await cdp.send("Input.insertText",{text:"signals --reset"});
+  await cdp.eval("document.querySelector('.root-terminal-prompt').requestSubmit()");
+  await poll(()=>cdp.eval("JSON.parse(sessionStorage.getItem('cd-signal-trail')).length===0"),
+    "notes are explicitly reset without affecting the portfolio");
+  assert.ok(await cdp.eval("!document.querySelector('#consistency')"),
+    "reset removes only the optional experiment, not the rest of the portfolio");
+  await cdp.eval("document.querySelector('.root-terminal-close').click()");
+  await cdp.eval("if(!document.querySelector('.specimen-dock-panel'))document.querySelector('.specimen-dock-toggle').click()");
+  await cdp.eval("document.querySelector('.specimen-dock-links button[aria-label=\\\"Restore original experience\\\"]').click()");
+  assert.equal(await cdp.eval("document.querySelector('.exhibition-site').dataset.specimenState"),"sealed",
+    "restoration works after the complete discovery circuit");
+  assert.ok(await cdp.eval("document.querySelector('.exhibition-site').classList.contains('root-chaos')"),
+    "restoring specimen must not silently erase an independent ROOT ACCESS effect");
+  await cdp.eval("document.querySelector('.root-discovery').click()");
+  await cdp.eval("document.querySelector('#root-command').focus()");
+  await cdp.send("Input.insertText",{text:"restore"});
+  await cdp.eval("document.querySelector('.root-terminal-prompt').requestSubmit()");
+  assert.ok(await cdp.eval("!document.querySelector('.exhibition-site').classList.contains('root-chaos')"),
+    "ROOT ACCESS restore reverses only the remaining fictional terminal visual mode");
+  await cdp.eval("document.querySelector('.root-terminal-close').click()");
+
+  await cdp.eval("document.querySelector('#play').scrollIntoView({behavior:'instant'})");
+  await poll(()=>cdp.eval("!!document.querySelector('.flux-canvas')"),"Signal Shift loaded near viewport");
+  await cdp.eval("document.querySelector('#final-boss').scrollIntoView({behavior:'instant'})");
+  await poll(()=>cdp.eval("!!document.querySelector('.packet-board')"),"Packet Panic loaded near viewport");
   await cdp.eval("document.querySelector('#play').scrollIntoView({behavior:'instant'})");
   await delay(350);
-  assert.ok(await cdp.eval("!!document.querySelector('.flux-canvas') && !!document.querySelector('.packet-board')"),"both embedded arcade games present");
+  assert.ok(await cdp.eval("!!document.querySelector('.flux-canvas') && !!document.querySelector('.packet-board')"),"both lazy-loaded arcade games present");
   assert.equal(await cdp.eval("document.querySelectorAll('.packet-node').length"),35);
   assert.ok(await cdp.eval("!!document.querySelector('.packet-daily-button')"),"daily challenge is discoverable without an account");
   assert.equal(await cdp.eval("document.querySelectorAll('.duel-hex').length"),0,"retire Hex from page");
@@ -301,8 +422,12 @@ try{
   assert.equal(await cdp.eval("document.querySelectorAll('.packet-node').length"),35);
   await cdp.screenshot("packet-standalone-desktop.png");
   await assertMinimumTextSize(cdp,"standalone packet desktop");
+  await cdp.send("Page.navigate",{url:"http://127.0.0.1:4173/#incident"});
+  await poll(()=>cdp.eval("!!document.querySelector('#incident')"),"deferred lab deep-link anchor exists before chunk");
+  await poll(()=>cdp.eval("(()=>{const root=document.querySelector('#incident');if(!root||!document.querySelector('.incident-replay'))return false;const target=parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop)||0;return Math.abs(root.getBoundingClientRect().top-target)<=16;})()"),
+    "initial hash navigation opens the lazy-loaded Lab at the intended sticky-header offset");
   await cdp.send("Page.navigate",{url:"http://127.0.0.1:4173/"});
-  await poll(()=>cdp.eval("!!document.querySelector('#top')"),"exhibition after route");
+  await poll(()=>cdp.eval("!!document.querySelector('#top')"),"exhibition after deep-link route");
 
   await cdp.send("Emulation.setDeviceMetricsOverride",{width:390,height:844,deviceScaleFactor:1,mobile:true,screenWidth:390,screenHeight:844});
   await delay(450);
@@ -318,7 +443,7 @@ try{
   assert.ok(Math.abs(mobileHeroFrame.canvasLeft-mobileHeroFrame.heroLeft)<=1 && Math.abs(mobileHeroFrame.canvasRight-mobileHeroFrame.heroRight)<=1,
     "3D monogram must occupy the full mobile hero width: "+JSON.stringify(mobileHeroFrame));
   if(desktop.renderer==="webgl") assert.ok(mobileHeroFrame.scale>0 && mobileHeroFrame.scale<=1.38,"Mobile scale must fit viewport");
-  const mobileGames=await cdp.eval("(()=>{const a=document.querySelector('.flux-experience').getBoundingClientRect(),b=document.querySelector('.after-hours .packet-experience').getBoundingClientRect();return {aLeft:a.left,aRight:a.right,bLeft:b.left,bRight:b.right,width:document.documentElement.clientWidth}})()");
+  const mobileGames=await cdp.eval("(()=>{const a=document.querySelector('[data-experience=arcade]').getBoundingClientRect(),b=document.querySelector('[data-experience=packet]').getBoundingClientRect();return {aLeft:a.left,aRight:a.right,bLeft:b.left,bRight:b.right,width:document.documentElement.clientWidth}})()");
   assert.ok(mobileGames.aLeft<=2 && mobileGames.aRight>=mobileGames.width-2,"arcade fills mobile width");
   assert.ok(mobileGames.bLeft<=2 && mobileGames.bRight>=mobileGames.width-2,"Packet Panic fills mobile width");
   await assertMinimumTextSize(cdp,"390px mobile");
@@ -336,8 +461,20 @@ try{
     "phone activation is responsive");
   await delay(1680);
   await cdp.screenshot("specimen-awakened-mobile.png");
+  await cdp.eval("document.querySelector('.signal-dossier-trigger').click()");
+  assert.ok(await cdp.eval("!!document.querySelector('.signal-dossier-body')"),
+    "awakened project notes work on touch-sized displays");
+  assert.ok(await cdp.eval("document.documentElement.scrollWidth<=innerWidth+3"),
+    "engineering dossier cannot cause horizontal overflow on 390px phone");
+  await cdp.eval("document.querySelector('.signal-dossier-body').scrollIntoView({behavior:'instant',block:'center'})");
+  await delay(260);
+  await cdp.screenshot("signal-archive-mobile.png");
+
   assert.ok(await cdp.eval("document.documentElement.scrollWidth<=innerWidth+3"),
     "activated mode cannot create horizontal overflow");
+  await cdp.eval("if(!document.querySelector('.specimen-dock-panel'))document.querySelector('.specimen-dock-toggle').click()");
+  await poll(()=>cdp.eval("!!document.querySelector('.specimen-dock-links button[aria-label=\\\"Restore original experience\\\"]')"),
+    "visitor can reopen the collapsed companion after scrolling the note");
   await cdp.eval("document.querySelector('.specimen-dock-links button[aria-label=\"Restore original experience\"]').click()");
   assert.equal(await cdp.eval("document.querySelector('.exhibition-site').dataset.specimenState"),"sealed");
 
@@ -395,6 +532,11 @@ try{
   assert.equal(nodesVisible.visible,35);
   assert.ok(nodesVisible.min>=nodesVisible.arenaLeft-3 && nodesVisible.max<=nodesVisible.arenaRight+3,
     "All 35 Packet routers must stay inside the mobile arena "+JSON.stringify(nodesVisible));
+  await cdp.send("Emulation.setDeviceMetricsOverride",{width:768,height:1024,deviceScaleFactor:1,mobile:true,screenWidth:768,screenHeight:1024});
+  await delay(380);
+  const tablet=await cdp.eval("({width:innerWidth,scroll:document.documentElement.scrollWidth})");
+  assert.ok(tablet.scroll<=tablet.width+3,"768px tablet must avoid overflow "+JSON.stringify(tablet));
+  await cdp.screenshot("tablet-layout.png");
   await cdp.send("Emulation.setDeviceMetricsOverride",{width:320,height:700,deviceScaleFactor:1,mobile:true,screenWidth:320,screenHeight:700});
   await delay(330);
   const narrow=await cdp.eval("({width:innerWidth,body:document.documentElement.scrollWidth})");
@@ -424,7 +566,42 @@ try{
   assert.ok(await cdp.eval("document.documentElement.scrollWidth<=innerWidth+3"),
     "no 320px overflow after complete specimen cycle");
 
-  console.log("Typography edition QA PASS: typography, reactor interactions, centered uncropped Signal Shift, spatial gallery, Packet Panic, Signal Shift and 320/390px.");
+  // Synthetic mobile p75 is a regression signal, not a substitute for RUM field p75.
+  await cdp.send("Emulation.setDeviceMetricsOverride",{width:390,height:844,deviceScaleFactor:1,mobile:true,screenWidth:390,screenHeight:844});
+  const mobileLcp=[];
+  const mobileCls=[];
+  for(let i=0;i<3;i++){
+    await cdp.send("Page.navigate",{url:"http://127.0.0.1:4173/"});
+    await poll(()=>cdp.eval("!!document.querySelector('.specimen-discovery')"),"synthetic mobile sample loaded");
+    await delay(950);
+    const metrics=await cdp.eval("window.__cdVitals");
+    if(typeof metrics?.lcp==="number")mobileLcp.push(metrics.lcp);
+    if(typeof metrics?.cls==="number")mobileCls.push(metrics.cls);
+  }
+  const percentile75=values=>values.length?[...values].sort((a,b)=>a-b)[Math.ceil(values.length*.75)-1]:null;
+  const p75Lcp=percentile75(mobileLcp);
+  const p75Cls=percentile75(mobileCls);
+  console.log("Synthetic mobile sample (3 reloads; not real-user field metrics):",
+    JSON.stringify({p75LcpMs:p75Lcp,p75Cls,longTasks:initialPerf.longTasks.length}));
+  if(p75Lcp!==null)assert.ok(p75Lcp<4200,"Synthetic mobile p75 LCP should avoid critical regression "+p75Lcp);
+  if(p75Cls!==null)assert.ok(p75Cls<.20,"Synthetic mobile p75 CLS should avoid critical regression "+p75Cls);
+  // In an environment without speech synthesis, the entire experience remains usable.
+  await cdp.send("Page.addScriptToEvaluateOnNewDocument",{source:`
+    try{Object.defineProperty(window,'speechSynthesis',{value:undefined,configurable:true});}
+    catch{/* speech API cannot be overridden in this browser */}
+  `});
+  await cdp.send("Page.navigate",{url:"http://127.0.0.1:4173/"});
+  await poll(()=>cdp.eval("!!document.querySelector('.specimen-discovery')"),"fresh reduced-motion, speech-free visit");
+  await poll(()=>cdp.eval("document.querySelector('.code-monument-canvas')?.dataset.renderer==='fallback'"),
+    "reduced-motion loads a static hero without starting WebGL");
+  await cdp.eval("document.querySelector('.specimen-discovery').click()");
+  await poll(()=>cdp.eval("!!document.querySelector('.specimen-inspection')"),"voice-disabled modal opens normally");
+  if(await cdp.eval("!window.speechSynthesis"))assert.ok(await cdp.eval("!document.querySelector('.specimen-voice-option')"),
+    "unsupported speech synthesis must not expose a broken voice control");
+  await cdp.eval("document.querySelector('.specimen-primary').click()");
+  assert.equal(await cdp.eval("document.querySelector('.exhibition-site').dataset.specimenState"),"awakened");
+  assert.ok(await cdp.eval("!document.querySelector('.specimen-apparition')"),"reduced motion still suppresses the effect");
+  console.log("Experience, typed discovery, keyboard focus, static hero, lazy modules, tablet and 320/390px QA PASS.");
   console.log("Visual QA saved to "+out);
 }finally{
   if(socket?.readyState===WebSocket.OPEN)socket.close();

@@ -4,7 +4,7 @@ import { ArrowUpRight, FlaskConical, RotateCcw, Volume2, VolumeX, X } from "luci
 import { shouldComment, specimenLine, type SpecimenMoment } from "./specimenCharacter";
 import "./specimen.css";
 
-type Props={awakened:boolean;onChange:(next:boolean)=>void};
+type Props={awakened:boolean;onChange:(next:boolean)=>void;signalCount:number};
 const KEY="cd-specimen-voice";
 
 function GlassVial({large=false}:{large?:boolean}) {
@@ -52,8 +52,14 @@ function GlassVial({large=false}:{large?:boolean}) {
   </svg>;
 }
 
+function speechAvailable():boolean {
+  return typeof window!=="undefined" &&
+    typeof window.speechSynthesis?.speak==="function" &&
+    typeof SpeechSynthesisUtterance==="function";
+}
 function speak(text:string) {
-  if(typeof window==="undefined"||!("speechSynthesis" in window))return;
+  if(!speechAvailable())return;
+  try{
   const engine=window.speechSynthesis;
   engine.cancel();
   const line=new SpeechSynthesisUtterance(text);
@@ -68,6 +74,7 @@ function speak(text:string) {
     ??voices[0];
   if(preferred)line.voice=preferred;
   engine.speak(line);
+  }catch{/* Unsupported or suspended platform voices never interrupt the site. */}
 }
 
 function Apparition() {
@@ -105,7 +112,7 @@ function Apparition() {
 }
 
 /** A small optional discovery on the hero; all real content stays available. */
-export default function SpecimenExperience({awakened,onChange}:Props) {
+export default function SpecimenExperience({awakened,onChange,signalCount}:Props) {
   const [open,setOpen]=useState(false);
   const [expanded,setExpanded]=useState(false);
   const [surge,setSurge]=useState(false);
@@ -120,10 +127,11 @@ export default function SpecimenExperience({awakened,onChange}:Props) {
   const surgeTimer=useRef<number|null>(null);
 
   useEffect(()=>{
-    setVoiceAvailable(typeof window!=="undefined"&&"speechSynthesis" in window);
-    try{setVoice(window.sessionStorage.getItem(KEY)==="on");}catch{/* optional */}
+    const supported=speechAvailable();
+    setVoiceAvailable(supported);
+    try{setVoice(supported&&window.sessionStorage.getItem(KEY)==="on");}catch{/* optional */}
     return()=>{
-      window.speechSynthesis?.cancel();
+      if(speechAvailable())window.speechSynthesis.cancel();
       if(surgeTimer.current!==null)window.clearTimeout(surgeTimer.current);
     };
   },[]);
@@ -203,14 +211,14 @@ export default function SpecimenExperience({awakened,onChange}:Props) {
     setOpen(false);
     setSurge(false);
     if(surgeTimer.current!==null)window.clearTimeout(surgeTimer.current);
-    window.speechSynthesis?.cancel();
+    if(speechAvailable())window.speechSynthesis.cancel();
   };
   const toggleVoice=()=>{
     const next=!voice;
     setVoice(next);
     try{window.sessionStorage.setItem(KEY,next?"on":"off");}catch{/* optional */}
     if(next)speak("Voice enabled. A questionable but defensible choice.");
-    else window.speechSynthesis?.cancel();
+    else if(speechAvailable())window.speechSynthesis.cancel();
   };
   const trapFocus=(event:KeyboardEvent<HTMLDivElement>)=>{
     if(event.key!=="Tab")return;
@@ -265,13 +273,16 @@ export default function SpecimenExperience({awakened,onChange}:Props) {
           </div>
         </div>
       </div>}
+      <output className="specimen-announce" aria-live="polite" aria-atomic="true">{awakened?"Specimen active. Additional engineering notes are available.":"Specimen sealed. Original presentation restored."}</output>
       {awakened&&<aside className="specimen-dock" aria-label="Specimen experience controls">
         {expanded&&<div className="specimen-dock-panel">
-          <div className="specimen-dock-heading"><FlaskConical size={15}/> EXPERIMENT 001 <span>ACTIVE</span></div>
+          <div className="specimen-dock-heading"><FlaskConical size={15}/> EXPERIMENT 001 <span>NOTES {signalCount}/3</span></div>
           <p aria-live="polite">{line}</p>
           <div className="specimen-dock-links">
+            <a href="#work" onClick={()=>setExpanded(false)}>ARCHIVE <ArrowUpRight size={13}/></a>
             <a href="#incident" onClick={()=>setExpanded(false)}>LAB <ArrowUpRight size={13}/></a>
             <a href="#final-boss" onClick={()=>setExpanded(false)}>ARCADE <ArrowUpRight size={13}/></a>
+            <a href="#site-footer" onClick={()=>setExpanded(false)}>INDEX <ArrowUpRight size={13}/></a>
             {voiceAvailable&&<button type="button" onClick={toggleVoice}
               aria-label={voice?"Mute character":"Enable character voice"}>
               {voice?<Volume2 size={16}/>:<VolumeX size={16}/>}
@@ -281,7 +292,7 @@ export default function SpecimenExperience({awakened,onChange}:Props) {
         </div>}
         <button className="specimen-dock-toggle" type="button" onClick={()=>setExpanded(v=>!v)}
           aria-expanded={expanded} aria-label={expanded?"Collapse specimen controls":"Open specimen controls"}>
-          <span className="specimen-dock-led"/><span>001 / ACTIVE</span><span>{expanded?"−":"+"}</span>
+          <span className="specimen-dock-led"/><span>001 / {signalCount}/3</span><span>{expanded?"−":"+"}</span>
         </button>
       </aside>}
     </>,document.body)}

@@ -5,22 +5,29 @@ import {
   type EvidenceKind, type Remediation,
 } from "./incidentScenario";
 import "./incident-replay.css";
+import type { SignalId } from "./signalTrail";
 
 const PHASES=["Detect","Investigate","Remediate","Verify"] as const;
 const TRACE_POINTS=INCIDENT_METRICS.map((d,i)=>[45+i*83,190-d.latency/2200*156] as const);
 const CHART_PATH=TRACE_POINTS.map(([x,y],i)=>(i?"L":"M")+x.toFixed(1)+" "+y.toFixed(1)).join(" ");
 const chartArea=CHART_PATH+" L"+TRACE_POINTS.at(-1)![0]+" 190 L45 190 Z";
 
-export default function IncidentReplay() {
+interface IncidentReplayProps {
+  awakened:boolean;
+  onDiscover:(id:SignalId)=>void;
+  signals:readonly SignalId[];
+}
+export default function IncidentReplay({awakened,onDiscover,signals}:IncidentReplayProps) {
+  const [traceOpen,setTraceOpen]=useState(false);
   const [phase,setPhase]=useState<0|1|2|3>(0);
   const [evidence,setEvidence]=useState<EvidenceKind>("traces");
   const [choice,setChoice]=useState<Remediation|null>(null);
   const selected=choice?evaluateRemediation(choice):null;
   const solved=selected?.correct===true;
-  const reset=()=>{setPhase(0);setEvidence("traces");setChoice(null);};
+  const reset=()=>{setPhase(0);setEvidence("traces");setChoice(null);setTraceOpen(false);};
   const navigate=(next:number)=>{if(next>=0&&next<=3&&(next!==3||solved))setPhase(next as 0|1|2|3);};
-  return <section className="incident-replay" id="incident" aria-labelledby="incident-heading">
-    <header className="incident-intro" data-reveal>
+  return <section className="incident-replay" aria-labelledby="incident-heading">
+    <header className="incident-intro">
       <div><span className="incident-eyebrow"><Activity size={16}/> THE ENGINEERING LAB / SCENARIO 042</span>
         <h2 id="incident-heading">DEBUG THE<br/><em>DISASTER.</em></h2>
       </div>
@@ -99,6 +106,25 @@ export default function IncidentReplay() {
               <div className="incident-log">{EVIDENCE[evidence].lines.map((line,i)=><div key={i}>{line}</div>)}</div>
               <p>{EVIDENCE[evidence].insight}</p>
             </div>
+            {awakened&&<div className="signal-lab">
+              <button type="button" className="signal-lab-trigger" aria-expanded={traceOpen}
+                aria-controls="signal-lab-analysis" onClick={()=>{
+                  setTraceOpen(v=>!v);
+                  if(!traceOpen)onDiscover("lab");
+                }}>
+                <span>LAB / FOLLOW THE WAIT</span>
+                <span>{signals.includes("lab")?"RECOVERED":"UNREAD"} {traceOpen?"−":"+"}</span>
+              </button>
+              {traceOpen&&<div className="signal-lab-analysis" id="signal-lab-analysis">
+                <strong>THE BOTTLENECK IS NOT THE QUERY</strong>
+                <div className="signal-lab-bar" role="img" aria-label="93.1 percent of the 2,102 millisecond trace spent acquiring a database connection">
+                  <span style={{width:"93.1%"}}/>
+                </div>
+                <p><b>1,957 / 2,102 ms (93.1%)</b> of the trace is connection acquisition; the SQL insert takes 21 ms. The simulated logs show 186 clients waiting while 20 connections are active.</p>
+                <p>Rollback addresses the change in pool size and request concurrency. Follow-up work should bound retries, size the pool against actual demand, and add a canary gate for p95 and errors.</p>
+                <a href="#site-footer">INDEX THE FINDING IN ROOT ACCESS <ArrowRight size={14}/></a>
+              </div>}
+            </div>}
             <button className="incident-primary" type="button" onClick={()=>navigate(2)}>CHOOSE A REMEDIATION <ArrowRight size={19}/></button>
           </>}
           {phase===2&&<>

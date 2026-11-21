@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
 import { ArrowUpRight, LockKeyhole, Terminal, X } from "lucide-react";
 import { runRootCommand } from "./rootCommands";
+import type { SignalProgress } from "./signalTrail";
 import "./root-access.css";
 
 type Entry={id:number;kind:"input"|"output";text:string};
@@ -9,11 +10,18 @@ const START:Entry[]=[
   {id:2,kind:"output",text:"Everything runs in this browser. There is no real shell."},
   {id:3,kind:"output",text:"Type help to find out how much trouble you can cause."},
 ];
-export default function RootAccess() {
+export type RootVisualMode="normal"|"chaos"|"gravity";
+interface RootAccessProps {
+  awakened:boolean;
+  signals:SignalProgress;
+  onResetSignals:()=>void;
+  onVisualModeChange:(next:RootVisualMode)=>void;
+}
+export default function RootAccess({awakened,signals,onResetSignals,onVisualModeChange}:RootAccessProps) {
   const [open,setOpen]=useState(false);
   const [command,setCommand]=useState("");
   const [entries,setEntries]=useState<Entry[]>(START);
-  const [effect,setEffect]=useState<"normal"|"chaos"|"gravity">("normal");
+
   const terminal=useRef<HTMLDivElement>(null);
   const entry=useRef<HTMLInputElement>(null);
   const history=useRef<HTMLDivElement>(null);
@@ -32,12 +40,6 @@ export default function RootAccess() {
     return()=>window.removeEventListener("keydown",shortcut);
   },[]);
   useEffect(()=>{
-    const site=document.querySelector(".exhibition-site");
-    site?.classList.toggle("root-chaos",effect==="chaos");
-    site?.classList.toggle("root-gravity",effect==="gravity");
-    return()=>{site?.classList.remove("root-chaos","root-gravity");};
-  },[effect]);
-  useEffect(()=>{
     if(!open)return;
     lastFocus.current=document.activeElement instanceof HTMLElement?document.activeElement:null;
     const oldOverflow=document.body.style.overflow;
@@ -54,7 +56,8 @@ export default function RootAccess() {
   const execute=(event:FormEvent<HTMLFormElement>)=>{
     event.preventDefault();
     if(!command.trim())return;
-    const result=runRootCommand(command);
+    const result=runRootCommand(command,{awakened,signals});
+    if(result.effect==="reset-signals")onResetSignals();
     if(result.effect==="clear")setEntries(START);
     else {
       const next:Entry[]=[
@@ -63,9 +66,9 @@ export default function RootAccess() {
       ];
       setEntries(old=>[...old,...next].slice(-100));
     }
-    if(result.effect==="chaos")setEffect("chaos");
-    if(result.effect==="gravity")setEffect("gravity");
-    if(result.effect==="restore")setEffect("normal");
+    if(result.effect==="chaos")onVisualModeChange("chaos");
+    if(result.effect==="gravity")onVisualModeChange("gravity");
+    if(result.effect==="restore")onVisualModeChange("normal");
     if(result.effect==="exit")setOpen(false);
     setCommand("");
   };
@@ -102,7 +105,7 @@ export default function RootAccess() {
         </div>
         <div className="root-terminal-banner">
           <span><LockKeyhole size={15}/> SANDBOX MODE · BROWSER ONLY</span>
-          <span>ROOT ACCESS IS A JOKE. SECURITY IS NOT.</span>
+          <span>{awakened?`SIGNALS ${signals.length}/3 · TYPE SIGNALS`:"ROOT ACCESS IS A JOKE. SECURITY IS NOT."}</span>
         </div>
         <div className="root-terminal-history" ref={history} role="log" aria-live="polite" aria-label="Terminal command history">
           {entries.map(item=><div key={item.id}
@@ -119,6 +122,8 @@ export default function RootAccess() {
             placeholder="help" aria-description="Press Enter to submit a local pretend command"/>
           <button type="submit" disabled={!command.trim()}>RUN ↵</button>
         </form>
+        {awakened&&signals.length===3&&<a className="root-terminal-unlock" href="#consistency"
+          onClick={()=>setOpen(false)}>RECOVERED: EXPERIMENT 001 / OPEN CONCURRENCY LAB <ArrowUpRight size={16}/></a>}
         <div className="root-terminal-footnote">
           <span>ESC TO CLOSE</span><span>TYPE RESTORE TO RESET VISUAL EFFECTS</span>
           <span>NO REAL COMMANDS EXECUTED</span>

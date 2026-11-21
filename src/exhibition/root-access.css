@@ -98,3 +98,13 @@
 @media(max-width:640px) {
   .exhibition-footer .visitor-result a {margin-left:0;}
 }
+
+/* A real experiment behind the recovered notes, rather than a scripted joke. */
+.root-terminal-unlock {
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:14px 19px;border-top:1px solid #5d8273;
+  background:#23473f;color:#dbffac;
+  font:750 12px/1.6 "JetBrains Mono",monospace;
+}
+.root-terminal-unlock:hover {background:#31594c;}
+.root-terminal-unlock:focus-visible {outline:3px solid #d4ffa9;outline-offset:-3px;}
