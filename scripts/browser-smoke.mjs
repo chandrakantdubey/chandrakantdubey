@@ -607,9 +607,9 @@ try{
   assert.ok(await cdp.eval("document.documentElement.scrollWidth<=innerWidth+3"),"lab mobile width fits viewport");
   await cdp.send("Page.navigate",{url:"http://127.0.0.1:4173/lab/disaster"});
   await poll(()=>cdp.eval("!!document.querySelector('.iw-action-grid button')"),"incident actions render");
-  const initialTick=await cdp.eval("document.querySelector('.iw-statusline')?.textContent");
+  const initialTick=await cdp.eval("document.querySelector('.iw-config')?.textContent");
   await cdp.eval("document.querySelector('.iw-action-grid button').click()");
-  await poll(()=>cdp.eval("document.querySelector('.iw-statusline')?.textContent!=="+JSON.stringify(initialTick)),"incident advances after operational command");
+  await poll(()=>cdp.eval("document.querySelector('.iw-config')?.textContent!=="+JSON.stringify(initialTick)),"incident advances after operational command");
   assert.ok(await cdp.eval("document.querySelectorAll('.iw-node').length===6"),"incident topology exposes six selectable services");
   assert.ok(await cdp.eval("!!document.querySelector('#incident-tick')"),"incident includes accessible metric timeline scrubber");
   await cdp.eval("document.querySelectorAll('.iw-evidence-tabs button')[1].click()");
